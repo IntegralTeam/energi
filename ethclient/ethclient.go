@@ -24,12 +24,12 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/IntegralTeam/energi"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/common/hexutil"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/rlp"
+	"github.com/IntegralTeam/energi/rpc"
 )
 
 // Client defines typed wrappers for the Ethereum RPC API.

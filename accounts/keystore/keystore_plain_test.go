@@ -27,12 +27,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/crypto"
 )
 
 func tmpKeyStoreIface(t *testing.T, encrypted bool) (dir string, ks keyStore) {
-	d, err := ioutil.TempDir("", "geth-keystore-test")
+	d, err := ioutil.TempDir("", "energi-keystore-test")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -27,12 +27,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/IntegralTeam/energi/event"
+	"github.com/IntegralTeam/energi/node"
+	"github.com/IntegralTeam/energi/p2p"
+	"github.com/IntegralTeam/energi/p2p/enode"
+	"github.com/IntegralTeam/energi/p2p/simulations/adapters"
+	"github.com/IntegralTeam/energi/rpc"
 )
 
 // testService implements the node.Service interface and provides protocols

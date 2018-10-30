@@ -23,10 +23,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm/fuse"
+	"github.com/IntegralTeam/energi/cmd/utils"
+	"github.com/IntegralTeam/energi/node"
+	"github.com/IntegralTeam/energi/rpc"
+	"github.com/IntegralTeam/energi/swarm/fuse"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -156,7 +156,7 @@ func dialRPC(ctx *cli.Context) (*rpc.Client, error) {
 	if endpoint == "" {
 		endpoint = node.DefaultIPCEndpoint(clientIdentifier)
 	} else if strings.HasPrefix(endpoint, "rpc:") || strings.HasPrefix(endpoint, "ipc:") {
-		// Backwards compatibility with geth < 1.5 which required
+		// Backwards compatibility with energi < 1.5 which required
 		// these prefixes.
 		endpoint = endpoint[4:]
 	}

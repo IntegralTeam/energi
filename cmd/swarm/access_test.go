@@ -32,13 +32,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/api"
-	swarm "github.com/ethereum/go-ethereum/swarm/api/client"
-	"github.com/ethereum/go-ethereum/swarm/testutil"
+	"github.com/IntegralTeam/energi/crypto"
+	"github.com/IntegralTeam/energi/crypto/ecies"
+	"github.com/IntegralTeam/energi/crypto/sha3"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/swarm/api"
+	swarm "github.com/IntegralTeam/energi/swarm/api/client"
+	"github.com/IntegralTeam/energi/swarm/testutil"
 )
 
 const (

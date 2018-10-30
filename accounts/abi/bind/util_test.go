@@ -22,12 +22,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/IntegralTeam/energi/accounts/abi/bind"
+	"github.com/IntegralTeam/energi/accounts/abi/bind/backends"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/core"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/crypto"
 )
 
 var testKey, _ = crypto.HexToECDSA("b71c71a67e1177ad4e901695e1b4b9ee17ae16c6668d313eac2f96dbcda3f291")

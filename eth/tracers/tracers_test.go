@@ -25,15 +25,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/tests"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/common/hexutil"
+	"github.com/IntegralTeam/energi/common/math"
+	"github.com/IntegralTeam/energi/core"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/core/vm"
+	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/rlp"
+	"github.com/IntegralTeam/energi/tests"
 )
 
 // To generate a new callTracer test, copy paste the makeTest method below into

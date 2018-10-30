@@ -27,12 +27,12 @@ import (
 
 	cli "gopkg.in/urfave/cli.v1"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/dashboard"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/params"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
+	"github.com/IntegralTeam/energi/cmd/utils"
+	"github.com/IntegralTeam/energi/dashboard"
+	"github.com/IntegralTeam/energi/eth"
+	"github.com/IntegralTeam/energi/node"
+	"github.com/IntegralTeam/energi/params"
+	whisper "github.com/IntegralTeam/energi/whisper/whisperv6"
 	"github.com/naoina/toml"
 )
 
@@ -103,7 +103,7 @@ func defaultNodeConfig() node.Config {
 	cfg.Version = params.VersionWithCommit(gitCommit)
 	cfg.HTTPModules = append(cfg.HTTPModules, "eth", "shh")
 	cfg.WSModules = append(cfg.WSModules, "eth", "shh")
-	cfg.IPCPath = "geth.ipc"
+	cfg.IPCPath = "energi.ipc"
 	return cfg
 }
 

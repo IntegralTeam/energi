@@ -28,12 +28,12 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/IntegralTeam/energi/accounts"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/common/hexutil"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/rlp"
 )
 
 // ledgerOpcode is an enumeration encoding the supported Ledger opcodes.

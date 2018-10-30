@@ -21,9 +21,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/storage"
+	"github.com/IntegralTeam/energi/metrics"
+	"github.com/IntegralTeam/energi/swarm/log"
+	"github.com/IntegralTeam/energi/swarm/storage"
 )
 
 const (

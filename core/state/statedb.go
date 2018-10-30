@@ -24,12 +24,12 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/trie"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/crypto"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/rlp"
+	"github.com/IntegralTeam/energi/trie"
 )
 
 type revision struct {
@@ -513,7 +513,7 @@ func (self *StateDB) Copy() *StateDB {
 	}
 	// Copy the dirty states, logs, and preimages
 	for addr := range self.journal.dirties {
-		// As documented [here](https://github.com/ethereum/go-ethereum/pull/16485#issuecomment-380438527),
+		// As documented [here](https://github.com/IntegralTeam/energi/pull/16485#issuecomment-380438527),
 		// and in the Finalise-method, there is a case where an object is in the journal but not
 		// in the stateObjects: OOG after touch on ripeMD prior to Byzantium. Thus, we need to check for
 		// nil

@@ -22,12 +22,12 @@ import (
 
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/network"
-	"github.com/ethereum/go-ethereum/swarm/spancontext"
-	"github.com/ethereum/go-ethereum/swarm/storage"
+	"github.com/IntegralTeam/energi/metrics"
+	"github.com/IntegralTeam/energi/p2p/enode"
+	"github.com/IntegralTeam/energi/swarm/log"
+	"github.com/IntegralTeam/energi/swarm/network"
+	"github.com/IntegralTeam/energi/swarm/spancontext"
+	"github.com/IntegralTeam/energi/swarm/storage"
 	opentracing "github.com/opentracing/opentracing-go"
 )
 

@@ -28,35 +28,35 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/fdlimit"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/consensus/clique"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/dashboard"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/eth/gasprice"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/ethstats"
-	"github.com/ethereum/go-ethereum/les"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/metrics/influxdb"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discv5"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/nat"
-	"github.com/ethereum/go-ethereum/p2p/netutil"
-	"github.com/ethereum/go-ethereum/params"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv6"
+	"github.com/IntegralTeam/energi/accounts"
+	"github.com/IntegralTeam/energi/accounts/keystore"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/common/fdlimit"
+	"github.com/IntegralTeam/energi/consensus"
+	"github.com/IntegralTeam/energi/consensus/clique"
+	"github.com/IntegralTeam/energi/consensus/ethash"
+	"github.com/IntegralTeam/energi/core"
+	"github.com/IntegralTeam/energi/core/state"
+	"github.com/IntegralTeam/energi/core/vm"
+	"github.com/IntegralTeam/energi/crypto"
+	"github.com/IntegralTeam/energi/dashboard"
+	"github.com/IntegralTeam/energi/eth"
+	"github.com/IntegralTeam/energi/eth/downloader"
+	"github.com/IntegralTeam/energi/eth/gasprice"
+	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/ethstats"
+	"github.com/IntegralTeam/energi/les"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/metrics"
+	"github.com/IntegralTeam/energi/metrics/influxdb"
+	"github.com/IntegralTeam/energi/node"
+	"github.com/IntegralTeam/energi/p2p"
+	"github.com/IntegralTeam/energi/p2p/discv5"
+	"github.com/IntegralTeam/energi/p2p/enode"
+	"github.com/IntegralTeam/energi/p2p/nat"
+	"github.com/IntegralTeam/energi/p2p/netutil"
+	"github.com/IntegralTeam/energi/params"
+	whisper "github.com/IntegralTeam/energi/whisper/whisperv6"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -589,7 +589,7 @@ var (
 	MetricsInfluxDBDatabaseFlag = cli.StringFlag{
 		Name:  "metrics.influxdb.database",
 		Usage: "InfluxDB database name to push reported metrics to",
-		Value: "geth",
+		Value: "energi",
 	}
 	MetricsInfluxDBUsernameFlag = cli.StringFlag{
 		Name:  "metrics.influxdb.username",
@@ -849,7 +849,7 @@ func MakeAddress(ks *keystore.KeyStore, account string) (accounts.Account, error
 	log.Warn("-------------------------------------------------------------------")
 	log.Warn("Referring to accounts by order in the keystore folder is dangerous!")
 	log.Warn("This functionality is deprecated and will be removed in the future!")
-	log.Warn("Please use explicit addresses! (can search via `geth account list`)")
+	log.Warn("Please use explicit addresses! (can search via `energi account list`)")
 	log.Warn("-------------------------------------------------------------------")
 
 	accs := ks.Accounts()
@@ -1327,7 +1327,7 @@ func SetupMetrics(ctx *cli.Context) {
 
 		if enableExport {
 			log.Info("Enabling metrics export to InfluxDB")
-			go influxdb.InfluxDBWithTags(metrics.DefaultRegistry, 10*time.Second, endpoint, database, username, password, "geth.", map[string]string{
+			go influxdb.InfluxDBWithTags(metrics.DefaultRegistry, 10*time.Second, endpoint, database, username, password, "energi.", map[string]string{
 				"host": hosttag,
 			})
 		}
@@ -1429,11 +1429,11 @@ func MakeConsolePreloads(ctx *cli.Context) []string {
 // This is a temporary function used for migrating old command/flags to the
 // new format.
 //
-// e.g. geth account new --keystore /tmp/mykeystore --lightkdf
+// e.g. energi account new --keystore /tmp/mykeystore --lightkdf
 //
 // is equivalent after calling this method with:
 //
-// geth --keystore /tmp/mykeystore --lightkdf account new
+// energi --keystore /tmp/mykeystore --lightkdf account new
 //
 // This allows the use of the existing configuration functionality.
 // When all flags are migrated this function can be removed and the existing

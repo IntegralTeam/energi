@@ -25,16 +25,16 @@ import (
 	"time"
 
 	mapset "github.com/deckarep/golang-set"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/consensus/misc"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/consensus"
+	"github.com/IntegralTeam/energi/consensus/misc"
+	"github.com/IntegralTeam/energi/core"
+	"github.com/IntegralTeam/energi/core/state"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/core/vm"
+	"github.com/IntegralTeam/energi/event"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/params"
 )
 
 const (

@@ -20,13 +20,13 @@ import (
 	"context"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/bitutil"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/bloombits"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethdb"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/common/bitutil"
+	"github.com/IntegralTeam/energi/core"
+	"github.com/IntegralTeam/energi/core/bloombits"
+	"github.com/IntegralTeam/energi/core/rawdb"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/ethdb"
 )
 
 const (

@@ -24,8 +24,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/swarm/log"
+	"github.com/IntegralTeam/energi/p2p/enode"
+	"github.com/IntegralTeam/energi/swarm/log"
 	lru "github.com/hashicorp/golang-lru"
 )
 

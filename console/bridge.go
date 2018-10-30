@@ -23,9 +23,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts/usbwallet"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/IntegralTeam/energi/accounts/usbwallet"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/rpc"
 	"github.com/robertkrimen/otto"
 )
 

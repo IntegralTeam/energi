@@ -9,17 +9,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/simulations"
-	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
-	"github.com/ethereum/go-ethereum/swarm/network"
-	"github.com/ethereum/go-ethereum/swarm/pss"
-	"github.com/ethereum/go-ethereum/swarm/state"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv5"
+	"github.com/IntegralTeam/energi/common/hexutil"
+	"github.com/IntegralTeam/energi/crypto"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/node"
+	"github.com/IntegralTeam/energi/p2p/enode"
+	"github.com/IntegralTeam/energi/p2p/simulations"
+	"github.com/IntegralTeam/energi/p2p/simulations/adapters"
+	"github.com/IntegralTeam/energi/swarm/network"
+	"github.com/IntegralTeam/energi/swarm/pss"
+	"github.com/IntegralTeam/energi/swarm/state"
+	whisper "github.com/IntegralTeam/energi/whisper/whisperv5"
 )
 
 var (

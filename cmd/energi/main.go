@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
-// geth is the official command-line client for Ethereum.
+// energi is the official command-line client for Ethereum.
 package main
 
 import (
@@ -27,22 +27,22 @@ import (
 	"strings"
 	"time"
 
+	"github.com/IntegralTeam/energi/accounts"
+	"github.com/IntegralTeam/energi/accounts/keystore"
+	"github.com/IntegralTeam/energi/cmd/utils"
+	"github.com/IntegralTeam/energi/console"
+	"github.com/IntegralTeam/energi/eth"
+	"github.com/IntegralTeam/energi/ethclient"
+	"github.com/IntegralTeam/energi/internal/debug"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/metrics"
+	"github.com/IntegralTeam/energi/node"
 	"github.com/elastic/gosigar"
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/console"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/internal/debug"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/node"
 	"gopkg.in/urfave/cli.v1"
 )
 
 const (
-	clientIdentifier = "geth" // Client identifier to advertise over the network
+	clientIdentifier = "energi" // Client identifier to advertise over the network
 )
 
 var (
@@ -254,7 +254,7 @@ func main() {
 	}
 }
 
-// geth is the main entry point into the system if no special subcommand is ran.
+// energi is the main entry point into the system if no special subcommand is ran.
 // It creates a default node based on the command line arguments and runs it in
 // blocking mode, waiting for it to be shut down.
 func geth(ctx *cli.Context) error {

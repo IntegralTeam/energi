@@ -20,12 +20,12 @@ import (
 	"bytes"
 	"context"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/core"
+	"github.com/IntegralTeam/energi/core/rawdb"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/crypto"
+	"github.com/IntegralTeam/energi/rlp"
 )
 
 var sha3_nil = crypto.Keccak256Hash(nil)

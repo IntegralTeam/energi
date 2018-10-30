@@ -38,18 +38,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/swarm/storage/feed/lookup"
+	"github.com/IntegralTeam/energi/swarm/storage/feed/lookup"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/api"
-	swarm "github.com/ethereum/go-ethereum/swarm/api/client"
-	"github.com/ethereum/go-ethereum/swarm/multihash"
-	"github.com/ethereum/go-ethereum/swarm/storage"
-	"github.com/ethereum/go-ethereum/swarm/storage/feed"
-	"github.com/ethereum/go-ethereum/swarm/testutil"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/crypto"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/swarm/api"
+	swarm "github.com/IntegralTeam/energi/swarm/api/client"
+	"github.com/IntegralTeam/energi/swarm/multihash"
+	"github.com/IntegralTeam/energi/swarm/storage"
+	"github.com/IntegralTeam/energi/swarm/storage/feed"
+	"github.com/IntegralTeam/energi/swarm/testutil"
 )
 
 func init() {

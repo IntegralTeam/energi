@@ -27,13 +27,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/simulations"
-	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
-	"github.com/ethereum/go-ethereum/swarm/network"
-	"github.com/ethereum/go-ethereum/swarm/state"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/node"
+	"github.com/IntegralTeam/energi/p2p/enode"
+	"github.com/IntegralTeam/energi/p2p/simulations"
+	"github.com/IntegralTeam/energi/p2p/simulations/adapters"
+	"github.com/IntegralTeam/energi/swarm/network"
+	"github.com/IntegralTeam/energi/swarm/state"
 	colorable "github.com/mattn/go-colorable"
 )
 

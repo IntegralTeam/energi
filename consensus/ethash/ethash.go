@@ -33,13 +33,13 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/consensus"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/metrics"
+	"github.com/IntegralTeam/energi/rpc"
 	mmap "github.com/edsrzf/mmap-go"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/hashicorp/golang-lru/simplelru"
 )
 

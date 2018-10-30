@@ -21,9 +21,9 @@ import (
 	"hash"
 	"sync/atomic"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/common/math"
+	"github.com/IntegralTeam/energi/params"
 )
 
 // Config are the configuration options for the Interpreter

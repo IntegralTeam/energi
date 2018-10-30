@@ -21,17 +21,17 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/IntegralTeam/energi/accounts"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/core"
+	"github.com/IntegralTeam/energi/core/state"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/core/vm"
+	"github.com/IntegralTeam/energi/eth/downloader"
+	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/event"
+	"github.com/IntegralTeam/energi/params"
+	"github.com/IntegralTeam/energi/rpc"
 )
 
 // Backend interface provides the common API services (that are provided by

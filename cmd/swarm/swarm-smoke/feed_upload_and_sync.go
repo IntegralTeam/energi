@@ -15,11 +15,11 @@ import (
 
 	"github.com/pborman/uuid"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/multihash"
-	"github.com/ethereum/go-ethereum/swarm/storage/feed"
+	"github.com/IntegralTeam/energi/common/hexutil"
+	"github.com/IntegralTeam/energi/crypto"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/swarm/multihash"
+	"github.com/IntegralTeam/energi/swarm/storage/feed"
 
 	colorable "github.com/mattn/go-colorable"
 

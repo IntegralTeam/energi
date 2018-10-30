@@ -28,17 +28,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/p2p/simulations/adapters"
-	"github.com/ethereum/go-ethereum/swarm/log"
-	"github.com/ethereum/go-ethereum/swarm/network"
-	"github.com/ethereum/go-ethereum/swarm/network/simulation"
-	"github.com/ethereum/go-ethereum/swarm/state"
-	"github.com/ethereum/go-ethereum/swarm/storage"
-	mockdb "github.com/ethereum/go-ethereum/swarm/storage/mock/db"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/node"
+	"github.com/IntegralTeam/energi/p2p"
+	"github.com/IntegralTeam/energi/p2p/enode"
+	"github.com/IntegralTeam/energi/p2p/simulations/adapters"
+	"github.com/IntegralTeam/energi/swarm/log"
+	"github.com/IntegralTeam/energi/swarm/network"
+	"github.com/IntegralTeam/energi/swarm/network/simulation"
+	"github.com/IntegralTeam/energi/swarm/state"
+	"github.com/IntegralTeam/energi/swarm/storage"
+	mockdb "github.com/IntegralTeam/energi/swarm/storage/mock/db"
 )
 
 const dataChunkCount = 200

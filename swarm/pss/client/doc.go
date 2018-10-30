@@ -28,11 +28,11 @@
 //  	"context"
 //  	"fmt"
 //  	"os"
-//  	pss "github.com/ethereum/go-ethereum/swarm/pss/client"
-//  	"github.com/ethereum/go-ethereum/p2p/protocols"
-//  	"github.com/ethereum/go-ethereum/p2p"
-//  	"github.com/ethereum/go-ethereum/swarm/pot"
-//  	"github.com/ethereum/go-ethereum/swarm/log"
+//  	pss "github.com/IntegralTeam/energi/swarm/pss/client"
+//  	"github.com/IntegralTeam/energi/p2p/protocols"
+//  	"github.com/IntegralTeam/energi/p2p"
+//  	"github.com/IntegralTeam/energi/swarm/pot"
+//  	"github.com/IntegralTeam/energi/swarm/log"
 //  )
 //
 //  type FooMsg struct {

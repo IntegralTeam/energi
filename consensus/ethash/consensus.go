@@ -24,16 +24,16 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/common/math"
+	"github.com/IntegralTeam/energi/consensus"
+	"github.com/IntegralTeam/energi/consensus/misc"
+	"github.com/IntegralTeam/energi/core/state"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/crypto/sha3"
+	"github.com/IntegralTeam/energi/params"
+	"github.com/IntegralTeam/energi/rlp"
 	mapset "github.com/deckarep/golang-set"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/consensus/misc"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
 )
 
 // Ethash proof-of-work protocol constants.

@@ -33,11 +33,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/crypto"
+	"github.com/IntegralTeam/energi/p2p/enode"
+	"github.com/IntegralTeam/energi/rlp"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/rlp"
 )
 
 func init() {

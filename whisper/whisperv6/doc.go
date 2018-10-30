@@ -19,7 +19,7 @@ Package whisper implements the Whisper protocol (version 6).
 
 Whisper combines aspects of both DHTs and datagram messaging systems (e.g. UDP).
 As such it may be likened and compared to both, not dissimilar to the
-matter/energy duality (apologies to physicists for the blatant abuse of a
+matter/energi duality (apologies to physicists for the blatant abuse of a
 fundamental and beautiful natural principle).
 
 Whisper is a pure identity-based messaging system. Whisper provides a low-level
@@ -40,7 +40,7 @@ import (
 const (
 	ProtocolVersion    = uint64(6) // Protocol version number
 	ProtocolVersionStr = "6.0"     // The same, as a string
-	ProtocolName       = "shh"     // Nickname of the protocol in geth
+	ProtocolName       = "shh"     // Nickname of the protocol in energi
 
 	// whisper protocol message codes, according to EIP-627
 	statusCode           = 0   // used by whisper protocol

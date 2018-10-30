@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/IntegralTeam/energi/node"
+	"github.com/IntegralTeam/energi/p2p"
+	"github.com/IntegralTeam/energi/rpc"
 )
 
 // SampleService is a trivial network service that can be attached to a node for

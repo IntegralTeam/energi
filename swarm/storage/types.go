@@ -27,10 +27,10 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"github.com/ethereum/go-ethereum/swarm/bmt"
-	ch "github.com/ethereum/go-ethereum/swarm/chunk"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/crypto/sha3"
+	"github.com/IntegralTeam/energi/swarm/bmt"
+	ch "github.com/IntegralTeam/energi/swarm/chunk"
 )
 
 const MaxPO = 16

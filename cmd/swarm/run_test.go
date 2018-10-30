@@ -32,17 +32,17 @@ import (
 	"testing"
 	"time"
 
+	"github.com/IntegralTeam/energi/accounts"
+	"github.com/IntegralTeam/energi/accounts/keystore"
+	"github.com/IntegralTeam/energi/internal/cmdtest"
+	"github.com/IntegralTeam/energi/node"
+	"github.com/IntegralTeam/energi/p2p"
+	"github.com/IntegralTeam/energi/rpc"
+	"github.com/IntegralTeam/energi/swarm"
+	"github.com/IntegralTeam/energi/swarm/api"
+	swarmhttp "github.com/IntegralTeam/energi/swarm/api/http"
+	"github.com/IntegralTeam/energi/swarm/testutil"
 	"github.com/docker/docker/pkg/reexec"
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/internal/cmdtest"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm"
-	"github.com/ethereum/go-ethereum/swarm/api"
-	swarmhttp "github.com/ethereum/go-ethereum/swarm/api/http"
-	"github.com/ethereum/go-ethereum/swarm/testutil"
 )
 
 var loglevel = flag.Int("loglevel", 3, "verbosity of logs")

@@ -29,21 +29,21 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/console"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/internal/debug"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p/enode"
-	"github.com/ethereum/go-ethereum/swarm"
-	bzzapi "github.com/ethereum/go-ethereum/swarm/api"
-	swarmmetrics "github.com/ethereum/go-ethereum/swarm/metrics"
-	"github.com/ethereum/go-ethereum/swarm/tracing"
-	sv "github.com/ethereum/go-ethereum/swarm/version"
+	"github.com/IntegralTeam/energi/accounts"
+	"github.com/IntegralTeam/energi/accounts/keystore"
+	"github.com/IntegralTeam/energi/cmd/utils"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/console"
+	"github.com/IntegralTeam/energi/crypto"
+	"github.com/IntegralTeam/energi/internal/debug"
+	"github.com/IntegralTeam/energi/log"
+	"github.com/IntegralTeam/energi/node"
+	"github.com/IntegralTeam/energi/p2p/enode"
+	"github.com/IntegralTeam/energi/swarm"
+	bzzapi "github.com/IntegralTeam/energi/swarm/api"
+	swarmmetrics "github.com/IntegralTeam/energi/swarm/metrics"
+	"github.com/IntegralTeam/energi/swarm/tracing"
+	sv "github.com/IntegralTeam/energi/swarm/version"
 
 	"gopkg.in/urfave/cli.v1"
 )
@@ -87,7 +87,7 @@ var defaultSubcommandHelp = cli.Command{
 
 var defaultNodeConfig = node.DefaultConfig
 
-// This init function sets defaults so cmd/swarm can run alongside geth.
+// This init function sets defaults so cmd/swarm can run alongside energi.
 func init() {
 	defaultNodeConfig.Name = clientIdentifier
 	defaultNodeConfig.Version = sv.VersionWithCommit(gitCommit)
@@ -261,9 +261,9 @@ func bzzd(ctx *cli.Context) error {
 	//pss operates on ws
 	cfg.WSModules = append(cfg.WSModules, "pss")
 
-	//geth only supports --datadir via command line
+	//energi only supports --datadir via command line
 	//in order to be consistent within swarm, if we pass --datadir via environment variable
-	//or via config file, we get the same directory for geth and swarm
+	//or via config file, we get the same directory for energi and swarm
 	if _, err := os.Stat(bzzconfig.Path); err == nil {
 		cfg.DataDir = bzzconfig.Path
 	}

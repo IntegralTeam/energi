@@ -16,7 +16,7 @@
 
 package bind
 
-import "github.com/ethereum/go-ethereum/accounts/abi"
+import "github.com/IntegralTeam/energi/accounts/abi"
 
 // tmplData is the data structure required to fill the binding template.
 type tmplData struct {
@@ -68,12 +68,12 @@ import (
 	"math/big"
 	"strings"
 
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
+	ethereum "github.com/IntegralTeam/energi"
+	"github.com/IntegralTeam/energi/accounts/abi"
+	"github.com/IntegralTeam/energi/accounts/abi/bind"
+	"github.com/IntegralTeam/energi/common"
+	"github.com/IntegralTeam/energi/core/types"
+	"github.com/IntegralTeam/energi/event"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -451,8 +451,8 @@ const tmplSourceJava = `
 
 package {{.Package}};
 
-import org.ethereum.geth.*;
-import org.ethereum.geth.internal.*;
+import org.ethereum.energi.*;
+import org.ethereum.energi.internal.*;
 
 {{range $contract := .Contracts}}
 	public class {{.Type}} {

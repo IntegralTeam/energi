@@ -29,8 +29,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/log"
-	ch "github.com/ethereum/go-ethereum/swarm/chunk"
+	"github.com/IntegralTeam/energi/log"
+	ch "github.com/IntegralTeam/energi/swarm/chunk"
 	colorable "github.com/mattn/go-colorable"
 )
 

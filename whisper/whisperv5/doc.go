@@ -19,7 +19,7 @@ Package whisperv5 implements the Whisper protocol (version 5).
 
 Whisper combines aspects of both DHTs and datagram messaging systems (e.g. UDP).
 As such it may be likened and compared to both, not dissimilar to the
-matter/energy duality (apologies to physicists for the blatant abuse of a
+matter/energi duality (apologies to physicists for the blatant abuse of a
 fundamental and beautiful natural principle).
 
 Whisper is a pure identity-based messaging system. Whisper provides a low-level
