@@ -630,9 +630,9 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 
 	state.AddBalance(header.Coinbase, EnergiMinerBlockReward)
 	reward.Sub(blockReward, EnergiMinerBlockReward)
-
-	// TODO: Once masternodes are implemented actually deliver the reward
-	reward.Sub(blockReward, MasternodeSupportMasternodeBlockReward)
-
+	if config.IsMasternodeSupport(header.Number) {
+		// TODO: Once masternodes are implemented actually deliver the reward
+		reward.Sub(blockReward, MasternodeSupportMasternodeBlockReward)
+	}
 	state.AddBalance(config.BackboneAddress, reward)
 }

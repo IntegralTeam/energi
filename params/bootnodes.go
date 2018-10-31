@@ -19,7 +19,7 @@ package params
 // MainnetBootnodes are the enode URLs of the P2P bootstrap nodes running on
 // the main Energi network.
 var MainnetBootnodes = []string{
-	// Energi has no bootnodes ATM
+	"enode://2e4ac82b2454aaa2871080b3d2e8c19ecac9a55e7817de024031a93c7fddd448f33bc68eedd4a0f741f519a88af3d3ac1b0d65a3f01c67c506f9f9f17e7f9f98@95.216.200.100:30301",
 }
 
 // TestnetBootnodes are the enode URLs of the P2P bootstrap nodes running on the
