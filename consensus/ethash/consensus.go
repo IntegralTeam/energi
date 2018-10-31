@@ -33,16 +33,19 @@ import (
 	"github.com/IntegralTeam/energi/crypto/sha3"
 	"github.com/IntegralTeam/energi/params"
 	"github.com/IntegralTeam/energi/rlp"
-	mapset "github.com/deckarep/golang-set"
+	"github.com/deckarep/golang-set"
 )
 
 // Ethash proof-of-work protocol constants.
 var (
-	FrontierBlockReward       = big.NewInt(5e+18) // Block reward in wei for successfully mining a block
-	ByzantiumBlockReward      = big.NewInt(3e+18) // Block reward in wei for successfully mining a block upward from Byzantium
-	ConstantinopleBlockReward = big.NewInt(2e+18) // Block reward in wei for successfully mining a block upward from Constantinople
-	maxUncles                 = 2                 // Maximum number of uncles allowed in a single block
-	allowedFutureBlockTime    = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
+	EnergiBlockReward                      = big.NewInt(456e+16)            // Full block reward in wei for successfully mining an energi block
+	EnergiMinerBlockReward                 = big.NewInt(228e+16)            // Block reward in wei for successfully mining an energi block given to miner
+	MasternodeSupportBlockReward, _        = big.NewFloat(137e+17).Int(nil) // Full block reward in wei for successfully mining an energi block from masternode support
+	MasternodeSupportMasternodeBlockReward = big.NewInt(914e+16)            // Block reward in wei for successfully mining an energi block given to masternodes
+	FrontierBlockReward                    = big.NewInt(5e+18)              // Block reward in wei for successfully mining a block
+	ByzantiumBlockReward                   = big.NewInt(3e+18)              // Block reward in wei for successfully mining a block upward from Byzantium
+	maxUncles                              = 2                              // Maximum number of uncles allowed in a single block
+	allowedFutureBlockTime                 = time.Minute                    // Max time from current time allowed for blocks, before they're considered future blocks
 
 	// calcDifficultyConstantinople is the difficulty adjustment algorithm for Constantinople.
 	// It returns the difficulty that a new block should have when created at time given the
@@ -607,12 +610,9 @@ var (
 // included uncles. The coinbase of each uncle block is also rewarded.
 func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header, uncles []*types.Header) {
 	// Select the correct block reward based on chain progression
-	blockReward := FrontierBlockReward
-	if config.IsByzantium(header.Number) {
-		blockReward = ByzantiumBlockReward
-	}
-	if config.IsConstantinople(header.Number) {
-		blockReward = ConstantinopleBlockReward
+	blockReward := EnergiBlockReward
+	if config.IsMasternodeSupport(header.Number) {
+		blockReward = MasternodeSupportBlockReward
 	}
 	// Accumulate the rewards for the miner and any included uncles
 	reward := new(big.Int).Set(blockReward)
@@ -627,5 +627,12 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 		r.Div(blockReward, big32)
 		reward.Add(reward, r)
 	}
-	state.AddBalance(header.Coinbase, reward)
+
+	state.AddBalance(header.Coinbase, EnergiMinerBlockReward)
+	reward.Sub(blockReward, EnergiMinerBlockReward)
+
+	// TODO: Once masternodes are implemented actually deliver the reward
+	reward.Sub(blockReward, MasternodeSupportMasternodeBlockReward)
+
+	state.AddBalance(config.BackboneAddress, reward)
 }
