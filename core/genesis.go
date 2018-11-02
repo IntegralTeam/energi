@@ -34,8 +34,6 @@ import (
 	"github.com/IntegralTeam/energi/rlp"
 	"math/big"
 	"strings"
-
-
 )
 
 //go:generate gencodec -type Genesis -field-override genesisSpecMarshaling -out gen_genesis.go
@@ -301,10 +299,9 @@ func GenesisBlockForTesting(db ethdb.Database, addr common.Address, balance *big
 // DefaultGenesisBlock returns the Ethereum main net genesis block.
 func DefaultGenesisBlock() *Genesis {
 	return &Genesis{
-		Config:     params.MainnetChainConfig,
-		Nonce:      8243658,
-		GasLimit:   5000,
-		Difficulty: big.NewInt(1),
+		Config:   params.MainnetChainConfig,
+		Nonce:    8243658,
+		GasLimit: 5000,
 	}
 }
 

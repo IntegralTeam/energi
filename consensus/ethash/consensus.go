@@ -323,7 +323,7 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 	case config.IsHomestead(next):
 		return calcDifficultyHomestead(time, parent)
 	default:
-		return calcDifficultyFrontier(time, parent)
+		return calcDifficultyHomestead(time, parent)
 	}
 }
 
@@ -333,7 +333,7 @@ var (
 	big1          = big.NewInt(1)
 	big2          = big.NewInt(2)
 	big9          = big.NewInt(9)
-	big10         = big.NewInt(10)
+	big60         = big.NewInt(60)
 	bigMinus99    = big.NewInt(-99)
 )
 
@@ -417,12 +417,12 @@ func calcDifficultyHomestead(time uint64, parent *types.Header) *big.Int {
 	x := new(big.Int)
 	y := new(big.Int)
 
-	// 1 - (block_timestamp - parent_timestamp) // 10
+	// 1 - (block_timestamp - parent_timestamp) // 60
 	x.Sub(bigTime, bigParentTime)
-	x.Div(x, big10)
+	x.Div(x, big60)
 	x.Sub(big1, x)
 
-	// max(1 - (block_timestamp - parent_timestamp) // 10, -99)
+	// max(1 - (block_timestamp - parent_timestamp) // 60, -99)
 	if x.Cmp(bigMinus99) < 0 {
 		x.Set(bigMinus99)
 	}
@@ -457,7 +457,6 @@ func calcDifficultyFrontier(time uint64, parent *types.Header) *big.Int {
 	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
 	bigTime := new(big.Int)
 	bigParentTime := new(big.Int)
-
 	bigTime.SetUint64(time)
 	bigParentTime.Set(parent.Time)
 
