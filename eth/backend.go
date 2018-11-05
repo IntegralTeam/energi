@@ -20,6 +20,7 @@ package eth
 import (
 	"errors"
 	"fmt"
+	"github.com/IntegralTeam/energi/consensus/energihash"
 	"math/big"
 	"runtime"
 	"sync"
@@ -224,6 +225,17 @@ func CreateConsensusEngine(ctx *node.ServiceContext, chainConfig *params.ChainCo
 	// If proof-of-authority is requested, set it up
 	if chainConfig.Clique != nil {
 		return clique.New(chainConfig.Clique, db)
+	}
+	// If we use energihash instead of ethash, set it up
+	if chainConfig.Energihash != nil {
+		return energihash.New(energihash.Config{
+			CacheDir:       ctx.ResolvePath(config.CacheDir),
+			CachesInMem:    config.CachesInMem,
+			CachesOnDisk:   config.CachesOnDisk,
+			DatasetDir:     config.DatasetDir,
+			DatasetsInMem:  config.DatasetsInMem,
+			DatasetsOnDisk: config.DatasetsOnDisk,
+		}, notify, noverify)
 	}
 	// Otherwise assume proof-of-work
 	switch config.PowMode {

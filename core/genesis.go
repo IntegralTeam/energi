@@ -299,9 +299,10 @@ func GenesisBlockForTesting(db ethdb.Database, addr common.Address, balance *big
 // DefaultGenesisBlock returns the Ethereum main net genesis block.
 func DefaultGenesisBlock() *Genesis {
 	return &Genesis{
-		Config:   params.MainnetChainConfig,
-		Nonce:    8243658,
-		GasLimit: 5000,
+		Config:     params.MainnetChainConfig,
+		Nonce:      8243658,
+		GasLimit:   5000,
+		Difficulty: params.EnergiGenesisDifficulty,
 	}
 }
 
