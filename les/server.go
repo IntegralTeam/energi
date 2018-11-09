@@ -14,7 +14,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package les implements the Light Ethereum Subprotocol.
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
+// Package les implements the Light Energi Subprotocol.
 package les
 
 import (
@@ -27,8 +43,8 @@ import (
 	"github.com/IntegralTeam/energi/core"
 	"github.com/IntegralTeam/energi/core/rawdb"
 	"github.com/IntegralTeam/energi/core/types"
-	"github.com/IntegralTeam/energi/eth"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energi"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/les/flowcontrol"
 	"github.com/IntegralTeam/energi/light"
 	"github.com/IntegralTeam/energi/log"
@@ -49,25 +65,25 @@ type LesServer struct {
 	quitSync    chan struct{}
 }
 
-func NewLesServer(eth *eth.Ethereum, config *eth.Config) (*LesServer, error) {
+func NewLesServer(energi *energi.Energi, config *energi.Config) (*LesServer, error) {
 	quitSync := make(chan struct{})
-	pm, err := NewProtocolManager(eth.BlockChain().Config(), light.DefaultServerIndexerConfig, false, config.NetworkId, eth.EventMux(), eth.Engine(), newPeerSet(), eth.BlockChain(), eth.TxPool(), eth.ChainDb(), nil, nil, nil, quitSync, new(sync.WaitGroup))
+	pm, err := NewProtocolManager(energi.BlockChain().Config(), light.DefaultServerIndexerConfig, false, config.NetworkId, energi.EventMux(), energi.Engine(), newPeerSet(), energi.BlockChain(), energi.TxPool(), energi.ChainDb(), nil, nil, nil, quitSync, new(sync.WaitGroup))
 	if err != nil {
 		return nil, err
 	}
 
 	lesTopics := make([]discv5.Topic, len(AdvertiseProtocolVersions))
 	for i, pv := range AdvertiseProtocolVersions {
-		lesTopics[i] = lesTopic(eth.BlockChain().Genesis().Hash(), pv)
+		lesTopics[i] = lesTopic(energi.BlockChain().Genesis().Hash(), pv)
 	}
 
 	srv := &LesServer{
 		lesCommons: lesCommons{
 			config:           config,
-			chainDb:          eth.ChainDb(),
+			chainDb:          energi.ChainDb(),
 			iConfig:          light.DefaultServerIndexerConfig,
-			chtIndexer:       light.NewChtIndexer(eth.ChainDb(), nil, params.CHTFrequencyServer, params.HelperTrieProcessConfirmations),
-			bloomTrieIndexer: light.NewBloomTrieIndexer(eth.ChainDb(), nil, params.BloomBitsBlocks, params.BloomTrieFrequency),
+			chtIndexer:       light.NewChtIndexer(energi.ChainDb(), nil, params.CHTFrequencyServer, params.HelperTrieProcessConfirmations),
+			bloomTrieIndexer: light.NewBloomTrieIndexer(energi.ChainDb(), nil, params.BloomBitsBlocks, params.BloomTrieFrequency),
 			protocolManager:  pm,
 		},
 		quitSync:  quitSync,
@@ -95,7 +111,7 @@ func NewLesServer(eth *eth.Ethereum, config *eth.Config) (*LesServer, error) {
 		logger.Info("Loaded bloom trie", "section", bloomTrieLastSection, "head", bloomTrieSectionHead, "root", bloomTrieRoot)
 	}
 
-	srv.chtIndexer.Start(eth.BlockChain())
+	srv.chtIndexer.Start(energi.BlockChain())
 	pm.server = srv
 
 	srv.defParams = &flowcontrol.ServerParams{
@@ -103,7 +119,7 @@ func NewLesServer(eth *eth.Ethereum, config *eth.Config) (*LesServer, error) {
 		MinRecharge: 50000,
 	}
 	srv.fcManager = flowcontrol.NewClientManager(uint64(config.LightServ), 10, 1000000000)
-	srv.fcCostStats = newCostStats(eth.ChainDb())
+	srv.fcCostStats = newCostStats(energi.ChainDb())
 	return srv, nil
 }
 
@@ -112,9 +128,9 @@ func (s *LesServer) Protocols() []p2p.Protocol {
 }
 
 // Start starts the LES server
-func (s *LesServer) Start(srvr *p2p.Server) {
+func (s *LesServer) Start(server *p2p.Server) {
 	s.protocolManager.Start(s.config.LightPeers)
-	if srvr.DiscV5 != nil {
+	if server.DiscV5 != nil {
 		for _, topic := range s.lesTopics {
 			topic := topic
 			go func() {
@@ -122,11 +138,11 @@ func (s *LesServer) Start(srvr *p2p.Server) {
 				logger.Info("Starting topic registration")
 				defer logger.Info("Terminated topic registration")
 
-				srvr.DiscV5.RegisterTopic(topic, s.quitSync)
+				server.DiscV5.RegisterTopic(topic, s.quitSync)
 			}()
 		}
 	}
-	s.privateKey = srvr.PrivateKey
+	s.privateKey = server.PrivateKey
 	s.protocolManager.blockLoop()
 }
 
@@ -229,7 +245,7 @@ func linRegFromBytes(data []byte) *linReg {
 
 type requestCostStats struct {
 	lock  sync.RWMutex
-	db    ethdb.Database
+	db    energidb.Database
 	stats map[uint64]*linReg
 }
 
@@ -240,7 +256,7 @@ type requestCostStatsRlp []struct {
 
 var rcStatsKey = []byte("_requestCostStats")
 
-func newCostStats(db ethdb.Database) *requestCostStats {
+func newCostStats(db energidb.Database) *requestCostStats {
 	stats := make(map[uint64]*linReg)
 	for _, code := range reqList {
 		stats[code] = &linReg{cnt: 100}

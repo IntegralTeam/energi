@@ -34,7 +34,7 @@ func (w *wizard) deployNode(boot bool) {
 		return
 	}
 	if w.conf.ethstats == "" {
-		log.Error("No ethstats server configured")
+		log.Error("No energistats server configured")
 		return
 	}
 	// Select the server to interact with

@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package light
 
 import (
@@ -27,7 +43,7 @@ import (
 	"github.com/IntegralTeam/energi/core/rawdb"
 	"github.com/IntegralTeam/energi/core/state"
 	"github.com/IntegralTeam/energi/core/types"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/event"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/params"
@@ -59,7 +75,7 @@ type TxPool struct {
 	mu           sync.RWMutex
 	chain        *LightChain
 	odr          OdrBackend
-	chainDb      ethdb.Database
+	chainDb      energidb.Database
 	relay        TxRelayBackend
 	head         common.Hash
 	nonce        map[common.Address]uint64            // "pending" nonce
@@ -71,7 +87,7 @@ type TxPool struct {
 }
 
 // TxRelayBackend provides an interface to the mechanism that forwards transacions
-// to the ETH network. The implementations of the functions should be non-blocking.
+// to the Energi network. The implementations of the functions should be non-blocking.
 //
 // Send instructs backend to forward new transactions
 // NewHead notifies backend about a new head after processed by the tx pool,

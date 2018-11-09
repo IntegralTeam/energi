@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package core
 
 import (
@@ -77,7 +93,7 @@ func (v *Validator) validateCallData(msgs *ValidationMessages, data []byte, meth
 			msgs.warn(fmt.Sprintf("Tx contains data, but provided ABI signature could not be matched: %v", err))
 		} else {
 			msgs.info(info.String())
-			//Successfull match. add to db if not there already (ignore errors there)
+			// Successfull match. add to db if not there already (ignore errors there)
 			v.db.AddSignature(*methodSelector, data[:4])
 		}
 		return
@@ -116,17 +132,17 @@ func (v *Validator) validate(msgs *ValidationMessages, txargs *SendTxArgs, metho
 	}
 
 	if txargs.To == nil {
-		//Contract creation should contain sufficient data to deploy a contract
+		// Contract creation should contain sufficient data to deploy a contract
 		// A typical error is omitting sender due to some quirk in the javascript call
 		// e.g. https://github.com/IntegralTeam/energi/issues/16106
 		if len(data) == 0 {
 			if txargs.Value.ToInt().Cmp(big.NewInt(0)) > 0 {
-				// Sending ether into black hole
+				// Sending energi into black hole
 				return errors.New("Tx will create contract with value but empty code!")
 			}
 			// No value submitted at least
 			msgs.crit("Tx will create contract with empty code!")
-		} else if len(data) < 40 { //Arbitrary limit
+		} else if len(data) < 40 { // Arbitrary limit
 			msgs.warn(fmt.Sprintf("Tx will will create contract, but payload is suspiciously small (%d b)", len(data)))
 		}
 		// methodSelector should be nil for contract creation

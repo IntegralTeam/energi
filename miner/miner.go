@@ -14,7 +14,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package miner implements Ethereum block creation and mining.
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
+// Package miner implements Energi block creation and mining.
 package miner
 
 import (
@@ -27,7 +43,7 @@ import (
 	"github.com/IntegralTeam/energi/core"
 	"github.com/IntegralTeam/energi/core/state"
 	"github.com/IntegralTeam/energi/core/types"
-	"github.com/IntegralTeam/energi/eth/downloader"
+	"github.com/IntegralTeam/energi/energi/downloader"
 	"github.com/IntegralTeam/energi/event"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/params"
@@ -44,7 +60,7 @@ type Miner struct {
 	mux      *event.TypeMux
 	worker   *worker
 	coinbase common.Address
-	eth      Backend
+	energi   Backend
 	engine   consensus.Engine
 	exitCh   chan struct{}
 
@@ -52,13 +68,13 @@ type Miner struct {
 	shouldStart int32 // should start indicates whether we should start after sync
 }
 
-func New(eth Backend, config *params.ChainConfig, mux *event.TypeMux, engine consensus.Engine, recommit time.Duration, gasFloor, gasCeil uint64, isLocalBlock func(block *types.Block) bool) *Miner {
+func New(energi Backend, config *params.ChainConfig, mux *event.TypeMux, engine consensus.Engine, recommit time.Duration, gasFloor, gasCeil uint64, isLocalBlock func(block *types.Block) bool) *Miner {
 	miner := &Miner{
-		eth:      eth,
+		energi:   energi,
 		mux:      mux,
 		engine:   engine,
 		exitCh:   make(chan struct{}),
-		worker:   newWorker(config, engine, eth, mux, recommit, gasFloor, gasCeil, isLocalBlock),
+		worker:   newWorker(config, engine, energi, mux, recommit, gasFloor, gasCeil, isLocalBlock),
 		canStart: 1,
 	}
 	go miner.update()
@@ -107,7 +123,7 @@ func (self *Miner) update() {
 
 func (self *Miner) Start(coinbase common.Address) {
 	atomic.StoreInt32(&self.shouldStart, 1)
-	self.SetEtherbase(coinbase)
+	self.SetEnergibase(coinbase)
 
 	if atomic.LoadInt32(&self.canStart) == 0 {
 		log.Info("Network syncing, will start miner afterwards")
@@ -164,7 +180,7 @@ func (self *Miner) PendingBlock() *types.Block {
 	return self.worker.pendingBlock()
 }
 
-func (self *Miner) SetEtherbase(addr common.Address) {
+func (self *Miner) SetEnergibase(addr common.Address) {
 	self.coinbase = addr
-	self.worker.setEtherbase(addr)
+	self.worker.setEnergibase(addr)
 }

@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package common
 
 import (
@@ -176,7 +192,7 @@ func TestMixedcaseAccount_Address(t *testing.T) {
 		}
 	}
 
-	//These should throw exceptions:
+	// These should throw exceptions:
 	var r2 []MixedcaseAddress
 	for _, r := range []string{
 		`["0x11111111111111111111122222222222233333"]`,     // Too short
@@ -185,7 +201,7 @@ func TestMixedcaseAccount_Address(t *testing.T) {
 		`["0x111111111111111111111222222222222333332344"]`, // Too long
 		`["1111111111111111111112222222222223333323"]`,     // Missing 0x
 		`["x1111111111111111111112222222222223333323"]`,    // Missing 0
-		`["0xG111111111111111111112222222222223333323"]`,   //Non-hex
+		`["0xG111111111111111111112222222222223333323"]`,   // Non-hex
 	} {
 		if err := json.Unmarshal([]byte(r), &r2); err == nil {
 			t.Errorf("Expected failure, input %v", r)

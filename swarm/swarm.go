@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package swarm
 
 import (
@@ -33,7 +49,7 @@ import (
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/contracts/chequebook"
 	"github.com/IntegralTeam/energi/contracts/ens"
-	"github.com/IntegralTeam/energi/ethclient"
+	"github.com/IntegralTeam/energi/energiclient"
 	"github.com/IntegralTeam/energi/metrics"
 	"github.com/IntegralTeam/energi/p2p"
 	"github.com/IntegralTeam/energi/p2p/enode"
@@ -110,7 +126,7 @@ func NewSwarm(config *api.Config, mockStore *mock.NodeStore) (self *Swarm, err e
 	var backend chequebook.Backend
 	if config.SwapAPI != "" && config.SwapEnabled {
 		log.Info("connecting to SWAP API", "url", config.SwapAPI)
-		backend, err = ethclient.Dial(config.SwapAPI)
+		backend, err = energiclient.Dial(config.SwapAPI)
 		if err != nil {
 			return nil, fmt.Errorf("error connecting to SWAP API %s: %s", config.SwapAPI, err)
 		}
@@ -258,7 +274,7 @@ func parseEnsAPIAddress(s string) (tld, endpoint string, addr common.Address) {
 // ensClient provides functionality for api.ResolveValidator
 type ensClient struct {
 	*ens.ENS
-	*ethclient.Client
+	*energiclient.Client
 }
 
 // newEnsClient creates a new ENS client for that is a consumer of
@@ -270,7 +286,7 @@ func newEnsClient(endpoint string, addr common.Address, config *api.Config, priv
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to ENS API %s: %s", endpoint, err)
 	}
-	ethClient := ethclient.NewClient(client)
+	energiClient := energiclient.NewClient(client)
 
 	ensRoot := config.EnsRoot
 	if addr != (common.Address{}) {
@@ -284,14 +300,14 @@ func newEnsClient(endpoint string, addr common.Address, config *api.Config, priv
 		}
 	}
 	transactOpts := bind.NewKeyedTransactor(privkey)
-	dns, err := ens.NewENS(transactOpts, ensRoot, ethClient)
+	dns, err := ens.NewENS(transactOpts, ensRoot, energiClient)
 	if err != nil {
 		return nil, err
 	}
 	log.Debug(fmt.Sprintf("-> Swarm Domain Name Registrar %v @ address %v", endpoint, ensRoot.Hex()))
 	return &ensClient{
 		ENS:    dns,
-		Client: ethClient,
+		Client: energiClient,
 	}, err
 }
 
@@ -307,7 +323,7 @@ func detectEnsAddr(client *rpc.Client) (common.Address, error) {
 		return common.Address{}, err
 	}
 
-	block, err := ethclient.NewClient(client).BlockByNumber(ctx, big.NewInt(0))
+	block, err := energiclient.NewClient(client).BlockByNumber(ctx, big.NewInt(0))
 	if err != nil {
 		return common.Address{}, err
 	}

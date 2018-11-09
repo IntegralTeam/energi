@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/IntegralTeam/energi/consensus/energihash"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -27,9 +28,8 @@ import (
 	"time"
 
 	"github.com/IntegralTeam/energi/common"
-	"github.com/IntegralTeam/energi/consensus/ethash"
 	"github.com/IntegralTeam/energi/core"
-	"github.com/IntegralTeam/energi/eth"
+	"github.com/IntegralTeam/energi/energi"
 	"github.com/IntegralTeam/energi/internal/jsre"
 	"github.com/IntegralTeam/energi/node"
 )
@@ -75,7 +75,7 @@ func (p *hookedPrompter) SetWordCompleter(completer WordCompleter) {}
 type tester struct {
 	workspace string
 	stack     *node.Node
-	ethereum  *eth.Ethereum
+	energi    *energi.Energi
 	console   *Console
 	input     *hookedPrompter
 	output    *bytes.Buffer
@@ -83,30 +83,30 @@ type tester struct {
 
 // newTester creates a test environment based on which the console can operate.
 // Please ensure you call Close() on the returned tester to avoid leaks.
-func newTester(t *testing.T, confOverride func(*eth.Config)) *tester {
+func newTester(t *testing.T, confOverride func(*energi.Config)) *tester {
 	// Create a temporary storage for the node keys and initialize it
 	workspace, err := ioutil.TempDir("", "console-tester-")
 	if err != nil {
 		t.Fatalf("failed to create temporary keystore: %v", err)
 	}
 
-	// Create a networkless protocol stack and start an Ethereum service within
+	// Create a networkless protocol stack and start an Energi service within
 	stack, err := node.New(&node.Config{DataDir: workspace, UseLightweightKDF: true, Name: testInstance})
 	if err != nil {
 		t.Fatalf("failed to create node: %v", err)
 	}
-	ethConf := &eth.Config{
-		Genesis:   core.DeveloperGenesisBlock(15, common.Address{}),
-		Etherbase: common.HexToAddress(testAddress),
-		Ethash: ethash.Config{
-			PowMode: ethash.ModeTest,
+	ethConf := &energi.Config{
+		Genesis:    core.DeveloperGenesisBlock(15, common.Address{}),
+		Energibase: common.HexToAddress(testAddress),
+		Energihash: energihash.Config{
+			PowMode: energihash.ModeTest,
 		},
 	}
 	if confOverride != nil {
 		confOverride(ethConf)
 	}
-	if err = stack.Register(func(ctx *node.ServiceContext) (node.Service, error) { return eth.New(ctx, ethConf) }); err != nil {
-		t.Fatalf("failed to register Ethereum protocol: %v", err)
+	if err = stack.Register(func(ctx *node.ServiceContext) (node.Service, error) { return energi.New(ctx, ethConf) }); err != nil {
+		t.Fatalf("failed to register Energi protocol: %v", err)
 	}
 	// Start the node and assemble the JavaScript console around it
 	if err = stack.Start(); err != nil {
@@ -131,13 +131,13 @@ func newTester(t *testing.T, confOverride func(*eth.Config)) *tester {
 		t.Fatalf("failed to create JavaScript console: %v", err)
 	}
 	// Create the final tester and return
-	var ethereum *eth.Ethereum
-	stack.Service(&ethereum)
+	var energi *energi.Energi
+	stack.Service(&energi)
 
 	return &tester{
 		workspace: workspace,
 		stack:     stack,
-		ethereum:  ethereum,
+		energi:    energi,
 		console:   console,
 		input:     prompter,
 		output:    printer,

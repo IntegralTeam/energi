@@ -15,13 +15,29 @@
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 //
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package core
 
 import (
 	"context"
 	"sync"
 
-	"github.com/IntegralTeam/energi/internal/ethapi"
+	"github.com/IntegralTeam/energi/internal/energiapi"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/rpc"
 )
@@ -98,7 +114,7 @@ func (ui *StdIOUI) ShowInfo(message string) {
 		log.Info("Error calling 'ShowInfo'", "exc", err.Error(), "msg", message)
 	}
 }
-func (ui *StdIOUI) OnApprovedTx(tx ethapi.SignTransactionResult) {
+func (ui *StdIOUI) OnApprovedTx(tx energiapi.SignTransactionResult) {
 	err := ui.dispatch("OnApprovedTx", tx, nil)
 	if err != nil {
 		log.Info("Error calling 'OnApprovedTx'", "exc", err.Error(), "tx", tx)

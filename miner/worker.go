@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package miner
 
 import (
@@ -24,7 +40,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	mapset "github.com/deckarep/golang-set"
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/consensus"
 	"github.com/IntegralTeam/energi/consensus/misc"
@@ -35,6 +50,7 @@ import (
 	"github.com/IntegralTeam/energi/event"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/params"
+	"github.com/deckarep/golang-set"
 )
 
 const (
@@ -125,7 +141,7 @@ type intervalAdjust struct {
 type worker struct {
 	config *params.ChainConfig
 	engine consensus.Engine
-	eth    Backend
+	energi Backend
 	chain  *core.BlockChain
 
 	gasFloor uint64
@@ -179,19 +195,19 @@ type worker struct {
 	resubmitHook func(time.Duration, time.Duration) // Method to call upon updating resubmitting interval.
 }
 
-func newWorker(config *params.ChainConfig, engine consensus.Engine, eth Backend, mux *event.TypeMux, recommit time.Duration, gasFloor, gasCeil uint64, isLocalBlock func(*types.Block) bool) *worker {
+func newWorker(config *params.ChainConfig, engine consensus.Engine, energi Backend, mux *event.TypeMux, recommit time.Duration, gasFloor, gasCeil uint64, isLocalBlock func(*types.Block) bool) *worker {
 	worker := &worker{
 		config:             config,
 		engine:             engine,
-		eth:                eth,
+		energi:             energi,
 		mux:                mux,
-		chain:              eth.BlockChain(),
+		chain:              energi.BlockChain(),
 		gasFloor:           gasFloor,
 		gasCeil:            gasCeil,
 		isLocalBlock:       isLocalBlock,
 		localUncles:        make(map[common.Hash]*types.Block),
 		remoteUncles:       make(map[common.Hash]*types.Block),
-		unconfirmed:        newUnconfirmedBlocks(eth.BlockChain(), miningLogAtDepth),
+		unconfirmed:        newUnconfirmedBlocks(energi.BlockChain(), miningLogAtDepth),
 		pendingTasks:       make(map[common.Hash]*task),
 		txsCh:              make(chan core.NewTxsEvent, txChanSize),
 		chainHeadCh:        make(chan core.ChainHeadEvent, chainHeadChanSize),
@@ -205,10 +221,10 @@ func newWorker(config *params.ChainConfig, engine consensus.Engine, eth Backend,
 		resubmitAdjustCh:   make(chan *intervalAdjust, resubmitAdjustChanSize),
 	}
 	// Subscribe NewTxsEvent for tx pool
-	worker.txsSub = eth.TxPool().SubscribeNewTxsEvent(worker.txsCh)
+	worker.txsSub = energi.TxPool().SubscribeNewTxsEvent(worker.txsCh)
 	// Subscribe events for blockchain
-	worker.chainHeadSub = eth.BlockChain().SubscribeChainHeadEvent(worker.chainHeadCh)
-	worker.chainSideSub = eth.BlockChain().SubscribeChainSideEvent(worker.chainSideCh)
+	worker.chainHeadSub = energi.BlockChain().SubscribeChainHeadEvent(worker.chainHeadCh)
+	worker.chainSideSub = energi.BlockChain().SubscribeChainSideEvent(worker.chainSideCh)
 
 	// Sanitize recommit interval if the user-specified one is too short.
 	if recommit < minRecommitInterval {
@@ -227,8 +243,8 @@ func newWorker(config *params.ChainConfig, engine consensus.Engine, eth Backend,
 	return worker
 }
 
-// setEtherbase sets the etherbase used to initialize the block coinbase field.
-func (w *worker) setEtherbase(addr common.Address) {
+// setEnergibase sets the energibase used to initialize the block coinbase field.
+func (w *worker) setEnergibase(addr common.Address) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	w.coinbase = addr
@@ -476,7 +492,7 @@ func (w *worker) mainLoop() {
 			}
 			atomic.AddInt32(&w.newTxs, int32(len(ev.Txs)))
 
-		// System stopped
+			// System stopped
 		case <-w.exitCh:
 			return
 		case <-w.txsSub.Err():
@@ -845,7 +861,7 @@ func (w *worker) commitNewWork(interrupt *int32, noempty bool, timestamp int64) 
 	// Only set the coinbase if our consensus engine is running (avoid spurious block rewards)
 	if w.isRunning() {
 		if w.coinbase == (common.Address{}) {
-			log.Error("Refusing to mine without etherbase")
+			log.Error("Refusing to mine without energibase")
 			return
 		}
 		header.Coinbase = w.coinbase
@@ -910,7 +926,7 @@ func (w *worker) commitNewWork(interrupt *int32, noempty bool, timestamp int64) 
 	}
 
 	// Fill the block with all available pending transactions.
-	pending, err := w.eth.TxPool().Pending()
+	pending, err := w.energi.TxPool().Pending()
 	if err != nil {
 		log.Error("Failed to fetch pending transactions", "err", err)
 		return
@@ -922,7 +938,7 @@ func (w *worker) commitNewWork(interrupt *int32, noempty bool, timestamp int64) 
 	}
 	// Split the pending transactions into locals and remotes
 	localTxs, remoteTxs := make(map[common.Address]types.Transactions), pending
-	for _, account := range w.eth.TxPool().Locals() {
+	for _, account := range w.energi.TxPool().Locals() {
 		if txs := remoteTxs[account]; len(txs) > 0 {
 			delete(remoteTxs, account)
 			localTxs[account] = txs
@@ -969,10 +985,10 @@ func (w *worker) commit(uncles []*types.Header, interval func(), update bool, st
 			for i, tx := range block.Transactions() {
 				feesWei.Add(feesWei, new(big.Int).Mul(new(big.Int).SetUint64(receipts[i].GasUsed), tx.GasPrice()))
 			}
-			feesEth := new(big.Float).Quo(new(big.Float).SetInt(feesWei), new(big.Float).SetInt(big.NewInt(params.Ether)))
+			feesEnergi := new(big.Float).Quo(new(big.Float).SetInt(feesWei), new(big.Float).SetInt(big.NewInt(params.Energi)))
 
 			log.Info("Commit new mining work", "number", block.Number(), "sealhash", w.engine.SealHash(block.Header()),
-				"uncles", len(uncles), "txs", w.current.tcount, "gas", block.GasUsed(), "fees", feesEth, "elapsed", common.PrettyDuration(time.Since(start)))
+				"uncles", len(uncles), "txs", w.current.tcount, "gas", block.GasUsed(), "fees", feesEnergi, "elapsed", common.PrettyDuration(time.Since(start)))
 
 		case <-w.exitCh:
 			log.Info("Worker has exited")

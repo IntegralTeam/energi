@@ -13,7 +13,23 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
 //
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package core
 
 import (
@@ -33,11 +49,11 @@ import (
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/common/hexutil"
 	"github.com/IntegralTeam/energi/core/types"
-	"github.com/IntegralTeam/energi/internal/ethapi"
+	"github.com/IntegralTeam/energi/internal/energiapi"
 	"github.com/IntegralTeam/energi/rlp"
 )
 
-//Used for testing
+// Used for testing
 type HeadlessUI struct {
 	controller chan string
 }
@@ -49,7 +65,7 @@ func (ui *HeadlessUI) OnInputRequired(info UserInputRequest) (UserInputResponse,
 func (ui *HeadlessUI) OnSignerStartup(info StartupInfo) {
 }
 
-func (ui *HeadlessUI) OnApprovedTx(tx ethapi.SignTransactionResult) {
+func (ui *HeadlessUI) OnApprovedTx(tx energiapi.SignTransactionResult) {
 	fmt.Printf("OnApproved()\n")
 }
 
@@ -58,7 +74,7 @@ func (ui *HeadlessUI) ApproveTx(request *SignTxRequest) (SignTxResponse, error) 
 	switch <-ui.controller {
 	case "Y":
 		return SignTxResponse{request.Transaction, true, <-ui.controller}, nil
-	case "M": //Modify
+	case "M": // Modify
 		old := big.Int(request.Transaction.Value)
 		newVal := big.NewInt(0).Add(&old, big.NewInt(1))
 		request.Transaction.Value = hexutil.Big(*newVal)
@@ -108,17 +124,17 @@ func (ui *HeadlessUI) ApproveNewAccount(request *NewAccountRequest) (NewAccountR
 }
 
 func (ui *HeadlessUI) ShowError(message string) {
-	//stdout is used by communication
+	// stdout is used by communication
 	fmt.Fprintln(os.Stderr, message)
 }
 
 func (ui *HeadlessUI) ShowInfo(message string) {
-	//stdout is used by communication
+	// stdout is used by communication
 	fmt.Fprintln(os.Stderr, message)
 }
 
 func tmpDirName(t *testing.T) string {
-	d, err := ioutil.TempDir("", "eth-keystore-test")
+	d, err := ioutil.TempDir("", "energi-keystore-test")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -247,7 +263,7 @@ func TestNewAcc(t *testing.T) {
 
 func TestSignData(t *testing.T) {
 	api, control := setup(t)
-	//Create two accounts
+	// Create two accounts
 	createAccount(control, api, t)
 	createAccount(control, api, t)
 	control <- "1"
@@ -305,7 +321,7 @@ func mkTestTx(from common.MixedcaseAddress) SendTxArgs {
 func TestSignTx(t *testing.T) {
 	var (
 		list      []common.Address
-		res, res2 *ethapi.SignTransactionResult
+		res, res2 *energiapi.SignTransactionResult
 		err       error
 	)
 
@@ -348,7 +364,7 @@ func TestSignTx(t *testing.T) {
 	parsedTx := &types.Transaction{}
 	rlp.Decode(bytes.NewReader(res.Raw), parsedTx)
 
-	//The tx should NOT be modified by the UI
+	// The tx should NOT be modified by the UI
 	if parsedTx.Value().Cmp(tx.Value.ToInt()) != 0 {
 		t.Errorf("Expected value to be unchanged, expected %v got %v", tx.Value, parsedTx.Value())
 	}
@@ -363,7 +379,7 @@ func TestSignTx(t *testing.T) {
 		t.Error("Expected tx to be unmodified by UI")
 	}
 
-	//The tx is modified by the UI
+	// The tx is modified by the UI
 	control <- "M"
 	control <- "a_long_password"
 
@@ -374,7 +390,7 @@ func TestSignTx(t *testing.T) {
 	parsedTx2 := &types.Transaction{}
 	rlp.Decode(bytes.NewReader(res.Raw), parsedTx2)
 
-	//The tx should be modified by the UI
+	// The tx should be modified by the UI
 	if parsedTx2.Value().Cmp(tx.Value.ToInt()) != 0 {
 		t.Errorf("Expected value to be unchanged, got %v", parsedTx.Value())
 	}

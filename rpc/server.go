@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package rpc
 
 import (
@@ -26,7 +42,7 @@ import (
 	"sync/atomic"
 
 	"github.com/IntegralTeam/energi/log"
-	mapset "github.com/deckarep/golang-set"
+	"github.com/deckarep/golang-set"
 )
 
 const MetadataApi = "rpc"
@@ -137,7 +153,7 @@ func (s *Server) serveRequest(ctx context.Context, codec ServerCodec, singleShot
 		s.codecsMu.Unlock()
 	}()
 
-	//	ctx, cancel := context.WithCancel(context.Background())
+	// 	ctx, cancel := context.WithCancel(context.Background())
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 

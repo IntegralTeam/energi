@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package adapters
 
 import (
@@ -219,7 +235,7 @@ type ServiceContext struct {
 
 // RPCDialer is used when initialising services which need to connect to
 // other nodes in the network (for example a simulated Swarm node which needs
-// to connect to a Geth node to resolve ENS names)
+// to connect to a Energi node to resolve ENS names)
 type RPCDialer interface {
 	DialRPC(id enode.ID) (*rpc.Client, error)
 }

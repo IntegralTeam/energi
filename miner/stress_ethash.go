@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 // +build none
 
 // This file contains a miner stress test based on the Ethash consensus engine.
@@ -36,8 +52,8 @@ import (
 	"github.com/IntegralTeam/energi/core"
 	"github.com/IntegralTeam/energi/core/types"
 	"github.com/IntegralTeam/energi/crypto"
-	"github.com/IntegralTeam/energi/eth"
-	"github.com/IntegralTeam/energi/eth/downloader"
+	"github.com/IntegralTeam/energi/energi"
+	"github.com/IntegralTeam/energi/energi/downloader"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/node"
 	"github.com/IntegralTeam/energi/p2p"
@@ -99,11 +115,11 @@ func main() {
 	time.Sleep(3 * time.Second)
 
 	for _, node := range nodes {
-		var ethereum *eth.Ethereum
-		if err := node.Service(&ethereum); err != nil {
+		var energi *energi.Energi
+		if err := node.Service(&energi); err != nil {
 			panic(err)
 		}
-		if err := ethereum.StartMining(1); err != nil {
+		if err := energi.StartMining(1); err != nil {
 			panic(err)
 		}
 	}
@@ -115,8 +131,8 @@ func main() {
 		index := rand.Intn(len(faucets))
 
 		// Fetch the accessor for the relevant signer
-		var ethereum *eth.Ethereum
-		if err := nodes[index%len(nodes)].Service(&ethereum); err != nil {
+		var energi *energi.Energi
+		if err := nodes[index%len(nodes)].Service(&energi); err != nil {
 			panic(err)
 		}
 		// Create a self transaction and inject into the pool
@@ -124,13 +140,13 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		if err := ethereum.TxPool().AddLocal(tx); err != nil {
+		if err := energi.TxPool().AddLocal(tx); err != nil {
 			panic(err)
 		}
 		nonces[index]++
 
 		// Wait if we're too saturated
-		if pend, _ := ethereum.TxPool().Stats(); pend > 2048 {
+		if pend, _ := energi.TxPool().Stats(); pend > 2048 {
 			time.Sleep(100 * time.Millisecond)
 		}
 	}
@@ -156,7 +172,7 @@ func makeGenesis(faucets []*ecdsa.PrivateKey) *core.Genesis {
 }
 
 func makeMiner(genesis *core.Genesis, nodes []string) (*node.Node, error) {
-	// Define the basic configurations for the Ethereum node
+	// Define the basic configurations for the Energi node
 	datadir, _ := ioutil.TempDir("", "")
 
 	config := &node.Config{
@@ -171,21 +187,21 @@ func makeMiner(genesis *core.Genesis, nodes []string) (*node.Node, error) {
 		NoUSB:             true,
 		UseLightweightKDF: true,
 	}
-	// Start the node and configure a full Ethereum node on it
+	// Start the node and configure a full Energi node on it
 	stack, err := node.New(config)
 	if err != nil {
 		return nil, err
 	}
 	if err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
-		return eth.New(ctx, &eth.Config{
+		return energi.New(ctx, &energi.Config{
 			Genesis:         genesis,
 			NetworkId:       genesis.Config.ChainID.Uint64(),
 			SyncMode:        downloader.FullSync,
 			DatabaseCache:   256,
 			DatabaseHandles: 256,
 			TxPool:          core.DefaultTxPoolConfig,
-			GPO:             eth.DefaultConfig.GPO,
-			Ethash:          eth.DefaultConfig.Ethash,
+			GPO:             energi.DefaultConfig.GPO,
+			Ethash:          energi.DefaultConfig.Ethash,
 			MinerGasFloor:   genesis.GasLimit * 9 / 10,
 			MinerGasCeil:    genesis.GasLimit * 11 / 10,
 			MinerGasPrice:   big.NewInt(1),

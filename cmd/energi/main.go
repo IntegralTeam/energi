@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
-// energi is the official command-line client for Ethereum.
+// energi is the official command-line client for Energi.
 package main
 
 import (
@@ -31,8 +31,8 @@ import (
 	"github.com/IntegralTeam/energi/accounts/keystore"
 	"github.com/IntegralTeam/energi/cmd/utils"
 	"github.com/IntegralTeam/energi/console"
-	"github.com/IntegralTeam/energi/eth"
-	"github.com/IntegralTeam/energi/ethclient"
+	"github.com/IntegralTeam/energi/energi"
+	"github.com/IntegralTeam/energi/energiclient"
 	"github.com/IntegralTeam/energi/internal/debug"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/metrics"
@@ -296,7 +296,7 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 		if err != nil {
 			utils.Fatalf("Failed to attach to self: %v", err)
 		}
-		stateReader := ethclient.NewClient(rpcClient)
+		stateReader := energiclient.NewClient(rpcClient)
 
 		// Open any wallets already attached
 		for _, wallet := range stack.AccountManager().Wallets() {
@@ -329,13 +329,13 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 	}()
 	// Start auxiliary services if enabled
 	if ctx.GlobalBool(utils.MiningEnabledFlag.Name) || ctx.GlobalBool(utils.DeveloperFlag.Name) {
-		// Mining only makes sense if a full Ethereum node is running
+		// Mining only makes sense if a full Energi node is running
 		if ctx.GlobalString(utils.SyncModeFlag.Name) == "light" {
 			utils.Fatalf("Light clients do not support mining")
 		}
-		var ethereum *eth.Ethereum
+		var ethereum *energi.Energi
 		if err := stack.Service(&ethereum); err != nil {
-			utils.Fatalf("Ethereum service not running: %v", err)
+			utils.Fatalf("Energi service not running: %v", err)
 		}
 		// Set the gas price to the limits from the CLI and start mining
 		gasprice := utils.GlobalBig(ctx, utils.MinerLegacyGasPriceFlag.Name)

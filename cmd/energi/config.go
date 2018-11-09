@@ -29,7 +29,7 @@ import (
 
 	"github.com/IntegralTeam/energi/cmd/utils"
 	"github.com/IntegralTeam/energi/dashboard"
-	"github.com/IntegralTeam/energi/eth"
+	"github.com/IntegralTeam/energi/energi"
 	"github.com/IntegralTeam/energi/node"
 	"github.com/IntegralTeam/energi/params"
 	whisper "github.com/IntegralTeam/energi/whisper/whisperv6"
@@ -75,7 +75,7 @@ type ethstatsConfig struct {
 }
 
 type gethConfig struct {
-	Eth       eth.Config
+	Eth       energi.Config
 	Shh       whisper.Config
 	Node      node.Config
 	Ethstats  ethstatsConfig
@@ -101,8 +101,8 @@ func defaultNodeConfig() node.Config {
 	cfg := node.DefaultConfig
 	cfg.Name = clientIdentifier
 	cfg.Version = params.VersionWithCommit(gitCommit)
-	cfg.HTTPModules = append(cfg.HTTPModules, "eth", "shh")
-	cfg.WSModules = append(cfg.WSModules, "eth", "shh")
+	cfg.HTTPModules = append(cfg.HTTPModules, "energi", "shh")
+	cfg.WSModules = append(cfg.WSModules, "energi", "shh")
 	cfg.IPCPath = "energi.ipc"
 	return cfg
 }
@@ -110,7 +110,7 @@ func defaultNodeConfig() node.Config {
 func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
 	// Load defaults.
 	cfg := gethConfig{
-		Eth:       eth.DefaultConfig,
+		Eth:       energi.DefaultConfig,
 		Shh:       whisper.DefaultConfig,
 		Node:      defaultNodeConfig(),
 		Dashboard: dashboard.DefaultConfig,
@@ -174,7 +174,7 @@ func makeFullNode(ctx *cli.Context) *node.Node {
 		utils.RegisterShhService(stack, &cfg.Shh)
 	}
 
-	// Add the Ethereum Stats daemon if requested.
+	// Add the Energi Stats daemon if requested.
 	if cfg.Ethstats.URL != "" {
 		utils.RegisterEthStatsService(stack, cfg.Ethstats.URL)
 	}

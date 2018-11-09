@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package bind
 
 import (
@@ -47,9 +63,9 @@ type ContractCaller interface {
 	// CodeAt returns the code of the given account. This is needed to differentiate
 	// between contract internal errors and the local chain being out of sync.
 	CodeAt(ctx context.Context, contract common.Address, blockNumber *big.Int) ([]byte, error)
-	// ContractCall executes an Ethereum contract call with the specified data as the
+	// ContractCall executes an Energi contract call with the specified data as the
 	// input.
-	CallContract(ctx context.Context, call ethereum.CallMsg, blockNumber *big.Int) ([]byte, error)
+	CallContract(ctx context.Context, call energi.CallMsg, blockNumber *big.Int) ([]byte, error)
 }
 
 // PendingContractCaller defines methods to perform contract calls on the pending state.
@@ -58,8 +74,8 @@ type ContractCaller interface {
 type PendingContractCaller interface {
 	// PendingCodeAt returns the code of the given account in the pending state.
 	PendingCodeAt(ctx context.Context, contract common.Address) ([]byte, error)
-	// PendingCallContract executes an Ethereum contract call against the pending state.
-	PendingCallContract(ctx context.Context, call ethereum.CallMsg) ([]byte, error)
+	// PendingCallContract executes an Energi contract call against the pending state.
+	PendingCallContract(ctx context.Context, call energi.CallMsg) ([]byte, error)
 }
 
 // ContractTransactor defines the methods needed to allow operating with contract
@@ -79,7 +95,7 @@ type ContractTransactor interface {
 	// There is no guarantee that this is the true gas limit requirement as other
 	// transactions may be added or removed by miners, but it should provide a basis
 	// for setting a reasonable default.
-	EstimateGas(ctx context.Context, call ethereum.CallMsg) (gas uint64, err error)
+	EstimateGas(ctx context.Context, call energi.CallMsg) (gas uint64, err error)
 	// SendTransaction injects the transaction into the pending pool for execution.
 	SendTransaction(ctx context.Context, tx *types.Transaction) error
 }
@@ -91,11 +107,11 @@ type ContractFilterer interface {
 	// returning all the results in one batch.
 	//
 	// TODO(karalabe): Deprecate when the subscription one can return past data too.
-	FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]types.Log, error)
+	FilterLogs(ctx context.Context, query energi.FilterQuery) ([]types.Log, error)
 
 	// SubscribeFilterLogs creates a background log filtering operation, returning
 	// a subscription immediately, which can be used to stream the found events.
-	SubscribeFilterLogs(ctx context.Context, query ethereum.FilterQuery, ch chan<- types.Log) (ethereum.Subscription, error)
+	SubscribeFilterLogs(ctx context.Context, query energi.FilterQuery, ch chan<- types.Log) (energi.Subscription, error)
 }
 
 // DeployBackend wraps the operations needed by WaitMined and WaitDeployed.

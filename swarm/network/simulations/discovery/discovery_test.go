@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package discovery
 
 import (
@@ -39,7 +55,7 @@ import (
 	"github.com/IntegralTeam/energi/p2p/simulations/adapters"
 	"github.com/IntegralTeam/energi/swarm/network"
 	"github.com/IntegralTeam/energi/swarm/state"
-	colorable "github.com/mattn/go-colorable"
+	"github.com/mattn/go-colorable"
 )
 
 // serviceName is used with the exec adapter so the exec'd binary knows which
@@ -370,7 +386,7 @@ func discoveryPersistenceSimulation(nodes, conns int, adapter adapters.NodeAdapt
 		for range ticker.C {
 			isHealthy := true
 			for _, id := range ids {
-				//call Healthy RPC
+				// call Healthy RPC
 				node := net.GetNode(id)
 				if node == nil {
 					return fmt.Errorf("unknown node: %s", id)
@@ -425,9 +441,9 @@ func discoveryPersistenceSimulation(nodes, conns int, adapter adapters.NodeAdapt
 
 		return nil
 	}
-	//connects in a chain
+	// connects in a chain
 	wg := sync.WaitGroup{}
-	//connects in a ring
+	// connects in a ring
 	for i := range ids {
 		for j := 1; j <= conns; j++ {
 			k := (i + j) % len(ids)

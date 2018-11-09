@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package stream
 
 import (
@@ -28,7 +44,7 @@ import (
 	"github.com/IntegralTeam/energi/swarm/network"
 	"github.com/IntegralTeam/energi/swarm/spancontext"
 	"github.com/IntegralTeam/energi/swarm/storage"
-	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go"
 )
 
 const (
@@ -190,20 +206,20 @@ func (d *Delivery) handleRetrieveRequestMsg(ctx context.Context, sp *Peer, req *
 	return nil
 }
 
-//Chunk delivery always uses the same message type....
+// Chunk delivery always uses the same message type....
 type ChunkDeliveryMsg struct {
 	Addr  storage.Address
 	SData []byte // the stored chunk Data (incl size)
 	peer  *Peer  // set in handleChunkDeliveryMsg
 }
 
-//...but swap accounting needs to disambiguate if it is a delivery for syncing or for retrieval
-//as it decides based on message type if it needs to account for this message or not
+// ...but swap accounting needs to disambiguate if it is a delivery for syncing or for retrieval
+// as it decides based on message type if it needs to account for this message or not
 
-//defines a chunk delivery for retrieval (with accounting)
+// defines a chunk delivery for retrieval (with accounting)
 type ChunkDeliveryMsgRetrieval ChunkDeliveryMsg
 
-//defines a chunk delivery for syncing (without accounting)
+// defines a chunk delivery for syncing (without accounting)
 type ChunkDeliveryMsgSyncing ChunkDeliveryMsg
 
 // TODO: Fix context SNAFU

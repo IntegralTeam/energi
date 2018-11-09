@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package les
 
 import (
@@ -24,7 +40,7 @@ import (
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/core/rawdb"
 	"github.com/IntegralTeam/energi/crypto"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/light"
 )
 
@@ -34,13 +50,13 @@ func secAddr(addr common.Address) []byte {
 	return crypto.Keccak256(addr[:])
 }
 
-type accessTestFn func(db ethdb.Database, bhash common.Hash, number uint64) light.OdrRequest
+type accessTestFn func(db energidb.Database, bhash common.Hash, number uint64) light.OdrRequest
 
 func TestBlockAccessLes1(t *testing.T) { testAccess(t, 1, tfBlockAccess) }
 
 func TestBlockAccessLes2(t *testing.T) { testAccess(t, 2, tfBlockAccess) }
 
-func tfBlockAccess(db ethdb.Database, bhash common.Hash, number uint64) light.OdrRequest {
+func tfBlockAccess(db energidb.Database, bhash common.Hash, number uint64) light.OdrRequest {
 	return &light.BlockRequest{Hash: bhash, Number: number}
 }
 
@@ -48,7 +64,7 @@ func TestReceiptsAccessLes1(t *testing.T) { testAccess(t, 1, tfReceiptsAccess) }
 
 func TestReceiptsAccessLes2(t *testing.T) { testAccess(t, 2, tfReceiptsAccess) }
 
-func tfReceiptsAccess(db ethdb.Database, bhash common.Hash, number uint64) light.OdrRequest {
+func tfReceiptsAccess(db energidb.Database, bhash common.Hash, number uint64) light.OdrRequest {
 	return &light.ReceiptsRequest{Hash: bhash, Number: number}
 }
 
@@ -56,7 +72,7 @@ func TestTrieEntryAccessLes1(t *testing.T) { testAccess(t, 1, tfTrieEntryAccess)
 
 func TestTrieEntryAccessLes2(t *testing.T) { testAccess(t, 2, tfTrieEntryAccess) }
 
-func tfTrieEntryAccess(db ethdb.Database, bhash common.Hash, number uint64) light.OdrRequest {
+func tfTrieEntryAccess(db energidb.Database, bhash common.Hash, number uint64) light.OdrRequest {
 	if number := rawdb.ReadHeaderNumber(db, bhash); number != nil {
 		return &light.TrieRequest{Id: light.StateTrieID(rawdb.ReadHeader(db, bhash, *number)), Key: testBankSecureTrieKey}
 	}
@@ -67,7 +83,7 @@ func TestCodeAccessLes1(t *testing.T) { testAccess(t, 1, tfCodeAccess) }
 
 func TestCodeAccessLes2(t *testing.T) { testAccess(t, 2, tfCodeAccess) }
 
-func tfCodeAccess(db ethdb.Database, bhash common.Hash, num uint64) light.OdrRequest {
+func tfCodeAccess(db energidb.Database, bhash common.Hash, num uint64) light.OdrRequest {
 	number := rawdb.ReadHeaderNumber(db, bhash)
 	if number != nil {
 		return nil

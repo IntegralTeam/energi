@@ -709,10 +709,10 @@ func (energihash *Energihash) Hashrate() float64 {
 // APIs implements consensus.Engine, returning the user facing RPC APIs.
 func (energihash *Energihash) APIs(chain consensus.ChainReader) []rpc.API {
 	// In order to ensure backward compatibility, we exposes energihash RPC APIs
-	// to both eth and energihash namespaces.
+	// to both energi and energihash namespaces.
 	return []rpc.API{
 		{
-			Namespace: "eth",
+			Namespace: "energi",
 			Version:   "1.0",
 			Service:   &API{energihash},
 			Public:    true,

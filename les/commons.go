@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package les
 
 import (
@@ -22,8 +38,8 @@ import (
 
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/core"
-	"github.com/IntegralTeam/energi/eth"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energi"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/light"
 	"github.com/IntegralTeam/energi/p2p"
 	"github.com/IntegralTeam/energi/p2p/enode"
@@ -32,17 +48,17 @@ import (
 
 // lesCommons contains fields needed by both server and client.
 type lesCommons struct {
-	config                       *eth.Config
+	config                       *energi.Config
 	iConfig                      *light.IndexerConfig
-	chainDb                      ethdb.Database
+	chainDb                      energidb.Database
 	protocolManager              *ProtocolManager
 	chtIndexer, bloomTrieIndexer *core.ChainIndexer
 }
 
-// NodeInfo represents a short summary of the Ethereum sub-protocol metadata
+// NodeInfo represents a short summary of the Energi sub-protocol metadata
 // known about the host peer.
 type NodeInfo struct {
-	Network    uint64                   `json:"network"`    // Ethereum network ID (1=Frontier, 2=Morden, Ropsten=3, Rinkeby=4)
+	Network    uint64                   `json:"network"`    // Energi network ID (1=Frontier, 2=Morden, Ropsten=3, Rinkeby=4)
 	Difficulty *big.Int                 `json:"difficulty"` // Total difficulty of the host's blockchain
 	Genesis    common.Hash              `json:"genesis"`    // SHA3 hash of the host's genesis block
 	Config     *params.ChainConfig      `json:"config"`     // Chain configuration for the fork rules

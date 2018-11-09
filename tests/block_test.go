@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package tests
 
 import (
@@ -39,10 +55,10 @@ func TestBlockchain(t *testing.T) {
 	bt.slow(`^bcWalletTest/`)
 
 	// Still failing tests that we need to look into
-	//bt.fails(`^bcStateTests/suicideThenCheckBalance.json/suicideThenCheckBalance_Constantinople`, "TODO: investigate")
-	//bt.fails(`^bcStateTests/suicideStorageCheckVCreate2.json/suicideStorageCheckVCreate2_Constantinople`, "TODO: investigate")
-	//bt.fails(`^bcStateTests/suicideStorageCheckVCreate.json/suicideStorageCheckVCreate_Constantinople`, "TODO: investigate")
-	//bt.fails(`^bcStateTests/suicideStorageCheck.json/suicideStorageCheck_Constantinople`, "TODO: investigate")
+	// bt.fails(`^bcStateTests/suicideThenCheckBalance.json/suicideThenCheckBalance_Constantinople`, "TODO: investigate")
+	// bt.fails(`^bcStateTests/suicideStorageCheckVCreate2.json/suicideStorageCheckVCreate2_Constantinople`, "TODO: investigate")
+	// bt.fails(`^bcStateTests/suicideStorageCheckVCreate.json/suicideStorageCheckVCreate_Constantinople`, "TODO: investigate")
+	// bt.fails(`^bcStateTests/suicideStorageCheck.json/suicideStorageCheck_Constantinople`, "TODO: investigate")
 
 	bt.walk(t, blockTestDir, func(t *testing.T, name string, test *BlockTest) {
 		if err := bt.checkFailure(t, name, test.Run()); err != nil {

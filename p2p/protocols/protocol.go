@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 /*
 Package protocols is an extension to p2p. It offers a user friendly simple way to define
 devp2p subprotocols by abstracting away code standardly shared by protocols.
@@ -44,7 +60,7 @@ import (
 	"github.com/IntegralTeam/energi/rlp"
 	"github.com/IntegralTeam/energi/swarm/spancontext"
 	"github.com/IntegralTeam/energi/swarm/tracing"
-	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go"
 )
 
 // error codes used by this  protocol scheme
@@ -122,13 +138,13 @@ type WrappedMsg struct {
 	Payload []byte
 }
 
-//For accounting, the design is to allow the Spec to describe which and how its messages are priced
-//To access this functionality, we provide a Hook interface which will call accounting methods
-//NOTE: there could be more such (horizontal) hooks in the future
+// For accounting, the design is to allow the Spec to describe which and how its messages are priced
+// To access this functionality, we provide a Hook interface which will call accounting methods
+// NOTE: there could be more such (horizontal) hooks in the future
 type Hook interface {
-	//A hook for sending messages
+	// A hook for sending messages
 	Send(peer *Peer, size uint32, msg interface{}) error
-	//A hook for receiving messages
+	// A hook for receiving messages
 	Receive(peer *Peer, size uint32, msg interface{}) error
 }
 
@@ -151,7 +167,7 @@ type Spec struct {
 	// each message must have a single unique data type
 	Messages []interface{}
 
-	//hook for accounting (could be extended to multiple hooks in the future)
+	// hook for accounting (could be extended to multiple hooks in the future)
 	Hook Hook
 
 	initOnce sync.Once
@@ -287,7 +303,7 @@ func (p *Peer) Send(ctx context.Context, msg interface{}) error {
 		Payload: r,
 	}
 
-	//if the accounting hook is set, call it
+	// if the accounting hook is set, call it
 	if p.spec.Hook != nil {
 		err := p.spec.Hook.Send(p, wmsg.Size, msg)
 		if err != nil {
@@ -358,7 +374,7 @@ func (p *Peer) handleIncoming(handle func(ctx context.Context, msg interface{}) 
 		return errorf(ErrDecode, "<= %v: %v", msg, err)
 	}
 
-	//if the accounting hook is set, call it
+	// if the accounting hook is set, call it
 	if p.spec.Hook != nil {
 		err := p.spec.Hook.Receive(p, wmsg.Size, val)
 		if err != nil {

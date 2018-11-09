@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package simulation
 
 import (
@@ -29,18 +45,18 @@ var (
 	DefaultHTTPSimAddr = ":8888"
 )
 
-//WithServer implements the builder pattern constructor for Simulation to
-//start with a HTTP server
+// WithServer implements the builder pattern constructor for Simulation to
+// start with a HTTP server
 func (s *Simulation) WithServer(addr string) *Simulation {
-	//assign default addr if nothing provided
+	// assign default addr if nothing provided
 	if addr == "" {
 		addr = DefaultHTTPSimAddr
 	}
 	log.Info(fmt.Sprintf("Initializing simulation server on %s...", addr))
-	//initialize the HTTP server
+	// initialize the HTTP server
 	s.handler = simulations.NewServer(s.Net)
 	s.runC = make(chan struct{})
-	//add swarm specific routes to the HTTP server
+	// add swarm specific routes to the HTTP server
 	s.addSimulationRoutes()
 	s.httpSrv = &http.Server{
 		Addr:    addr,
@@ -55,7 +71,7 @@ func (s *Simulation) WithServer(addr string) *Simulation {
 	return s
 }
 
-//register additional HTTP routes
+// register additional HTTP routes
 func (s *Simulation) addSimulationRoutes() {
 	s.handler.POST("/runsim", s.RunSimulation)
 }

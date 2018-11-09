@@ -34,7 +34,7 @@ import (
 	"github.com/IntegralTeam/energi/core/types"
 	"github.com/IntegralTeam/energi/crypto"
 	"github.com/IntegralTeam/energi/crypto/sha3"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/params"
 	"github.com/IntegralTeam/energi/rlp"
@@ -200,7 +200,7 @@ func ecrecover(header *types.Header, sigcache *lru.ARCCache) (common.Address, er
 // Ethereum testnet following the Ropsten attacks.
 type Clique struct {
 	config *params.CliqueConfig // Consensus engine configuration parameters
-	db     ethdb.Database       // Database to store and retrieve snapshot checkpoints
+	db     energidb.Database    // Database to store and retrieve snapshot checkpoints
 
 	recents    *lru.ARCCache // Snapshots for recent block to speed up reorgs
 	signatures *lru.ARCCache // Signatures of recent blocks to speed up mining
@@ -217,7 +217,7 @@ type Clique struct {
 
 // New creates a Clique proof-of-authority consensus engine with the initial
 // signers set to the ones provided by the user.
-func New(config *params.CliqueConfig, db ethdb.Database) *Clique {
+func New(config *params.CliqueConfig, db energidb.Database) *Clique {
 	// Set any missing consensus parameters to their defaults
 	conf := *config
 	if conf.Epoch == 0 {

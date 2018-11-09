@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package core
 
 import (
@@ -31,7 +47,7 @@ import (
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/common/hexutil"
 	"github.com/IntegralTeam/energi/crypto"
-	"github.com/IntegralTeam/energi/internal/ethapi"
+	"github.com/IntegralTeam/energi/internal/energiapi"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/rlp"
 )
@@ -46,7 +62,7 @@ type ExternalAPI interface {
 	// New request to create a new account
 	New(ctx context.Context) (accounts.Account, error)
 	// SignTransaction request to sign the specified transaction
-	SignTransaction(ctx context.Context, args SendTxArgs, methodSelector *string) (*ethapi.SignTransactionResult, error)
+	SignTransaction(ctx context.Context, args SendTxArgs, methodSelector *string) (*energiapi.SignTransactionResult, error)
 	// Sign - request to sign the given data (plus prefix)
 	Sign(ctx context.Context, addr common.MixedcaseAddress, data hexutil.Bytes) (hexutil.Bytes, error)
 	// Export - request to export an account
@@ -54,7 +70,7 @@ type ExternalAPI interface {
 	// Import - request to import an account
 	// Should be moved to Internal API, in next phase when we have
 	// bi-directional communication
-	//Import(ctx context.Context, keyJSON json.RawMessage) (Account, error)
+	// Import(ctx context.Context, keyJSON json.RawMessage) (Account, error)
 }
 
 // SignerUI specifies what method a UI needs to implement to be able to be used as a UI for the signer
@@ -78,7 +94,7 @@ type SignerUI interface {
 	ShowInfo(message string)
 	// OnApprovedTx notifies the UI about a transaction having been successfully signed.
 	// This method can be used by a UI to keep track of e.g. how much has been sent to a particular recipient.
-	OnApprovedTx(tx ethapi.SignTransactionResult)
+	OnApprovedTx(tx energiapi.SignTransactionResult)
 	// OnSignerStartup is invoked when the signer boots, and tells the UI info about external API location and version
 	// information
 	OnSignerStartup(info StartupInfo)
@@ -146,7 +162,7 @@ type (
 	}
 	// SignTxResponse result from SignTxRequest
 	SignTxResponse struct {
-		//The UI may make changes to the TX
+		// The UI may make changes to the TX
 		Transaction SendTxArgs `json:"transaction"`
 		Approved    bool       `json:"approved"`
 		Password    string     `json:"password"`
@@ -450,7 +466,7 @@ func logDiff(original *SignTxRequest, new *SignTxResponse) bool {
 }
 
 // SignTransaction signs the given Transaction and returns it both as json and rlp-encoded form
-func (api *SignerAPI) SignTransaction(ctx context.Context, args SendTxArgs, methodSelector *string) (*ethapi.SignTransactionResult, error) {
+func (api *SignerAPI) SignTransaction(ctx context.Context, args SendTxArgs, methodSelector *string) (*energiapi.SignTransactionResult, error) {
 	var (
 		err    error
 		result SignTxResponse
@@ -501,7 +517,7 @@ func (api *SignerAPI) SignTransaction(ctx context.Context, args SendTxArgs, meth
 	}
 
 	rlpdata, err := rlp.EncodeToBytes(signedTx)
-	response := ethapi.SignTransactionResult{Raw: rlpdata, Tx: signedTx}
+	response := energiapi.SignTransactionResult{Raw: rlpdata, Tx: signedTx}
 
 	// Finally, send the signed tx to the UI
 	api.UI.OnApprovedTx(response)
@@ -510,8 +526,8 @@ func (api *SignerAPI) SignTransaction(ctx context.Context, args SendTxArgs, meth
 
 }
 
-// Sign calculates an Ethereum ECDSA signature for:
-// keccack256("\x19Ethereum Signed Message:\n" + len(message) + message))
+// Sign calculates an Energi ECDSA signature for:
+// keccack256("\x19Energi Signed Message:\n" + len(message) + message))
 //
 // Note, the produced signature conforms to the secp256k1 curve R, S and V values,
 // where the V value will be 27 or 28 for legacy reasons.
@@ -552,11 +568,11 @@ func (api *SignerAPI) Sign(ctx context.Context, addr common.MixedcaseAddress, da
 // safely used to calculate a signature from.
 //
 // The hash is calculated as
-//   keccak256("\x19Ethereum Signed Message:\n"${message length}${message}).
+//   keccak256("\x19Energi Signed Message:\n"${message length}${message}).
 //
 // This gives context to the signed message and prevents signing of transactions.
 func SignHash(data []byte) ([]byte, string) {
-	msg := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(data), data)
+	msg := fmt.Sprintf("\x19Energi Signed Message:\n%d%s", len(data), data)
 	return crypto.Keccak256([]byte(msg)), msg
 }
 

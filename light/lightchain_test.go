@@ -14,19 +14,35 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package light
 
 import (
 	"context"
+	"github.com/IntegralTeam/energi/consensus/energihash"
 	"math/big"
 	"testing"
 
 	"github.com/IntegralTeam/energi/common"
-	"github.com/IntegralTeam/energi/consensus/ethash"
 	"github.com/IntegralTeam/energi/core"
 	"github.com/IntegralTeam/energi/core/rawdb"
 	"github.com/IntegralTeam/energi/core/types"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/params"
 )
 
@@ -37,8 +53,8 @@ var (
 )
 
 // makeHeaderChain creates a deterministic chain of headers rooted at parent.
-func makeHeaderChain(parent *types.Header, n int, db ethdb.Database, seed int) []*types.Header {
-	blocks, _ := core.GenerateChain(params.TestChainConfig, types.NewBlockWithHeader(parent), ethash.NewFaker(), db, n, func(i int, b *core.BlockGen) {
+func makeHeaderChain(parent *types.Header, n int, db energidb.Database, seed int) []*types.Header {
+	blocks, _ := core.GenerateChain(params.TestChainConfig, types.NewBlockWithHeader(parent), energihash.NewFaker(), db, n, func(i int, b *core.BlockGen) {
 		b.SetCoinbase(common.Address{0: byte(seed), 19: byte(i)})
 	})
 	headers := make([]*types.Header, len(blocks))
@@ -51,11 +67,11 @@ func makeHeaderChain(parent *types.Header, n int, db ethdb.Database, seed int) [
 // newCanonical creates a chain database, and injects a deterministic canonical
 // chain. Depending on the full flag, if creates either a full block chain or a
 // header only chain.
-func newCanonical(n int) (ethdb.Database, *LightChain, error) {
-	db := ethdb.NewMemDatabase()
+func newCanonical(n int) (energidb.Database, *LightChain, error) {
+	db := energidb.NewMemDatabase()
 	gspec := core.Genesis{Config: params.TestChainConfig}
 	genesis := gspec.MustCommit(db)
-	blockchain, _ := NewLightChain(&dummyOdr{db: db, indexerConfig: TestClientIndexerConfig}, gspec.Config, ethash.NewFaker())
+	blockchain, _ := NewLightChain(&dummyOdr{db: db, indexerConfig: TestClientIndexerConfig}, gspec.Config, energihash.NewFaker())
 
 	// Create and inject the requested chain
 	if n == 0 {
@@ -69,13 +85,13 @@ func newCanonical(n int) (ethdb.Database, *LightChain, error) {
 
 // newTestLightChain creates a LightChain that doesn't validate anything.
 func newTestLightChain() *LightChain {
-	db := ethdb.NewMemDatabase()
+	db := energidb.NewMemDatabase()
 	gspec := &core.Genesis{
 		Difficulty: big.NewInt(1),
 		Config:     params.TestChainConfig,
 	}
 	gspec.MustCommit(db)
-	lc, err := NewLightChain(&dummyOdr{db: db}, gspec.Config, ethash.NewFullFaker())
+	lc, err := NewLightChain(&dummyOdr{db: db}, gspec.Config, energihash.NewFullFaker())
 	if err != nil {
 		panic(err)
 	}
@@ -265,11 +281,11 @@ func makeHeaderChainWithDiff(genesis *types.Block, d []int, seed byte) []*types.
 
 type dummyOdr struct {
 	OdrBackend
-	db            ethdb.Database
+	db            energidb.Database
 	indexerConfig *IndexerConfig
 }
 
-func (odr *dummyOdr) Database() ethdb.Database {
+func (odr *dummyOdr) Database() energidb.Database {
 	return odr.db
 }
 
@@ -344,7 +360,7 @@ func TestReorgBadHeaderHashes(t *testing.T) {
 	defer func() { delete(core.BadHashes, headers[3].Hash()) }()
 
 	// Create a new LightChain and check that it rolled back the state.
-	ncm, err := NewLightChain(&dummyOdr{db: bc.chainDb}, params.TestChainConfig, ethash.NewFaker())
+	ncm, err := NewLightChain(&dummyOdr{db: bc.chainDb}, params.TestChainConfig, energihash.NewFaker())
 	if err != nil {
 		t.Fatalf("failed to create new chain manager: %v", err)
 	}

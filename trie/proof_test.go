@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package trie
 
 import (
@@ -25,7 +41,7 @@ import (
 
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/crypto"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 )
 
 func init() {
@@ -34,18 +50,18 @@ func init() {
 
 // makeProvers creates Merkle trie provers based on different implementations to
 // test all variations.
-func makeProvers(trie *Trie) []func(key []byte) *ethdb.MemDatabase {
-	var provers []func(key []byte) *ethdb.MemDatabase
+func makeProvers(trie *Trie) []func(key []byte) *energidb.MemDatabase {
+	var provers []func(key []byte) *energidb.MemDatabase
 
 	// Create a direct trie based Merkle prover
-	provers = append(provers, func(key []byte) *ethdb.MemDatabase {
-		proof := ethdb.NewMemDatabase()
+	provers = append(provers, func(key []byte) *energidb.MemDatabase {
+		proof := energidb.NewMemDatabase()
 		trie.Prove(key, 0, proof)
 		return proof
 	})
 	// Create a leaf iterator based Merkle prover
-	provers = append(provers, func(key []byte) *ethdb.MemDatabase {
-		proof := ethdb.NewMemDatabase()
+	provers = append(provers, func(key []byte) *energidb.MemDatabase {
+		proof := energidb.NewMemDatabase()
 		if it := NewIterator(trie.NodeIterator(key)); it.Next() && bytes.Equal(key, it.Key) {
 			for _, p := range it.Prove() {
 				proof.Put(crypto.Keccak256(p), p)
@@ -127,7 +143,7 @@ func TestMissingKeyProof(t *testing.T) {
 	updateString(trie, "k", "v")
 
 	for i, key := range []string{"a", "j", "l", "z"} {
-		proof := ethdb.NewMemDatabase()
+		proof := energidb.NewMemDatabase()
 		trie.Prove([]byte(key), 0, proof)
 
 		if proof.Len() != 1 {
@@ -164,7 +180,7 @@ func BenchmarkProve(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		kv := vals[keys[i%len(keys)]]
-		proofs := ethdb.NewMemDatabase()
+		proofs := energidb.NewMemDatabase()
 		if trie.Prove(kv.k, 0, proofs); len(proofs.Keys()) == 0 {
 			b.Fatalf("zero length proof for %x", kv.k)
 		}
@@ -175,10 +191,10 @@ func BenchmarkVerifyProof(b *testing.B) {
 	trie, vals := randomTrie(100)
 	root := trie.Hash()
 	var keys []string
-	var proofs []*ethdb.MemDatabase
+	var proofs []*energidb.MemDatabase
 	for k := range vals {
 		keys = append(keys, k)
-		proof := ethdb.NewMemDatabase()
+		proof := energidb.NewMemDatabase()
 		trie.Prove([]byte(k), 0, proof)
 		proofs = append(proofs, proof)
 	}

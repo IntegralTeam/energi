@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package node
 
 import (
@@ -232,9 +248,9 @@ func DefaultWSEndpoint() string {
 // NodeName returns the devp2p node identifier.
 func (c *Config) NodeName() string {
 	name := c.name()
-	// Backwards compatibility: previous versions used title-cased "Geth", keep that.
+	// Backwards compatibility: previous versions used title-cased "energi", keep that.
 	if name == "energi" || name == "energi-testnet" {
-		name = "Geth"
+		name = "Energi"
 	}
 	if c.UserIdent != "" {
 		name += "/" + c.UserIdent
@@ -259,7 +275,7 @@ func (c *Config) name() string {
 }
 
 // These resources are resolved differently for "energi" instances.
-var isOldGethResource = map[string]bool{
+var isOldEnergiResource = map[string]bool{
 	"chaindata":          true,
 	"nodes":              true,
 	"nodekey":            true,
@@ -277,7 +293,7 @@ func (c *Config) ResolvePath(path string) string {
 	}
 	// Backwards-compatibility: ensure that data directory files created
 	// by energi 1.4 are used if they exist.
-	if c.name() == "energi" && isOldGethResource[path] {
+	if c.name() == "energi" && isOldEnergiResource[path] {
 		oldpath := ""
 		if c.Name == "energi" {
 			oldpath = filepath.Join(c.DataDir, path)
@@ -410,7 +426,7 @@ func makeAccountManager(conf *Config) (*accounts.Manager, string, error) {
 	var ephemeral string
 	if keydir == "" {
 		// There is no datadir.
-		keydir, err = ioutil.TempDir("", "go-ethereum-keystore")
+		keydir, err = ioutil.TempDir("", "energi-keystore")
 		ephemeral = keydir
 	}
 

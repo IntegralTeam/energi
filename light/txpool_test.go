@@ -14,21 +14,37 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package light
 
 import (
 	"context"
+	"github.com/IntegralTeam/energi/consensus/energihash"
 	"math"
 	"math/big"
 	"testing"
 	"time"
 
 	"github.com/IntegralTeam/energi/common"
-	"github.com/IntegralTeam/energi/consensus/ethash"
 	"github.com/IntegralTeam/energi/core"
 	"github.com/IntegralTeam/energi/core/types"
 	"github.com/IntegralTeam/energi/core/vm"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/params"
 )
 
@@ -81,15 +97,15 @@ func TestTxPool(t *testing.T) {
 	}
 
 	var (
-		sdb     = ethdb.NewMemDatabase()
-		ldb     = ethdb.NewMemDatabase()
+		sdb     = energidb.NewMemDatabase()
+		ldb     = energidb.NewMemDatabase()
 		gspec   = core.Genesis{Alloc: core.GenesisAlloc{testBankAddress: {Balance: testBankFunds}}}
 		genesis = gspec.MustCommit(sdb)
 	)
 	gspec.MustCommit(ldb)
 	// Assemble the test environment
-	blockchain, _ := core.NewBlockChain(sdb, nil, params.TestChainConfig, ethash.NewFullFaker(), vm.Config{}, nil)
-	gchain, _ := core.GenerateChain(params.TestChainConfig, genesis, ethash.NewFaker(), sdb, poolTestBlocks, txPoolTestChainGen)
+	blockchain, _ := core.NewBlockChain(sdb, nil, params.TestChainConfig, energihash.NewFullFaker(), vm.Config{}, nil)
+	gchain, _ := core.GenerateChain(params.TestChainConfig, genesis, energihash.NewFaker(), sdb, poolTestBlocks, txPoolTestChainGen)
 	if _, err := blockchain.InsertChain(gchain); err != nil {
 		panic(err)
 	}
@@ -100,7 +116,7 @@ func TestTxPool(t *testing.T) {
 		discard: make(chan int, 1),
 		mined:   make(chan int, 1),
 	}
-	lightchain, _ := NewLightChain(odr, params.TestChainConfig, ethash.NewFullFaker())
+	lightchain, _ := NewLightChain(odr, params.TestChainConfig, energihash.NewFullFaker())
 	txPermanent = 50
 	pool := NewTxPool(params.TestChainConfig, lightchain, relay)
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)

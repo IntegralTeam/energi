@@ -29,7 +29,7 @@ import (
 	"github.com/IntegralTeam/energi/core/state"
 	"github.com/IntegralTeam/energi/core/vm"
 	"github.com/IntegralTeam/energi/crypto"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/params"
 )
 
@@ -79,7 +79,7 @@ type vmExecMarshaling struct {
 }
 
 func (t *VMTest) Run(vmconfig vm.Config) error {
-	statedb := MakePreState(ethdb.NewMemDatabase(), t.json.Pre)
+	statedb := MakePreState(energidb.NewMemDatabase(), t.json.Pre)
 	ret, gasRemaining, err := t.exec(statedb, vmconfig)
 
 	if t.json.GasRemaining == nil {

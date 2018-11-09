@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package api
 
 import (
@@ -164,7 +180,7 @@ func (t *testResolveValidator) HeaderByNumber(context.Context, *big.Int) (header
 // TestAPIResolve tests resolving URIs which can either contain content hashes
 // or ENS names
 func TestAPIResolve(t *testing.T) {
-	ensAddr := "swarm.eth"
+	ensAddr := "swarm.energi"
 	hashAddr := "1111111111111111111111111111111111111111111111111111111111111111"
 	resolvedAddr := "2222222222222222222222222222222222222222222222222222222222222222"
 	doesResolve := newTestResolveValidator(resolvedAddr)
@@ -190,7 +206,7 @@ func TestAPIResolve(t *testing.T) {
 			desc:      "DNS not configured, ENS address, returns error",
 			dns:       nil,
 			addr:      ensAddr,
-			expectErr: errors.New(`no DNS to resolve name: "swarm.eth"`),
+			expectErr: errors.New(`no DNS to resolve name: "swarm.energi"`),
 		},
 		{
 			desc:   "DNS configured, hash address, hash resolves, returns resolved address",
@@ -222,13 +238,13 @@ func TestAPIResolve(t *testing.T) {
 			dns:       doesResolve,
 			addr:      ensAddr,
 			immutable: true,
-			expectErr: errors.New(`immutable address not a content hash: "swarm.eth"`),
+			expectErr: errors.New(`immutable address not a content hash: "swarm.energi"`),
 		},
 		{
 			desc:      "DNS configured, ENS address, name doesn't resolve, returns error",
 			dns:       doesntResolve,
 			addr:      ensAddr,
-			expectErr: errors.New(`DNS name not found: "swarm.eth"`),
+			expectErr: errors.New(`DNS name not found: "swarm.energi"`),
 		},
 	}
 	for _, x := range tests {
@@ -261,9 +277,9 @@ func TestAPIResolve(t *testing.T) {
 func TestMultiResolver(t *testing.T) {
 	doesntResolve := newTestResolveValidator("")
 
-	ethAddr := "swarm.eth"
-	ethHash := "0x2222222222222222222222222222222222222222222222222222222222222222"
-	ethResolve := newTestResolveValidator(ethHash)
+	energiAddr := "swarm.energi"
+	energiHash := "0x2222222222222222222222222222222222222222222222222222222222222222"
+	energiResolve := newTestResolveValidator(energiHash)
 
 	testAddr := "swarm.test"
 	testHash := "0x1111111111111111111111111111111111111111111111111111111111111111"
@@ -283,70 +299,70 @@ func TestMultiResolver(t *testing.T) {
 		},
 		{
 			desc:   "One default resolver, returns resolved address",
-			r:      NewMultiResolver(MultiResolverOptionWithResolver(ethResolve, "")),
-			addr:   ethAddr,
-			result: ethHash,
+			r:      NewMultiResolver(MultiResolverOptionWithResolver(energiResolve, "")),
+			addr:   energiAddr,
+			result: energiHash,
 		},
 		{
 			desc: "Two default resolvers, returns resolved address",
 			r: NewMultiResolver(
-				MultiResolverOptionWithResolver(ethResolve, ""),
-				MultiResolverOptionWithResolver(ethResolve, ""),
+				MultiResolverOptionWithResolver(energiResolve, ""),
+				MultiResolverOptionWithResolver(energiResolve, ""),
 			),
-			addr:   ethAddr,
-			result: ethHash,
+			addr:   energiAddr,
+			result: energiHash,
 		},
 		{
 			desc: "Two default resolvers, first doesn't resolve, returns resolved address",
 			r: NewMultiResolver(
 				MultiResolverOptionWithResolver(doesntResolve, ""),
-				MultiResolverOptionWithResolver(ethResolve, ""),
+				MultiResolverOptionWithResolver(energiResolve, ""),
 			),
-			addr:   ethAddr,
-			result: ethHash,
+			addr:   energiAddr,
+			result: energiHash,
 		},
 		{
 			desc: "Default resolver doesn't resolve, tld resolver resolve, returns resolved address",
 			r: NewMultiResolver(
 				MultiResolverOptionWithResolver(doesntResolve, ""),
-				MultiResolverOptionWithResolver(ethResolve, "eth"),
+				MultiResolverOptionWithResolver(energiResolve, "energi"),
 			),
-			addr:   ethAddr,
-			result: ethHash,
+			addr:   energiAddr,
+			result: energiHash,
 		},
 		{
 			desc: "Three TLD resolvers, third resolves, returns resolved address",
 			r: NewMultiResolver(
-				MultiResolverOptionWithResolver(doesntResolve, "eth"),
-				MultiResolverOptionWithResolver(doesntResolve, "eth"),
-				MultiResolverOptionWithResolver(ethResolve, "eth"),
+				MultiResolverOptionWithResolver(doesntResolve, "energi"),
+				MultiResolverOptionWithResolver(doesntResolve, "energi"),
+				MultiResolverOptionWithResolver(energiResolve, "energi"),
 			),
-			addr:   ethAddr,
-			result: ethHash,
+			addr:   energiAddr,
+			result: energiHash,
 		},
 		{
 			desc: "One TLD resolver doesn't resolve, returns error",
 			r: NewMultiResolver(
 				MultiResolverOptionWithResolver(doesntResolve, ""),
-				MultiResolverOptionWithResolver(ethResolve, "eth"),
+				MultiResolverOptionWithResolver(energiResolve, "energi"),
 			),
-			addr:   ethAddr,
-			result: ethHash,
+			addr:   energiAddr,
+			result: energiHash,
 		},
 		{
 			desc: "One defautl and one TLD resolver, all doesn't resolve, returns error",
 			r: NewMultiResolver(
 				MultiResolverOptionWithResolver(doesntResolve, ""),
-				MultiResolverOptionWithResolver(doesntResolve, "eth"),
+				MultiResolverOptionWithResolver(doesntResolve, "energi"),
 			),
-			addr:   ethAddr,
-			result: ethHash,
-			err:    errors.New(`DNS name not found: "swarm.eth"`),
+			addr:   energiAddr,
+			result: energiHash,
+			err:    errors.New(`DNS name not found: "swarm.energi"`),
 		},
 		{
 			desc: "Two TLD resolvers, both resolve, returns resolved address",
 			r: NewMultiResolver(
-				MultiResolverOptionWithResolver(ethResolve, "eth"),
+				MultiResolverOptionWithResolver(energiResolve, "energi"),
 				MultiResolverOptionWithResolver(testResolve, "test"),
 			),
 			addr:   testAddr,
@@ -355,7 +371,7 @@ func TestMultiResolver(t *testing.T) {
 		{
 			desc: "One TLD resolver, no default resolver, returns error for different TLD",
 			r: NewMultiResolver(
-				MultiResolverOptionWithResolver(ethResolve, "eth"),
+				MultiResolverOptionWithResolver(energiResolve, "energi"),
 			),
 			addr: testAddr,
 			err:  NewNoResolverError("test"),

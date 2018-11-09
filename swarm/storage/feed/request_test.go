@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package feed
 
 import (
@@ -30,7 +46,7 @@ import (
 )
 
 func areEqualJSON(s1, s2 string) (bool, error) {
-	//credit for the trick: turtlemonvh https://gist.github.com/turtlemonvh/e4f7404e28387fadb8ad275a99596f67
+	// credit for the trick: turtlemonvh https://gist.github.com/turtlemonvh/e4f7404e28387fadb8ad275a99596f67
 	var o1 interface{}
 	var o2 interface{}
 
@@ -50,8 +66,8 @@ func areEqualJSON(s1, s2 string) (bool, error) {
 // while also checking cryptographically that only the owner of a feed can update it.
 func TestEncodingDecodingUpdateRequests(t *testing.T) {
 
-	charlie := newCharlieSigner() //Charlie
-	bob := newBobSigner()         //Bob
+	charlie := newCharlieSigner() // Charlie
+	bob := newBobSigner()         // Bob
 
 	// Create a feed to our good guy Charlie's name
 	topic, _ := NewTopic("a good topic name", nil)
@@ -80,7 +96,7 @@ func TestEncodingDecodingUpdateRequests(t *testing.T) {
 	const expectedSignature = "0x7235b27a68372ddebcf78eba48543fa460864b0b0e99cb533fcd3664820e603312d29426dd00fb39628f5299480a69bf6e462838d78de49ce0704c754c9deb2601"
 	const expectedJSON = `{"feed":{"topic":"0x6120676f6f6420746f706963206e616d65000000000000000000000000000000","user":"0x876a8936a7cd0b79ef0735ad0896c1afe278781c"},"epoch":{"time":1000,"level":1},"protocolVersion":0,"data":"0x5468697320686f75722773207570646174653a20537761726d2039392e3020686173206265656e2072656c656173656421"}`
 
-	//Put together an unsigned update request that we will serialize to send it to the signer.
+	// Put together an unsigned update request that we will serialize to send it to the signer.
 	data := []byte("This hour's update: Swarm 99.0 has been released!")
 	request := &Request{
 		Update: Update{
@@ -110,13 +126,13 @@ func TestEncodingDecodingUpdateRequests(t *testing.T) {
 
 	// now the encoded message messageRawData is sent over the wire and arrives to the signer
 
-	//Attempt to extract an UpdateRequest out of the encoded message
+	// Attempt to extract an UpdateRequest out of the encoded message
 	var recoveredRequest Request
 	if err := recoveredRequest.UnmarshalJSON(messageRawData); err != nil {
 		t.Fatalf("Error decoding update request: %s", err)
 	}
 
-	//sign the request and see if it matches our predefined signature above.
+	// sign the request and see if it matches our predefined signature above.
 	if err := recoveredRequest.Sign(charlie); err != nil {
 		t.Fatalf("Error signing request: %s", err)
 	}

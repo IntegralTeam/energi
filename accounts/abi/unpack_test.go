@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package abi
 
 import (
@@ -476,7 +492,7 @@ func TestMultiReturnWithDeeplyNestedArray(t *testing.T) {
 	// construct the test array, each 3 char element is joined with 61 '0' chars,
 	// to from the ((3 + 61) * 0.5) = 32 byte elements in the array.
 	buff.Write(common.Hex2Bytes(strings.Join([]string{
-		"", //empty, to apply the 61-char separator to the first element as well.
+		"", // empty, to apply the 61-char separator to the first element as well.
 		"111", "112", "113", "121", "122", "123",
 		"211", "212", "213", "221", "222", "223",
 		"311", "312", "313", "321", "322", "323",

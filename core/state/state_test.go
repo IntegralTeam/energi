@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package state
 
 import (
@@ -23,12 +39,12 @@ import (
 
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/crypto"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	checker "gopkg.in/check.v1"
 )
 
 type StateSuite struct {
-	db    *ethdb.MemDatabase
+	db    *energidb.MemDatabase
 	state *StateDB
 }
 
@@ -87,14 +103,14 @@ func (s *StateSuite) TestDump(c *checker.C) {
 }
 
 func (s *StateSuite) SetUpTest(c *checker.C) {
-	s.db = ethdb.NewMemDatabase()
+	s.db = energidb.NewMemDatabase()
 	s.state, _ = New(common.Hash{}, NewDatabase(s.db))
 }
 
 func (s *StateSuite) TestNull(c *checker.C) {
 	address := common.HexToAddress("0x823140710bf13990e4500136726d8b55")
 	s.state.CreateAccount(address)
-	//value := common.FromHex("0x823140710bf13990e4500136726d8b55")
+	// value := common.FromHex("0x823140710bf13990e4500136726d8b55")
 	var value common.Hash
 
 	s.state.SetState(address, common.Hash{}, value)
@@ -141,7 +157,7 @@ func (s *StateSuite) TestSnapshotEmpty(c *checker.C) {
 // use testing instead of checker because checker does not support
 // printing/logging in tests (-check.vv does not work)
 func TestSnapshot2(t *testing.T) {
-	state, _ := New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
+	state, _ := New(common.Hash{}, NewDatabase(energidb.NewMemDatabase()))
 
 	stateobjaddr0 := toAddr([]byte("so0"))
 	stateobjaddr1 := toAddr([]byte("so1"))

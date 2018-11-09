@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package simulation
 
 import (
@@ -51,9 +67,9 @@ type Simulation struct {
 	done         chan struct{}
 	mu           sync.RWMutex
 
-	httpSrv *http.Server        //attach a HTTP server via SimulationOptions
-	handler *simulations.Server //HTTP handler for the server
-	runC    chan struct{}       //channel where frontend signals it is ready
+	httpSrv *http.Server        // attach a HTTP server via SimulationOptions
+	handler *simulations.Server // HTTP handler for the server
+	runC    chan struct{}       // channel where frontend signals it is ready
 }
 
 // ServiceFunc is used in New to declare new service constructor.
@@ -114,12 +130,12 @@ type Result struct {
 // Run calls the RunFunc function while taking care of
 // cancellation provided through the Context.
 func (s *Simulation) Run(ctx context.Context, f RunFunc) (r Result) {
-	//if the option is set to run a HTTP server with the simulation,
-	//init the server and start it
+	// if the option is set to run a HTTP server with the simulation,
+	// init the server and start it
 	start := time.Now()
 	if s.httpSrv != nil {
 		log.Info("Waiting for frontend to be ready...(send POST /runsim to HTTP server)")
-		//wait for the frontend to connect
+		// wait for the frontend to connect
 		select {
 		case <-s.runC:
 		case <-ctx.Done():

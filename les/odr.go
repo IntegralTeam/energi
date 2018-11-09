@@ -14,27 +14,43 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package les
 
 import (
 	"context"
 
 	"github.com/IntegralTeam/energi/core"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/light"
 	"github.com/IntegralTeam/energi/log"
 )
 
 // LesOdr implements light.OdrBackend
 type LesOdr struct {
-	db                                         ethdb.Database
+	db                                         energidb.Database
 	indexerConfig                              *light.IndexerConfig
 	chtIndexer, bloomTrieIndexer, bloomIndexer *core.ChainIndexer
 	retriever                                  *retrieveManager
 	stop                                       chan struct{}
 }
 
-func NewLesOdr(db ethdb.Database, config *light.IndexerConfig, retriever *retrieveManager) *LesOdr {
+func NewLesOdr(db energidb.Database, config *light.IndexerConfig, retriever *retrieveManager) *LesOdr {
 	return &LesOdr{
 		db:            db,
 		indexerConfig: config,
@@ -49,7 +65,7 @@ func (odr *LesOdr) Stop() {
 }
 
 // Database returns the backing database
-func (odr *LesOdr) Database() ethdb.Database {
+func (odr *LesOdr) Database() energidb.Database {
 	return odr.db
 }
 

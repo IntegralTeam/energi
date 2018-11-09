@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package api
 
 //go:generate mimegen --types=./../../cmd/swarm/mimegen/mime.types --package=api --out=gen_mime.go
@@ -174,7 +190,7 @@ func (m *MultiResolver) Resolve(addr string) (h common.Hash, err error) {
 	return
 }
 
-// ValidateOwner checks the ENS to validate that the owner of the given domain is the given eth address
+// ValidateOwner checks the ENS to validate that the owner of the given domain is the given energi address
 func (m *MultiResolver) ValidateOwner(name string, address common.Address) (bool, error) {
 	rs, err := m.getResolveValidator(name)
 	if err != nil {
@@ -233,7 +249,7 @@ func (m *MultiResolver) SetNameHash(nameHash func(string) common.Hash) {
 /*
 API implements webserver/file system related content storage and retrieval
 on top of the FileStore
-it is the public interface of the FileStore which is included in the ethereum stack
+it is the public interface of the FileStore which is included in the energi stack
 */
 type API struct {
 	feed      *feed.Handler

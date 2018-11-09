@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package rpc
 
 import (
@@ -51,7 +67,7 @@ func (s *NotificationTestService) SomeSubscription(ctx context.Context, n, val i
 
 	// by explicitly creating an subscription we make sure that the subscription id is send back to the client
 	// before the first subscription.Notify is called. Otherwise the events might be send before the response
-	// for the eth_subscribe method.
+	// for the energi_subscribe method.
 	subscription := notifier.CreateSubscription()
 
 	go func() {
@@ -98,7 +114,7 @@ func TestNotifications(t *testing.T) {
 	server := NewServer()
 	service := &NotificationTestService{unsubscribed: make(chan string)}
 
-	if err := server.RegisterName("eth", service); err != nil {
+	if err := server.RegisterName("energi", service); err != nil {
 		t.Fatalf("unable to register test service %v", err)
 	}
 
@@ -113,7 +129,7 @@ func TestNotifications(t *testing.T) {
 	val := 12345
 	request := map[string]interface{}{
 		"id":      1,
-		"method":  "eth_subscribe",
+		"method":  "energi_subscribe",
 		"version": "2.0",
 		"params":  []interface{}{"someSubscription", n, val},
 	}
@@ -216,7 +232,7 @@ func waitForMessages(t *testing.T, in *json.Decoder, successes chan<- jsonSucces
 // for multiple different namespaces.
 func TestSubscriptionMultipleNamespaces(t *testing.T) {
 	var (
-		namespaces        = []string{"eth", "shh", "bzz"}
+		namespaces        = []string{"energi", "shh", "bzz"}
 		service           = NotificationTestService{}
 		subCount          = len(namespaces) * 2
 		notificationCount = 3

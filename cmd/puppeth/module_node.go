@@ -42,7 +42,7 @@ ADD genesis.json /genesis.json
 RUN \
   echo 'energi --cache 512 init /genesis.json' > energi.sh && \{{if .Unlock}}
 	echo 'mkdir -p /root/.ethereum/keystore/ && cp /signer.json /root/.ethereum/keystore/' >> energi.sh && \{{end}}
-	echo $'exec energi --networkid {{.NetworkID}} --cache 512 --port {{.Port}} --nat extip:{{.IP}} --maxpeers {{.Peers}} {{.LightFlag}} --ethstats \'{{.Ethstats}}\' {{if .Bootnodes}}--bootnodes {{.Bootnodes}}{{end}} {{if .Etherbase}}--miner.etherbase {{.Etherbase}} --mine --miner.threads 1{{end}} {{if .Unlock}}--unlock 0 --password /signer.pass --mine{{end}} --miner.gastarget {{.GasTarget}} --miner.gaslimit {{.GasLimit}} --miner.gasprice {{.GasPrice}}' >> energi.sh
+	echo $'exec energi --networkid {{.NetworkID}} --cache 512 --port {{.Port}} --nat extip:{{.IP}} --maxpeers {{.Peers}} {{.LightFlag}} --energistats \'{{.Ethstats}}\' {{if .Bootnodes}}--bootnodes {{.Bootnodes}}{{end}} {{if .Energibase}}--miner.etherbase {{.Energibase}} --mine --miner.threads 1{{end}} {{if .Unlock}}--unlock 0 --password /signer.pass --mine{{end}} --miner.gastarget {{.GasTarget}} --miner.gaslimit {{.GasLimit}} --miner.gasprice {{.GasPrice}}' >> energi.sh
 
 ENTRYPOINT ["/bin/sh", "energi.sh"]
 `
@@ -66,7 +66,7 @@ services:
       - TOTAL_PEERS={{.TotalPeers}}
       - LIGHT_PEERS={{.LightPeers}}
       - STATS_NAME={{.Ethstats}}
-      - MINER_NAME={{.Etherbase}}
+      - MINER_NAME={{.Energibase}}
       - GAS_TARGET={{.GasTarget}}
       - GAS_LIMIT={{.GasLimit}}
       - GAS_PRICE={{.GasPrice}}
@@ -97,18 +97,18 @@ func deployNode(client *sshClient, network string, bootnodes []string, config *n
 	}
 	dockerfile := new(bytes.Buffer)
 	template.Must(template.New("").Parse(nodeDockerfile)).Execute(dockerfile, map[string]interface{}{
-		"NetworkID": config.network,
-		"Port":      config.port,
-		"IP":        client.address,
-		"Peers":     config.peersTotal,
-		"LightFlag": lightFlag,
-		"Bootnodes": strings.Join(bootnodes, ","),
-		"Ethstats":  config.ethstats,
-		"Etherbase": config.etherbase,
-		"GasTarget": uint64(1000000 * config.gasTarget),
-		"GasLimit":  uint64(1000000 * config.gasLimit),
-		"GasPrice":  uint64(1000000000 * config.gasPrice),
-		"Unlock":    config.keyJSON != "",
+		"NetworkID":  config.network,
+		"Port":       config.port,
+		"IP":         client.address,
+		"Peers":      config.peersTotal,
+		"LightFlag":  lightFlag,
+		"Bootnodes":  strings.Join(bootnodes, ","),
+		"Ethstats":   config.ethstats,
+		"Energibase": config.etherbase,
+		"GasTarget":  uint64(1000000 * config.gasTarget),
+		"GasLimit":   uint64(1000000 * config.gasLimit),
+		"GasPrice":   uint64(1000000000 * config.gasPrice),
+		"Unlock":     config.keyJSON != "",
 	})
 	files[filepath.Join(workdir, "Dockerfile")] = dockerfile.Bytes()
 
@@ -123,7 +123,7 @@ func deployNode(client *sshClient, network string, bootnodes []string, config *n
 		"Light":      config.peersLight > 0,
 		"LightPeers": config.peersLight,
 		"Ethstats":   config.ethstats[:strings.Index(config.ethstats, ":")],
-		"Etherbase":  config.etherbase,
+		"Energibase": config.etherbase,
 		"GasTarget":  config.gasTarget,
 		"GasLimit":   config.gasLimit,
 		"GasPrice":   config.gasPrice,

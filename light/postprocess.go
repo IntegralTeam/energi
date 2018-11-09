@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package light
 
 import (
@@ -29,7 +45,7 @@ import (
 	"github.com/IntegralTeam/energi/core"
 	"github.com/IntegralTeam/energi/core/rawdb"
 	"github.com/IntegralTeam/energi/core/types"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/params"
 	"github.com/IntegralTeam/energi/rlp"
@@ -127,7 +143,7 @@ type ChtNode struct {
 
 // GetChtRoot reads the CHT root associated to the given section from the database
 // Note that sectionIdx is specified according to LES/1 CHT section size.
-func GetChtRoot(db ethdb.Database, sectionIdx uint64, sectionHead common.Hash) common.Hash {
+func GetChtRoot(db energidb.Database, sectionIdx uint64, sectionHead common.Hash) common.Hash {
 	var encNumber [8]byte
 	binary.BigEndian.PutUint64(encNumber[:], sectionIdx)
 	data, _ := db.Get(append(append(chtPrefix, encNumber[:]...), sectionHead.Bytes()...))
@@ -136,7 +152,7 @@ func GetChtRoot(db ethdb.Database, sectionIdx uint64, sectionHead common.Hash) c
 
 // StoreChtRoot writes the CHT root associated to the given section into the database
 // Note that sectionIdx is specified according to LES/1 CHT section size.
-func StoreChtRoot(db ethdb.Database, sectionIdx uint64, sectionHead, root common.Hash) {
+func StoreChtRoot(db energidb.Database, sectionIdx uint64, sectionHead, root common.Hash) {
 	var encNumber [8]byte
 	binary.BigEndian.PutUint64(encNumber[:], sectionIdx)
 	db.Put(append(append(chtPrefix, encNumber[:]...), sectionHead.Bytes()...), root.Bytes())
@@ -144,7 +160,7 @@ func StoreChtRoot(db ethdb.Database, sectionIdx uint64, sectionHead, root common
 
 // ChtIndexerBackend implements core.ChainIndexerBackend.
 type ChtIndexerBackend struct {
-	diskdb, trieTable    ethdb.Database
+	diskdb, trieTable    energidb.Database
 	odr                  OdrBackend
 	triedb               *trie.Database
 	section, sectionSize uint64
@@ -153,8 +169,8 @@ type ChtIndexerBackend struct {
 }
 
 // NewChtIndexer creates a Cht chain indexer
-func NewChtIndexer(db ethdb.Database, odr OdrBackend, size, confirms uint64) *core.ChainIndexer {
-	trieTable := ethdb.NewTable(db, ChtTablePrefix)
+func NewChtIndexer(db energidb.Database, odr OdrBackend, size, confirms uint64) *core.ChainIndexer {
+	trieTable := energidb.NewTable(db, ChtTablePrefix)
 	backend := &ChtIndexerBackend{
 		diskdb:      db,
 		odr:         odr,
@@ -162,7 +178,7 @@ func NewChtIndexer(db ethdb.Database, odr OdrBackend, size, confirms uint64) *co
 		triedb:      trie.NewDatabase(trieTable),
 		sectionSize: size,
 	}
-	return core.NewChainIndexer(db, ethdb.NewTable(db, "chtIndex-"), backend, size, confirms, time.Millisecond*100, "cht")
+	return core.NewChainIndexer(db, energidb.NewTable(db, "chtIndex-"), backend, size, confirms, time.Millisecond*100, "cht")
 }
 
 // fetchMissingNodes tries to retrieve the last entry of the latest trusted CHT from the
@@ -247,7 +263,7 @@ var (
 )
 
 // GetBloomTrieRoot reads the BloomTrie root assoctiated to the given section from the database
-func GetBloomTrieRoot(db ethdb.Database, sectionIdx uint64, sectionHead common.Hash) common.Hash {
+func GetBloomTrieRoot(db energidb.Database, sectionIdx uint64, sectionHead common.Hash) common.Hash {
 	var encNumber [8]byte
 	binary.BigEndian.PutUint64(encNumber[:], sectionIdx)
 	data, _ := db.Get(append(append(bloomTriePrefix, encNumber[:]...), sectionHead.Bytes()...))
@@ -255,7 +271,7 @@ func GetBloomTrieRoot(db ethdb.Database, sectionIdx uint64, sectionHead common.H
 }
 
 // StoreBloomTrieRoot writes the BloomTrie root assoctiated to the given section into the database
-func StoreBloomTrieRoot(db ethdb.Database, sectionIdx uint64, sectionHead, root common.Hash) {
+func StoreBloomTrieRoot(db energidb.Database, sectionIdx uint64, sectionHead, root common.Hash) {
 	var encNumber [8]byte
 	binary.BigEndian.PutUint64(encNumber[:], sectionIdx)
 	db.Put(append(append(bloomTriePrefix, encNumber[:]...), sectionHead.Bytes()...), root.Bytes())
@@ -263,7 +279,7 @@ func StoreBloomTrieRoot(db ethdb.Database, sectionIdx uint64, sectionHead, root 
 
 // BloomTrieIndexerBackend implements core.ChainIndexerBackend
 type BloomTrieIndexerBackend struct {
-	diskdb, trieTable ethdb.Database
+	diskdb, trieTable energidb.Database
 	triedb            *trie.Database
 	odr               OdrBackend
 	section           uint64
@@ -275,8 +291,8 @@ type BloomTrieIndexerBackend struct {
 }
 
 // NewBloomTrieIndexer creates a BloomTrie chain indexer
-func NewBloomTrieIndexer(db ethdb.Database, odr OdrBackend, parentSize, size uint64) *core.ChainIndexer {
-	trieTable := ethdb.NewTable(db, BloomTrieTablePrefix)
+func NewBloomTrieIndexer(db energidb.Database, odr OdrBackend, parentSize, size uint64) *core.ChainIndexer {
+	trieTable := energidb.NewTable(db, BloomTrieTablePrefix)
 	backend := &BloomTrieIndexerBackend{
 		diskdb:     db,
 		odr:        odr,
@@ -287,7 +303,7 @@ func NewBloomTrieIndexer(db ethdb.Database, odr OdrBackend, parentSize, size uin
 	}
 	backend.bloomTrieRatio = size / parentSize
 	backend.sectionHeads = make([]common.Hash, backend.bloomTrieRatio)
-	return core.NewChainIndexer(db, ethdb.NewTable(db, "bltIndex-"), backend, size, 0, time.Millisecond*100, "bloomtrie")
+	return core.NewChainIndexer(db, energidb.NewTable(db, "bltIndex-"), backend, size, 0, time.Millisecond*100, "bloomtrie")
 }
 
 // fetchMissingNodes tries to retrieve the last entries of the latest trusted bloom trie from the

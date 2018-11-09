@@ -34,7 +34,7 @@ import (
 	"github.com/IntegralTeam/energi/core/state"
 	"github.com/IntegralTeam/energi/core/vm"
 	"github.com/IntegralTeam/energi/core/vm/runtime"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/params"
 	cli "gopkg.in/urfave/cli.v1"
@@ -99,12 +99,12 @@ func runCmd(ctx *cli.Context) error {
 	if ctx.GlobalString(GenesisFlag.Name) != "" {
 		gen := readGenesis(ctx.GlobalString(GenesisFlag.Name))
 		genesisConfig = gen
-		db := ethdb.NewMemDatabase()
+		db := energidb.NewMemDatabase()
 		genesis := gen.ToBlock(db)
 		statedb, _ = state.New(genesis.Root(), state.NewDatabase(db))
 		chainConfig = gen.Config
 	} else {
-		statedb, _ = state.New(common.Hash{}, state.NewDatabase(ethdb.NewMemDatabase()))
+		statedb, _ = state.New(common.Hash{}, state.NewDatabase(energidb.NewMemDatabase()))
 		genesisConfig = new(core.Genesis)
 	}
 	if ctx.GlobalString(SenderFlag.Name) != "" {

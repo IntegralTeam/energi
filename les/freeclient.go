@@ -14,7 +14,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package les implements the Light Ethereum Subprotocol.
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
+// Package les implements the Light Energi Subprotocol.
 package les
 
 import (
@@ -25,7 +41,7 @@ import (
 
 	"github.com/IntegralTeam/energi/common/mclock"
 	"github.com/IntegralTeam/energi/common/prque"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/rlp"
 )
@@ -44,7 +60,7 @@ import (
 // value for the client. Currently the LES protocol manager uses IP addresses
 // (without port address) to identify clients.
 type freeClientPool struct {
-	db     ethdb.Database
+	db     energidb.Database
 	lock   sync.Mutex
 	clock  mclock.Clock
 	closed bool
@@ -64,7 +80,7 @@ const (
 )
 
 // newFreeClientPool creates a new free client pool
-func newFreeClientPool(db ethdb.Database, connectedLimit, totalLimit int, clock mclock.Clock) *freeClientPool {
+func newFreeClientPool(db energidb.Database, connectedLimit, totalLimit int, clock mclock.Clock) *freeClientPool {
 	pool := &freeClientPool{
 		db:             db,
 		clock:          clock,

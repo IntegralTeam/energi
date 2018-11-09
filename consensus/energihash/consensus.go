@@ -85,7 +85,7 @@ func (energihash *Energihash) Author(header *types.Header) (common.Address, erro
 }
 
 // VerifyHeader checks whether a header conforms to the consensus rules of the
-// stock Ethereum energihash engine.
+// stock Energi energihash engine.
 func (energihash *Energihash) VerifyHeader(chain consensus.ChainReader, header *types.Header, seal bool) error {
 	// If we're running a full engine faking, accept any input as valid
 	if energihash.config.PowMode == ModeFullFake {
@@ -238,7 +238,7 @@ func (energihash *Energihash) VerifyUncles(chain consensus.ChainReader, block *t
 }
 
 // verifyHeader checks whether a header conforms to the consensus rules of the
-// stock Ethereum energihash engine.
+// stock Energi energihash engine.
 // See YP section 4.3.4. "Block Header Validity"
 func (energihash *Energihash) verifyHeader(chain consensus.ChainReader, header, parent *types.Header, uncle bool, seal bool) error {
 	// Ensure that the header's extra-data section is of a reasonable size
@@ -323,7 +323,6 @@ var (
 	expDiffPeriod = big.NewInt(100000)
 	big1          = big.NewInt(1)
 	big2          = big.NewInt(2)
-	big9          = big.NewInt(9)
 	big60         = big.NewInt(60)
 	bigMinus99    = big.NewInt(-99)
 )
@@ -335,7 +334,7 @@ func calcDifficultyHomestead(time uint64, parent *types.Header) *big.Int {
 	// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2.md
 	// algorithm:
 	// diff = (parent_diff +
-	//         (parent_diff / 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
+	//         (parent_diff / 2048 * max(1 - (block_timestamp - parent_timestamp) // 60, -99))
 	//        ) + 2^(periodCount - 2)
 
 	bigTime := new(big.Int).SetUint64(time)
@@ -354,7 +353,7 @@ func calcDifficultyHomestead(time uint64, parent *types.Header) *big.Int {
 	if x.Cmp(bigMinus99) < 0 {
 		x.Set(bigMinus99)
 	}
-	// (parent_diff + parent_diff // 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
+	// (parent_diff + parent_diff // 2048 * max(1 - (block_timestamp - parent_timestamp) // 60, -99))
 	y.Div(parent.Difficulty, params.DifficultyBoundDivisor)
 	x.Mul(y, x)
 	x.Add(parent.Difficulty, x)

@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package http
 
 import (
@@ -103,7 +119,7 @@ func TestBzzFeedMultihash(t *testing.T) {
 
 	log.Info("added data", "manifest", string(b), "data", common.ToHex(mh))
 
-	topic, _ := feed.NewTopic("foo.eth", nil)
+	topic, _ := feed.NewTopic("foo.energi", nil)
 	updateRequest := feed.NewFirstRequest(topic)
 
 	updateRequest.SetData(mh)
@@ -182,7 +198,7 @@ func TestBzzFeed(t *testing.T) {
 	//data for update 2
 	update2Data := []byte("foo")
 
-	topic, _ := feed.NewTopic("foo.eth", nil)
+	topic, _ := feed.NewTopic("foo.energi", nil)
 	updateRequest := feed.NewFirstRequest(topic)
 	if err != nil {
 		t.Fatal(err)

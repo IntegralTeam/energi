@@ -14,7 +14,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package p2p implements the Ethereum p2p network protocols.
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
+// Package p2p implements the Energi p2p network protocols.
 package p2p
 
 import (
@@ -525,7 +541,7 @@ func (srv *Server) setupDiscovery() error {
 	srv.log.Debug("UDP listener up", "addr", realaddr)
 	if srv.NAT != nil {
 		if !realaddr.IP.IsLoopback() {
-			go nat.Map(srv.NAT, srv.quit, "udp", realaddr.Port, realaddr.Port, "ethereum discovery")
+			go nat.Map(srv.NAT, srv.quit, "udp", realaddr.Port, realaddr.Port, "energi discovery")
 		}
 	}
 	srv.localnode.SetFallbackUDP(realaddr.Port)
@@ -588,7 +604,7 @@ func (srv *Server) setupListening() error {
 	if !laddr.IP.IsLoopback() && srv.NAT != nil {
 		srv.loopWG.Add(1)
 		go func() {
-			nat.Map(srv.NAT, srv.quit, "tcp", laddr.Port, laddr.Port, "ethereum p2p")
+			nat.Map(srv.NAT, srv.quit, "tcp", laddr.Port, laddr.Port, "energi p2p")
 			srv.loopWG.Done()
 		}()
 	}
@@ -1019,7 +1035,7 @@ type NodeInfo struct {
 	ID    string `json:"id"`    // Unique node identifier (also the encryption key)
 	Name  string `json:"name"`  // Name of the node, including client type, version, OS, custom data
 	Enode string `json:"enode"` // Enode URL for adding this peer from remote peers
-	ENR   string `json:"enr"`   // Ethereum Node Record
+	ENR   string `json:"enr"`   // Energi Node Record
 	IP    string `json:"ip"`    // IP address of the node
 	Ports struct {
 		Discovery int `json:"discovery"` // UDP listening port for discovery protocol

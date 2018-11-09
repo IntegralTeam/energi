@@ -14,19 +14,35 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package light
 
 import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/IntegralTeam/energi/consensus/energihash"
 	"testing"
 
-	"github.com/IntegralTeam/energi/consensus/ethash"
 	"github.com/IntegralTeam/energi/core"
 	"github.com/IntegralTeam/energi/core/state"
 	"github.com/IntegralTeam/energi/core/vm"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/params"
 	"github.com/IntegralTeam/energi/trie"
 	"github.com/davecgh/go-spew/spew"
@@ -34,14 +50,14 @@ import (
 
 func TestNodeIterator(t *testing.T) {
 	var (
-		fulldb  = ethdb.NewMemDatabase()
-		lightdb = ethdb.NewMemDatabase()
+		fulldb  = energidb.NewMemDatabase()
+		lightdb = energidb.NewMemDatabase()
 		gspec   = core.Genesis{Alloc: core.GenesisAlloc{testBankAddress: {Balance: testBankFunds}}}
 		genesis = gspec.MustCommit(fulldb)
 	)
 	gspec.MustCommit(lightdb)
-	blockchain, _ := core.NewBlockChain(fulldb, nil, params.TestChainConfig, ethash.NewFullFaker(), vm.Config{}, nil)
-	gchain, _ := core.GenerateChain(params.TestChainConfig, genesis, ethash.NewFaker(), fulldb, 4, testChainGen)
+	blockchain, _ := core.NewBlockChain(fulldb, nil, params.TestChainConfig, energihash.NewFullFaker(), vm.Config{}, nil)
+	gchain, _ := core.GenerateChain(params.TestChainConfig, genesis, energihash.NewFaker(), fulldb, 4, testChainGen)
 	if _, err := blockchain.InsertChain(gchain); err != nil {
 		panic(err)
 	}

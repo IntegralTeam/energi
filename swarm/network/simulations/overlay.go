@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 // You can run this simulation using
 //
 //    go run ./swarm/network/simulations/overlay.go
@@ -34,7 +50,7 @@ import (
 	"github.com/IntegralTeam/energi/p2p/simulations/adapters"
 	"github.com/IntegralTeam/energi/swarm/network"
 	"github.com/IntegralTeam/energi/swarm/state"
-	colorable "github.com/mattn/go-colorable"
+	"github.com/mattn/go-colorable"
 )
 
 var (
@@ -46,13 +62,13 @@ var (
 
 func init() {
 	flag.Parse()
-	//initialize the logger
-	//this is a demonstration on how to use Vmodule for filtering logs
-	//provide -vmodule as param, and comma-separated values, e.g.:
-	//-vmodule overlay_test.go=4,simulations=3
-	//above examples sets overlay_test.go logs to level 4, while packages ending with "simulations" to 3
+	// initialize the logger
+	// this is a demonstration on how to use Vmodule for filtering logs
+	// provide -vmodule as param, and comma-separated values, e.g.:
+	// -vmodule overlay_test.go=4,simulations=3
+	// above examples sets overlay_test.go logs to level 4, while packages ending with "simulations" to 3
 	if *vmodule != "" {
-		//only enable the pattern matching handler if the flag has been provided
+		// only enable the pattern matching handler if the flag has been provided
 		glogger := log.NewGlogHandler(log.StreamHandler(colorable.NewColorableStderr(), log.TerminalFormat(true)))
 		if *verbosity > 0 {
 			glogger.Verbosity(log.Lvl(*verbosity))
@@ -106,7 +122,7 @@ func (s *Simulation) NewService(ctx *adapters.ServiceContext) (node.Service, err
 	return network.NewBzz(config, kad, store, nil, nil), nil
 }
 
-//create the simulation network
+// create the simulation network
 func newSimulationNetwork() *simulations.Network {
 
 	s := NewSimulation()
@@ -120,25 +136,25 @@ func newSimulationNetwork() *simulations.Network {
 	return simNetwork
 }
 
-//return a new http server
+// return a new http server
 func newOverlaySim(sim *simulations.Network) *simulations.Server {
 	return simulations.NewServer(sim)
 }
 
 // var server
 func main() {
-	//cpu optimization
+	// cpu optimization
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	//run the sim
+	// run the sim
 	runOverlaySim()
 }
 
 func runOverlaySim() {
-	//create the simulation network
+	// create the simulation network
 	net := newSimulationNetwork()
-	//create a http server with it
+	// create a http server with it
 	sim := newOverlaySim(net)
 	log.Info(fmt.Sprintf("starting simulation server on 0.0.0.0:%d...", httpSimPort))
-	//start the HTTP server
+	// start the HTTP server
 	http.ListenAndServe(fmt.Sprintf(":%d", httpSimPort), sim)
 }

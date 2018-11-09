@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package console
 
 import (
@@ -32,7 +48,7 @@ import (
 // bridge is a collection of JavaScript utility methods to bride the .js runtime
 // environment and the Go RPC connection backing the remote method calls.
 type bridge struct {
-	client   *rpc.Client  // RPC client to execute Ethereum requests through
+	client   *rpc.Client  // RPC client to execute Energi requests through
 	prompter UserPrompter // Input prompter to allow interactive user feedback
 	printer  io.Writer    // Output writer to serialize any display strings to
 }
@@ -247,7 +263,7 @@ func (b *bridge) SleepBlocks(call otto.FunctionCall) (response otto.Value) {
 	// go through the console, this will allow web3 to call the appropriate
 	// callbacks if a delayed response or notification is received.
 	blockNumber := func() int64 {
-		result, err := call.Otto.Run("eth.blockNumber")
+		result, err := call.Otto.Run("energi.blockNumber")
 		if err != nil {
 			throwJSException(err.Error())
 		}

@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package api
 
 import (
@@ -49,7 +65,7 @@ type Config struct {
 	*network.HiveParams
 	Swap *swap.LocalProfile
 	Pss  *pss.PssParams
-	//*network.SyncParams
+	// *network.SyncParams
 	Contract             common.Address
 	EnsRoot              common.Address
 	EnsAPIs              []string
@@ -73,14 +89,14 @@ type Config struct {
 	privateKey           *ecdsa.PrivateKey
 }
 
-//create a default config with all parameters to set to defaults
+// create a default config with all parameters to set to defaults
 func NewConfig() (c *Config) {
 
 	c = &Config{
 		LocalStoreParams: storage.NewDefaultLocalStoreParams(),
 		FileStoreParams:  storage.NewFileStoreParams(),
 		HiveParams:       network.NewHiveParams(),
-		//SyncParams:    network.NewDefaultSyncParams(),
+		// SyncParams:    network.NewDefaultSyncParams(),
 		Swap:                 swap.NewDefaultSwapParams(),
 		Pss:                  pss.NewPssParams(),
 		ListenAddr:           DefaultHTTPListenAddr,
@@ -101,8 +117,8 @@ func NewConfig() (c *Config) {
 	return
 }
 
-//some config params need to be initialized after the complete
-//config building phase is completed (e.g. due to overriding flags)
+// some config params need to be initialized after the complete
+// config building phase is completed (e.g. due to overriding flags)
 func (c *Config) Init(prvKey *ecdsa.PrivateKey) {
 
 	address := crypto.PubkeyToAddress(prvKey.PublicKey)

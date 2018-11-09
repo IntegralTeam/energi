@@ -13,6 +13,23 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package stream
 
 import (
@@ -47,7 +64,7 @@ type synctestConfig struct {
 	addrs         [][]byte
 	hashes        []storage.Address
 	idToChunksMap map[enode.ID][]int
-	//chunksToNodesMap map[string][]int
+	// chunksToNodesMap map[string][]int
 	addrToIDMap map[string]enode.ID
 }
 
@@ -68,32 +85,32 @@ func dummyRequestFromPeers(_ context.Context, req *network.Request) (*enode.ID, 
 	panic(fmt.Sprintf("unexpected request: address %s, source %s", req.Addr.String(), req.Source.String()))
 }
 
-//This test is a syncing test for nodes.
-//One node is randomly selected to be the pivot node.
-//A configurable number of chunks and nodes can be
-//provided to the test, the number of chunks is uploaded
-//to the pivot node, and we check that nodes get the chunks
-//they are expected to store based on the syncing protocol.
-//Number of chunks and nodes can be provided via commandline too.
+// This test is a syncing test for nodes.
+// One node is randomly selected to be the pivot node.
+// A configurable number of chunks and nodes can be
+// provided to the test, the number of chunks is uploaded
+// to the pivot node, and we check that nodes get the chunks
+// they are expected to store based on the syncing protocol.
+// Number of chunks and nodes can be provided via commandline too.
 func TestSyncingViaGlobalSync(t *testing.T) {
 	if runtime.GOOS == "darwin" && os.Getenv("TRAVIS") == "true" {
 		t.Skip("Flaky on mac on travis")
 	}
-	//if nodes/chunks have been provided via commandline,
-	//run the tests with these values
+	// if nodes/chunks have been provided via commandline,
+	// run the tests with these values
 	if *nodes != 0 && *chunks != 0 {
 		log.Info(fmt.Sprintf("Running test with %d chunks and %d nodes...", *chunks, *nodes))
 		testSyncingViaGlobalSync(t, *chunks, *nodes)
 	} else {
 		var nodeCnt []int
 		var chnkCnt []int
-		//if the `longrunning` flag has been provided
-		//run more test combinations
+		// if the `longrunning` flag has been provided
+		// run more test combinations
 		if *longrunning {
 			chnkCnt = []int{1, 8, 32, 256, 1024}
 			nodeCnt = []int{16, 32, 64, 128, 256}
 		} else {
-			//default test
+			// default test
 			chnkCnt = []int{4, 32}
 			nodeCnt = []int{32, 16}
 		}
@@ -110,8 +127,8 @@ func TestSyncingViaDirectSubscribe(t *testing.T) {
 	if runtime.GOOS == "darwin" && os.Getenv("TRAVIS") == "true" {
 		t.Skip("Flaky on mac on travis")
 	}
-	//if nodes/chunks have been provided via commandline,
-	//run the tests with these values
+	// if nodes/chunks have been provided via commandline,
+	// run the tests with these values
 	if *nodes != 0 && *chunks != 0 {
 		log.Info(fmt.Sprintf("Running test with %d chunks and %d nodes...", *chunks, *nodes))
 		err := testSyncingViaDirectSubscribe(t, *chunks, *nodes)
@@ -121,13 +138,13 @@ func TestSyncingViaDirectSubscribe(t *testing.T) {
 	} else {
 		var nodeCnt []int
 		var chnkCnt []int
-		//if the `longrunning` flag has been provided
-		//run more test combinations
+		// if the `longrunning` flag has been provided
+		// run more test combinations
 		if *longrunning {
 			chnkCnt = []int{1, 8, 32, 256, 1024}
 			nodeCnt = []int{32, 16}
 		} else {
-			//default test
+			// default test
 			chnkCnt = []int{4, 32}
 			nodeCnt = []int{32, 16}
 		}
@@ -189,11 +206,11 @@ func testSyncingViaGlobalSync(t *testing.T, chunkCount int, nodeCount int) {
 	log.Info("Initializing test config")
 
 	conf := &synctestConfig{}
-	//map of discover ID to indexes of chunks expected at that ID
+	// map of discover ID to indexes of chunks expected at that ID
 	conf.idToChunksMap = make(map[enode.ID][]int)
-	//map of overlay address to discover ID
+	// map of overlay address to discover ID
 	conf.addrToIDMap = make(map[string]enode.ID)
-	//array where the generated chunk hashes will be stored
+	// array where the generated chunk hashes will be stored
 	conf.hashes = make([]storage.Address, 0)
 
 	err := sim.UploadSnapshot(fmt.Sprintf("testing/snapshot_%d.json", nodeCount))
@@ -235,18 +252,18 @@ func runSim(conf *synctestConfig, ctx context.Context, sim *simulation.Simulatio
 	return sim.Run(ctx, func(ctx context.Context, sim *simulation.Simulation) error {
 		nodeIDs := sim.UpNodeIDs()
 		for _, n := range nodeIDs {
-			//get the kademlia overlay address from this ID
+			// get the kademlia overlay address from this ID
 			a := n.Bytes()
-			//append it to the array of all overlay addresses
+			// append it to the array of all overlay addresses
 			conf.addrs = append(conf.addrs, a)
-			//the proximity calculation is on overlay addr,
-			//the p2p/simulations check func triggers on enode.ID,
-			//so we need to know which overlay addr maps to which nodeID
+			// the proximity calculation is on overlay addr,
+			// the p2p/simulations check func triggers on enode.ID,
+			// so we need to know which overlay addr maps to which nodeID
 			conf.addrToIDMap[string(a)] = n
 		}
 
-		//get the node at that index
-		//this is the node selected for upload
+		// get the node at that index
+		// this is the node selected for upload
 		node := sim.RandomUpNode()
 		item, ok := sim.NodeItem(node.ID, bucketKeyStore)
 		if !ok {
@@ -288,20 +305,20 @@ func runSim(conf *synctestConfig, ctx context.Context, sim *simulation.Simulatio
 	REPEAT:
 		for {
 			for _, id := range nodeIDs {
-				//for each expected chunk, check if it is in the local store
+				// for each expected chunk, check if it is in the local store
 				localChunks := conf.idToChunksMap[id]
 				for _, ch := range localChunks {
-					//get the real chunk by the index in the index array
+					// get the real chunk by the index in the index array
 					chunk := conf.hashes[ch]
 					log.Trace(fmt.Sprintf("node has chunk: %s:", chunk))
-					//check if the expected chunk is indeed in the localstore
+					// check if the expected chunk is indeed in the localstore
 					var err error
 					if *useMockStore {
-						//use the globalStore if the mockStore should be used; in that case,
-						//the complete localStore stack is bypassed for getting the chunk
+						// use the globalStore if the mockStore should be used; in that case,
+						// the complete localStore stack is bypassed for getting the chunk
 						_, err = globalStore.Get(common.BytesToAddress(id.Bytes()), chunk)
 					} else {
-						//use the actual localstore
+						// use the actual localstore
 						item, ok := sim.NodeItem(id, bucketKeyStore)
 						if !ok {
 							return fmt.Errorf("Error accessing localstore")
@@ -384,11 +401,11 @@ func testSyncingViaDirectSubscribe(t *testing.T, chunkCount int, nodeCount int) 
 	defer cancelSimRun()
 
 	conf := &synctestConfig{}
-	//map of discover ID to indexes of chunks expected at that ID
+	// map of discover ID to indexes of chunks expected at that ID
 	conf.idToChunksMap = make(map[enode.ID][]int)
-	//map of overlay address to discover ID
+	// map of overlay address to discover ID
 	conf.addrToIDMap = make(map[string]enode.ID)
-	//array where the generated chunk hashes will be stored
+	// array where the generated chunk hashes will be stored
 	conf.hashes = make([]storage.Address, 0)
 
 	err := sim.UploadSnapshot(fmt.Sprintf("testing/snapshot_%d.json", nodeCount))
@@ -417,13 +434,13 @@ func testSyncingViaDirectSubscribe(t *testing.T, chunkCount int, nodeCount int) 
 	result := sim.Run(ctx, func(ctx context.Context, sim *simulation.Simulation) error {
 		nodeIDs := sim.UpNodeIDs()
 		for _, n := range nodeIDs {
-			//get the kademlia overlay address from this ID
+			// get the kademlia overlay address from this ID
 			a := n.Bytes()
-			//append it to the array of all overlay addresses
+			// append it to the array of all overlay addresses
 			conf.addrs = append(conf.addrs, a)
-			//the proximity calculation is on overlay addr,
-			//the p2p/simulations check func triggers on enode.ID,
-			//so we need to know which overlay addr maps to which nodeID
+			// the proximity calculation is on overlay addr,
+			// the p2p/simulations check func triggers on enode.ID,
+			// so we need to know which overlay addr maps to which nodeID
 			conf.addrToIDMap[string(a)] = n
 		}
 
@@ -434,7 +451,7 @@ func testSyncingViaDirectSubscribe(t *testing.T, chunkCount int, nodeCount int) 
 
 		for j, node := range nodeIDs {
 			log.Trace(fmt.Sprintf("Start syncing subscriptions: %d", j))
-			//start syncing!
+			// start syncing!
 			item, ok := sim.NodeItem(node, bucketKeyRegistry)
 			if !ok {
 				return fmt.Errorf("No registry")
@@ -446,8 +463,8 @@ func testSyncingViaDirectSubscribe(t *testing.T, chunkCount int, nodeCount int) 
 			if err != nil {
 				return err
 			}
-			//increment the number of subscriptions we need to wait for
-			//by the count returned from startSyncing (SYNC subscriptions)
+			// increment the number of subscriptions we need to wait for
+			// by the count returned from startSyncing (SYNC subscriptions)
 			subscriptionCount += cnt
 		}
 
@@ -460,7 +477,7 @@ func testSyncingViaDirectSubscribe(t *testing.T, chunkCount int, nodeCount int) 
 				break
 			}
 		}
-		//select a random node for upload
+		// select a random node for upload
 		node := sim.RandomUpNode()
 		item, ok := sim.NodeItem(node.ID, bucketKeyStore)
 		if !ok {
@@ -492,20 +509,20 @@ func testSyncingViaDirectSubscribe(t *testing.T, chunkCount int, nodeCount int) 
 	REPEAT:
 		for {
 			for _, id := range nodeIDs {
-				//for each expected chunk, check if it is in the local store
+				// for each expected chunk, check if it is in the local store
 				localChunks := conf.idToChunksMap[id]
 				for _, ch := range localChunks {
-					//get the real chunk by the index in the index array
+					// get the real chunk by the index in the index array
 					chunk := conf.hashes[ch]
 					log.Trace(fmt.Sprintf("node has chunk: %s:", chunk))
-					//check if the expected chunk is indeed in the localstore
+					// check if the expected chunk is indeed in the localstore
 					var err error
 					if *useMockStore {
-						//use the globalStore if the mockStore should be used; in that case,
-						//the complete localStore stack is bypassed for getting the chunk
+						// use the globalStore if the mockStore should be used; in that case,
+						// the complete localStore stack is bypassed for getting the chunk
 						_, err = globalStore.Get(common.BytesToAddress(id.Bytes()), chunk)
 					} else {
-						//use the actual localstore
+						// use the actual localstore
 						item, ok := sim.NodeItem(id, bucketKeyStore)
 						if !ok {
 							return fmt.Errorf("Error accessing localstore")
@@ -534,17 +551,17 @@ func testSyncingViaDirectSubscribe(t *testing.T, chunkCount int, nodeCount int) 
 	return nil
 }
 
-//the server func to start syncing
-//issues `RequestSubscriptionMsg` to peers, based on po, by iterating over
-//the kademlia's `EachBin` function.
-//returns the number of subscriptions requested
+// the server func to start syncing
+// issues `RequestSubscriptionMsg` to peers, based on po, by iterating over
+// the kademlia's `EachBin` function.
+// returns the number of subscriptions requested
 func startSyncing(r *Registry, conf *synctestConfig) (int, error) {
 	var err error
 	kad := r.delivery.kad
 	subCnt := 0
-	//iterate over each bin and solicit needed subscription to bins
+	// iterate over each bin and solicit needed subscription to bins
 	kad.EachBin(r.addr[:], pof, 0, func(conn *network.Peer, po int) bool {
-		//identify begin and start index of the bin(s) we want to subscribe to
+		// identify begin and start index of the bin(s) we want to subscribe to
 		subCnt++
 		err = r.RequestSubscription(conf.addrToIDMap[string(conn.Address())], NewStream("SYNC", FormatSyncBinKey(uint8(po)), true), NewRange(0, 0), High)
 		if err != nil {
@@ -557,10 +574,10 @@ func startSyncing(r *Registry, conf *synctestConfig) (int, error) {
 	return subCnt, nil
 }
 
-//map chunk keys to addresses which are responsible
+// map chunk keys to addresses which are responsible
 func mapKeysToNodes(conf *synctestConfig) {
 	nodemap := make(map[string][]int)
-	//build a pot for chunk hashes
+	// build a pot for chunk hashes
 	np := pot.NewPot(nil, 0)
 	indexmap := make(map[string]int)
 	for i, a := range conf.addrs {
@@ -572,7 +589,7 @@ func mapKeysToNodes(conf *synctestConfig) {
 
 	ppmap := network.NewPeerPotMap(kadMinProxSize, conf.addrs)
 
-	//for each address, run EachNeighbour on the chunk hashes pot to identify closest nodes
+	// for each address, run EachNeighbour on the chunk hashes pot to identify closest nodes
 	log.Trace(fmt.Sprintf("Generated hash chunk(s): %v", conf.hashes))
 	for i := 0; i < len(conf.hashes); i++ {
 		var a []byte
@@ -590,13 +607,13 @@ func mapKeysToNodes(conf *synctestConfig) {
 		}
 	}
 	for addr, chunks := range nodemap {
-		//this selects which chunks are expected to be found with the given node
+		// this selects which chunks are expected to be found with the given node
 		conf.idToChunksMap[conf.addrToIDMap[addr]] = chunks
 	}
 	log.Debug(fmt.Sprintf("Map of expected chunks by ID: %v", conf.idToChunksMap))
 }
 
-//upload a file(chunks) to a single local node store
+// upload a file(chunks) to a single local node store
 func uploadFileToSingleNodeStore(id enode.ID, chunkCount int, lstore *storage.LocalStore) ([]storage.Address, error) {
 	log.Debug(fmt.Sprintf("Uploading to node id: %s", id))
 	fileStore := storage.NewFileStore(lstore, storage.NewFileStoreParams())

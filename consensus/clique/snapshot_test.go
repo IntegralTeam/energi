@@ -27,7 +27,7 @@ import (
 	"github.com/IntegralTeam/energi/core/types"
 	"github.com/IntegralTeam/energi/core/vm"
 	"github.com/IntegralTeam/energi/crypto"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/params"
 )
 
@@ -400,7 +400,7 @@ func TestClique(t *testing.T) {
 			copy(genesis.ExtraData[extraVanity+j*common.AddressLength:], signer[:])
 		}
 		// Create a pristine blockchain with the genesis injected
-		db := ethdb.NewMemDatabase()
+		db := energidb.NewMemDatabase()
 		genesis.Commit(db)
 
 		// Assemble a chain of headers from the cast votes

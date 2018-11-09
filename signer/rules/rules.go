@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package rules
 
 import (
@@ -23,7 +39,7 @@ import (
 	"strings"
 
 	"github.com/IntegralTeam/energi/common"
-	"github.com/IntegralTeam/energi/internal/ethapi"
+	"github.com/IntegralTeam/energi/internal/energiapi"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/signer/core"
 	"github.com/IntegralTeam/energi/signer/rules/deps"
@@ -241,7 +257,7 @@ func (r *rulesetUI) OnSignerStartup(info core.StartupInfo) {
 	}
 }
 
-func (r *rulesetUI) OnApprovedTx(tx ethapi.SignTransactionResult) {
+func (r *rulesetUI) OnApprovedTx(tx energiapi.SignTransactionResult) {
 	jsonTx, err := json.Marshal(tx)
 	if err != nil {
 		log.Warn("failed marshalling transaction", "tx", tx)

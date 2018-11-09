@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package simulation
 
 import (
@@ -195,9 +211,9 @@ func (s *Simulation) AddNodesAndConnectStar(count int, opts ...AddNodeOption) (i
 	return ids, nil
 }
 
-//UploadSnapshot uploads a snapshot to the simulation
-//This method tries to open the json file provided, applies the config to all nodes
-//and then loads the snapshot into the Simulation network
+// UploadSnapshot uploads a snapshot to the simulation
+// This method tries to open the json file provided, applies the config to all nodes
+// and then loads the snapshot into the Simulation network
 func (s *Simulation) UploadSnapshot(snapshotFile string, opts ...AddNodeOption) error {
 	f, err := os.Open(snapshotFile)
 	if err != nil {
@@ -219,9 +235,9 @@ func (s *Simulation) UploadSnapshot(snapshotFile string, opts ...AddNodeOption) 
 		return err
 	}
 
-	//the snapshot probably has the property EnableMsgEvents not set
-	//just in case, set it to true!
-	//(we need this to wait for messages before uploading)
+	// the snapshot probably has the property EnableMsgEvents not set
+	// just in case, set it to true!
+	// (we need this to wait for messages before uploading)
 	for _, n := range snap.Nodes {
 		n.Node.Config.EnableMsgEvents = true
 		n.Node.Config.Services = s.serviceNames
@@ -232,7 +248,7 @@ func (s *Simulation) UploadSnapshot(snapshotFile string, opts ...AddNodeOption) 
 
 	log.Info("Waiting for p2p connections to be established...")
 
-	//now we can load the snapshot
+	// now we can load the snapshot
 	err = s.Net.Load(&snap)
 	if err != nil {
 		return err

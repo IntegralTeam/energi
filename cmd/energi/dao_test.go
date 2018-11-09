@@ -25,7 +25,7 @@ import (
 
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/core/rawdb"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/params"
 )
 
@@ -121,7 +121,7 @@ func testDAOForkBlockNewChain(t *testing.T, test int, genesis string, expectBloc
 	}
 	// Retrieve the DAO config flag from the database
 	path := filepath.Join(datadir, "energi", "chaindata")
-	db, err := ethdb.NewLDBDatabase(path, 0, 0)
+	db, err := energidb.NewLDBDatabase(path, 0, 0)
 	if err != nil {
 		t.Fatalf("test %d: failed to open test database: %v", test, err)
 	}

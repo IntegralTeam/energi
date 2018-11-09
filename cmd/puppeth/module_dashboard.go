@@ -117,7 +117,7 @@ var dashboardContent = `
 										<br/>
 										<p>To run an archive node, download <a href="/{{.GethGenesis}}"><code>{{.GethGenesis}}</code></a> and start Geth with:
 											<pre>energi --datadir=$HOME/.{{.Network}} init {{.GethGenesis}}</pre>
-											<pre>energi --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=1024 --syncmode=full{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
+											<pre>energi --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=1024 --syncmode=full{{if .Ethstats}} --energistats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
 										</p>
 										<br/>
 										<p>You can download Geth from <a href="https://energi.ethereum.org/downloads/" target="about:blank">https://energi.ethereum.org/downloads/</a>.</p>
@@ -136,7 +136,7 @@ var dashboardContent = `
 										<br/>
 										<p>To run a full node, download <a href="/{{.GethGenesis}}"><code>{{.GethGenesis}}</code></a> and start Geth with:
 											<pre>energi --datadir=$HOME/.{{.Network}} init {{.GethGenesis}}</pre>
-											<pre>energi --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=512{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
+											<pre>energi --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=512{{if .Ethstats}} --energistats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
 										</p>
 										<br/>
 										<p>You can download Geth from <a href="https://energi.ethereum.org/downloads/" target="about:blank">https://energi.ethereum.org/downloads/</a>.</p>
@@ -158,7 +158,7 @@ var dashboardContent = `
 										<br/>
 										<p>To run a light node, download <a href="/{{.GethGenesis}}"><code>{{.GethGenesis}}</code></a> and start Geth with:
 											<pre>energi --datadir=$HOME/.{{.Network}} init {{.GethGenesis}}</pre>
-											<pre>energi --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --syncmode=light{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
+											<pre>energi --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --syncmode=light{{if .Ethstats}} --energistats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
 										</p>
 										<br/>
 										<p>You can download Geth from <a href="https://energi.ethereum.org/downloads/" target="about:blank">https://energi.ethereum.org/downloads/</a>.</p>
@@ -177,7 +177,7 @@ var dashboardContent = `
 										<br/>
 										<p>To run an embedded node, download <a href="/{{.GethGenesis}}"><code>{{.GethGenesis}}</code></a> and start Geth with:
 											<pre>energi --datadir=$HOME/.{{.Network}} init {{.GethGenesis}}</pre>
-											<pre>energi --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=16 --ethash.cachesinmem=1 --syncmode=light{{if .Ethstats}} --ethstats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
+											<pre>energi --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=16 --ethash.cachesinmem=1 --syncmode=light{{if .Ethstats}} --energistats='{{.Ethstats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
 										</p>
 										<br/>
 										<p>You can download Geth from <a href="https://energi.ethereum.org/downloads/" target="about:blank">https://energi.ethereum.org/downloads/</a>.</p>
@@ -208,7 +208,7 @@ var dashboardContent = `
 											<pre>energi --datadir=$HOME/.{{.Network}} init {{.GethGenesis}}</pre>
 										</p>
 										<p>With your local chain initialized, you can start the Ethereum Wallet:
-											<pre>ethereumwallet --rpc $HOME/.{{.Network}}/energi.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Ethstats}} --node-ethstats='{{.Ethstats}}'{{end}} --node-bootnodes={{.BootnodesFlat}}</pre>
+											<pre>ethereumwallet --rpc $HOME/.{{.Network}}/energi.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Ethstats}} --node-energistats='{{.Ethstats}}'{{end}} --node-bootnodes={{.BootnodesFlat}}</pre>
 										<p>
 										<br/>
 										<p>You can download the Ethereum Wallet from <a href="https://github.com/ethereum/mist/releases" target="about:blank">https://github.com/ethereum/mist/releases</a>.</p>
@@ -229,7 +229,7 @@ var dashboardContent = `
 											<pre>energi --datadir=$HOME/.{{.Network}} init {{.GethGenesis}}</pre>
 										</p>
 										<p>With your local chain initialized, you can start Mist:
-											<pre>mist --rpc $HOME/.{{.Network}}/energi.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Ethstats}} --node-ethstats='{{.Ethstats}}'{{end}} --node-bootnodes={{.BootnodesFlat}}</pre>
+											<pre>mist --rpc $HOME/.{{.Network}}/energi.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Ethstats}} --node-energistats='{{.Ethstats}}'{{end}} --node-bootnodes={{.BootnodesFlat}}</pre>
 										<p>
 										<br/>
 										<p>You can download the Mist browser from <a href="https://github.com/ethereum/mist/releases" target="about:blank">https://github.com/ethereum/mist/releases</a>.</p>
@@ -334,7 +334,7 @@ try! node?.start();
 										<p>C++ Ethereum is the third most popular of the Ethereum clients, focusing on code portability to a broad range of operating systems and hardware. The client is currently a full node with transaction processing based synchronization.</p>
 										<br/>
 										<p>To run a cpp-ethereum node, download <a href="/{{.CppGenesis}}"><code>{{.CppGenesis}}</code></a> and start the node with:
-											<pre>eth --config {{.CppGenesis}} --datadir $HOME/.{{.Network}} --peerset "{{.CppBootnodes}}"</pre>
+											<pre>energi --config {{.CppGenesis}} --datadir $HOME/.{{.Network}} --peerset "{{.CppBootnodes}}"</pre>
 										</p>
 										<br/>
 										<p>You can find cpp-ethereum at <a href="https://github.com/ethereum/cpp-ethereum/" target="about:blank">https://github.com/ethereum/cpp-ethereum/</a>.</p>
@@ -398,7 +398,7 @@ try! node?.start();
 										<br/>
 										<p>To run a pyethapp node, download <a href="/{{.PythonGenesis}}"><code>{{.PythonGenesis}}</code></a> and start the node with:
 											<pre>mkdir -p $HOME/.config/pyethapp/{{.Network}}</pre>
-											<pre>pyethapp -c eth.genesis="$(cat {{.PythonGenesis}})" -c eth.network_id={{.NetworkID}} -c data_dir=$HOME/.config/pyethapp/{{.Network}} -c discovery.bootstrap_nodes="[{{.PythonBootnodes}}]" -c eth.block.HOMESTEAD_FORK_BLKNUM={{.Homestead}} -c eth.block.ANTI_DOS_FORK_BLKNUM={{.Tangerine}} -c eth.block.SPURIOUS_DRAGON_FORK_BLKNUM={{.Spurious}} -c eth.block.METROPOLIS_FORK_BLKNUM={{.Byzantium}} -c eth.block.DAO_FORK_BLKNUM=18446744073709551615 run --console</pre>
+											<pre>pyethapp -c energi.genesis="$(cat {{.PythonGenesis}})" -c energi.network_id={{.NetworkID}} -c data_dir=$HOME/.config/pyethapp/{{.Network}} -c discovery.bootstrap_nodes="[{{.PythonBootnodes}}]" -c energi.block.HOMESTEAD_FORK_BLKNUM={{.Homestead}} -c energi.block.ANTI_DOS_FORK_BLKNUM={{.Tangerine}} -c energi.block.SPURIOUS_DRAGON_FORK_BLKNUM={{.Spurious}} -c energi.block.METROPOLIS_FORK_BLKNUM={{.Byzantium}} -c energi.block.DAO_FORK_BLKNUM=18446744073709551615 run --console</pre>
 										</p>
 										<br/>
 										<p>You can find pyethapp at <a href="https://github.com/ethereum/pyethapp/" target="about:blank">https://github.com/ethereum/pyethapp/</a>.</p>
@@ -416,7 +416,7 @@ try! node?.start();
 										<div class="clearfix"></div>
 									</div>
 									<div style="display: inline-block; vertical-align: bottom; width: 623px; margin-top: 16px;">
-										<p>Puppeth is a tool to aid you in creating a new Ethereum network down to the genesis block, bootnodes, signers, ethstats server, crypto faucet, wallet browsers, block explorer, dashboard and more; without the hassle that it would normally entail to manually configure all these services one by one.</p>
+										<p>Puppeth is a tool to aid you in creating a new Ethereum network down to the genesis block, bootnodes, signers, energistats server, crypto faucet, wallet browsers, block explorer, dashboard and more; without the hassle that it would normally entail to manually configure all these services one by one.</p>
 										<p>Puppeth uses ssh to dial in to remote servers, and builds its network components out of docker containers using docker-compose. The user is guided through the process via a command line wizard that does the heavy lifting and topology configuration automatically behind the scenes.</p>
 										<br/>
 										<p>Puppeth is distributed as part of the <a href="https://energi.ethereum.org/downloads/" target="about:blank">Geth &amp; Tools</a> bundles, but can also be installed separately via:<pre>go get github.com/IntegralTeam/energi/cmd/puppeth</pre></p>
@@ -712,7 +712,7 @@ func (info *dashboardInfos) Report() map[string]string {
 // checkDashboard does a health-check against a dashboard container to verify if
 // it's running, and if yes, gathering a collection of useful infos about it.
 func checkDashboard(client *sshClient, network string) (*dashboardInfos, error) {
-	// Inspect a possible ethstats container on the host
+	// Inspect a possible energistats container on the host
 	infos, err := inspectContainer(client, fmt.Sprintf("%s_dashboard_1", network))
 	if err != nil {
 		return nil, err

@@ -104,13 +104,13 @@ func (w *wizard) gatherStats(server string, pubkey []byte, client *sshClient) *s
 	} else {
 		stat.services["nginx"] = infos.Report()
 	}
-	logger.Debug("Checking for ethstats availability")
+	logger.Debug("Checking for energistats availability")
 	if infos, err := checkEthstats(client, w.network); err != nil {
 		if err != ErrServiceUnknown {
-			stat.services["ethstats"] = map[string]string{"offline": err.Error()}
+			stat.services["energistats"] = map[string]string{"offline": err.Error()}
 		}
 	} else {
-		stat.services["ethstats"] = infos.Report()
+		stat.services["energistats"] = infos.Report()
 		ethstats = infos.config
 	}
 	logger.Debug("Checking for bootnode availability")

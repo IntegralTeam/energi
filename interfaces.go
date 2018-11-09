@@ -14,8 +14,24 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package ethereum defines interfaces for interacting with Ethereum.
-package ethereum
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
+// Package energi defines interfaces for interacting with Energi.
+package energi
 
 import (
 	"context"
@@ -96,7 +112,7 @@ type ChainStateReader interface {
 }
 
 // SyncProgress gives progress indications when the node is synchronising with
-// the Ethereum network.
+// the Energi network.
 type SyncProgress struct {
 	StartingBlock uint64 // Block number where sync began
 	CurrentBlock  uint64 // Current block number where sync is at
@@ -131,7 +147,7 @@ type ContractCaller interface {
 
 // FilterQuery contains options for contract log filtering.
 type FilterQuery struct {
-	BlockHash *common.Hash     // used by eth_getLogs, return logs only from block with this hash
+	BlockHash *common.Hash     // used by energi_getLogs, return logs only from block with this hash
 	FromBlock *big.Int         // beginning of the queried range, nil means genesis block
 	ToBlock   *big.Int         // end of the range, nil means latest block
 	Addresses []common.Address // restricts matches to events created by specific contracts

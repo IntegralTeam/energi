@@ -68,7 +68,7 @@ The security model of the signer is as follows:
 The general flow for signing a transaction using e.g. energi is as follows:
 ![image](sign_flow.png)
 
-In this case, `energi` would be started with `--externalsigner=http://localhost:8550` and would relay requests to `eth.sendTransaction`.
+In this case, `energi` would be started with `--externalsigner=http://localhost:8550` and would relay requests to `energi.sendTransaction`.
 
 ## TODOs
 

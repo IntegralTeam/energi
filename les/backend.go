@@ -14,7 +14,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package les implements the Light Ethereum Subprotocol.
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
+// Package les implements the Light Energi Subprotocol.
 package les
 
 import (
@@ -30,12 +46,12 @@ import (
 	"github.com/IntegralTeam/energi/core/bloombits"
 	"github.com/IntegralTeam/energi/core/rawdb"
 	"github.com/IntegralTeam/energi/core/types"
-	"github.com/IntegralTeam/energi/eth"
-	"github.com/IntegralTeam/energi/eth/downloader"
-	"github.com/IntegralTeam/energi/eth/filters"
-	"github.com/IntegralTeam/energi/eth/gasprice"
+	"github.com/IntegralTeam/energi/energi"
+	"github.com/IntegralTeam/energi/energi/downloader"
+	"github.com/IntegralTeam/energi/energi/filters"
+	"github.com/IntegralTeam/energi/energi/gasprice"
 	"github.com/IntegralTeam/energi/event"
-	"github.com/IntegralTeam/energi/internal/ethapi"
+	"github.com/IntegralTeam/energi/internal/energiapi"
 	"github.com/IntegralTeam/energi/light"
 	"github.com/IntegralTeam/energi/log"
 	"github.com/IntegralTeam/energi/node"
@@ -45,7 +61,7 @@ import (
 	rpc "github.com/IntegralTeam/energi/rpc"
 )
 
-type LightEthereum struct {
+type LightEnergi struct {
 	lesCommons
 
 	odr         *LesOdr
@@ -72,13 +88,13 @@ type LightEthereum struct {
 	accountManager *accounts.Manager
 
 	networkId     uint64
-	netRPCService *ethapi.PublicNetAPI
+	netRPCService *energiapi.PublicNetAPI
 
 	wg sync.WaitGroup
 }
 
-func New(ctx *node.ServiceContext, config *eth.Config) (*LightEthereum, error) {
-	chainDb, err := eth.CreateDB(ctx, config, "lightchaindata")
+func New(ctx *node.ServiceContext, config *energi.Config) (*LightEnergi, error) {
+	chainDb, err := energi.CreateDB(ctx, config, "lightchaindata")
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +107,7 @@ func New(ctx *node.ServiceContext, config *eth.Config) (*LightEthereum, error) {
 	peers := newPeerSet()
 	quitSync := make(chan struct{})
 
-	leth := &LightEthereum{
+	lenergi := &LightEnergi{
 		lesCommons: lesCommons{
 			chainDb: chainDb,
 			config:  config,
@@ -102,50 +118,50 @@ func New(ctx *node.ServiceContext, config *eth.Config) (*LightEthereum, error) {
 		peers:          peers,
 		reqDist:        newRequestDistributor(peers, quitSync),
 		accountManager: ctx.AccountManager,
-		engine:         eth.CreateConsensusEngine(ctx, chainConfig, &config.Ethash, nil, false, chainDb),
+		engine:         energi.CreateConsensusEngine(ctx, chainConfig, *config, chainDb),
 		shutdownChan:   make(chan bool),
 		networkId:      config.NetworkId,
 		bloomRequests:  make(chan chan *bloombits.Retrieval),
-		bloomIndexer:   eth.NewBloomIndexer(chainDb, params.BloomBitsBlocksClient, params.HelperTrieConfirmations),
+		bloomIndexer:   energi.NewBloomIndexer(chainDb, params.BloomBitsBlocksClient, params.HelperTrieConfirmations),
 	}
 
-	leth.relay = NewLesTxRelay(peers, leth.reqDist)
-	leth.serverPool = newServerPool(chainDb, quitSync, &leth.wg)
-	leth.retriever = newRetrieveManager(peers, leth.reqDist, leth.serverPool)
+	lenergi.relay = NewLesTxRelay(peers, lenergi.reqDist)
+	lenergi.serverPool = newServerPool(chainDb, quitSync, &lenergi.wg)
+	lenergi.retriever = newRetrieveManager(peers, lenergi.reqDist, lenergi.serverPool)
 
-	leth.odr = NewLesOdr(chainDb, light.DefaultClientIndexerConfig, leth.retriever)
-	leth.chtIndexer = light.NewChtIndexer(chainDb, leth.odr, params.CHTFrequencyClient, params.HelperTrieConfirmations)
-	leth.bloomTrieIndexer = light.NewBloomTrieIndexer(chainDb, leth.odr, params.BloomBitsBlocksClient, params.BloomTrieFrequency)
-	leth.odr.SetIndexers(leth.chtIndexer, leth.bloomTrieIndexer, leth.bloomIndexer)
+	lenergi.odr = NewLesOdr(chainDb, light.DefaultClientIndexerConfig, lenergi.retriever)
+	lenergi.chtIndexer = light.NewChtIndexer(chainDb, lenergi.odr, params.CHTFrequencyClient, params.HelperTrieConfirmations)
+	lenergi.bloomTrieIndexer = light.NewBloomTrieIndexer(chainDb, lenergi.odr, params.BloomBitsBlocksClient, params.BloomTrieFrequency)
+	lenergi.odr.SetIndexers(lenergi.chtIndexer, lenergi.bloomTrieIndexer, lenergi.bloomIndexer)
 
 	// Note: NewLightChain adds the trusted checkpoint so it needs an ODR with
 	// indexers already set but not started yet
-	if leth.blockchain, err = light.NewLightChain(leth.odr, leth.chainConfig, leth.engine); err != nil {
+	if lenergi.blockchain, err = light.NewLightChain(lenergi.odr, lenergi.chainConfig, lenergi.engine); err != nil {
 		return nil, err
 	}
 	// Note: AddChildIndexer starts the update process for the child
-	leth.bloomIndexer.AddChildIndexer(leth.bloomTrieIndexer)
-	leth.chtIndexer.Start(leth.blockchain)
-	leth.bloomIndexer.Start(leth.blockchain)
+	lenergi.bloomIndexer.AddChildIndexer(lenergi.bloomTrieIndexer)
+	lenergi.chtIndexer.Start(lenergi.blockchain)
+	lenergi.bloomIndexer.Start(lenergi.blockchain)
 
 	// Rewind the chain in case of an incompatible config upgrade.
 	if compat, ok := genesisErr.(*params.ConfigCompatError); ok {
 		log.Warn("Rewinding chain to upgrade configuration", "err", compat)
-		leth.blockchain.SetHead(compat.RewindTo)
+		lenergi.blockchain.SetHead(compat.RewindTo)
 		rawdb.WriteChainConfig(chainDb, genesisHash, chainConfig)
 	}
 
-	leth.txPool = light.NewTxPool(leth.chainConfig, leth.blockchain, leth.relay)
-	if leth.protocolManager, err = NewProtocolManager(leth.chainConfig, light.DefaultClientIndexerConfig, true, config.NetworkId, leth.eventMux, leth.engine, leth.peers, leth.blockchain, nil, chainDb, leth.odr, leth.relay, leth.serverPool, quitSync, &leth.wg); err != nil {
+	lenergi.txPool = light.NewTxPool(lenergi.chainConfig, lenergi.blockchain, lenergi.relay)
+	if lenergi.protocolManager, err = NewProtocolManager(lenergi.chainConfig, light.DefaultClientIndexerConfig, true, config.NetworkId, lenergi.eventMux, lenergi.engine, lenergi.peers, lenergi.blockchain, nil, chainDb, lenergi.odr, lenergi.relay, lenergi.serverPool, quitSync, &lenergi.wg); err != nil {
 		return nil, err
 	}
-	leth.ApiBackend = &LesApiBackend{leth, nil}
+	lenergi.ApiBackend = &LesApiBackend{lenergi, nil}
 	gpoParams := config.GPO
 	if gpoParams.Default == nil {
 		gpoParams.Default = config.MinerGasPrice
 	}
-	leth.ApiBackend.gpo = gasprice.NewOracle(leth.ApiBackend, gpoParams)
-	return leth, nil
+	lenergi.ApiBackend.gpo = gasprice.NewOracle(lenergi.ApiBackend, gpoParams)
+	return lenergi, nil
 }
 
 func lesTopic(genesisHash common.Hash, protocolVersion uint) discv5.Topic {
@@ -163,12 +179,12 @@ func lesTopic(genesisHash common.Hash, protocolVersion uint) discv5.Topic {
 
 type LightDummyAPI struct{}
 
-// Etherbase is the address that mining rewards will be send to
-func (s *LightDummyAPI) Etherbase() (common.Address, error) {
+// Energibase is the address that mining rewards will be send to
+func (s *LightDummyAPI) Energibase() (common.Address, error) {
 	return common.Address{}, fmt.Errorf("not supported")
 }
 
-// Coinbase is the address that mining rewards will be send to (alias for Etherbase)
+// Coinbase is the address that mining rewards will be send to (alias for Energibase)
 func (s *LightDummyAPI) Coinbase() (common.Address, error) {
 	return common.Address{}, fmt.Errorf("not supported")
 }
@@ -183,80 +199,82 @@ func (s *LightDummyAPI) Mining() bool {
 	return false
 }
 
-// APIs returns the collection of RPC services the ethereum package offers.
+// APIs returns the collection of RPC services the energi package offers.
 // NOTE, some of these services probably need to be moved to somewhere else.
-func (s *LightEthereum) APIs() []rpc.API {
-	return append(ethapi.GetAPIs(s.ApiBackend), []rpc.API{
+func (energi *LightEnergi) APIs() []rpc.API {
+	return append(energiapi.GetAPIs(energi.ApiBackend), []rpc.API{
 		{
-			Namespace: "eth",
+			Namespace: "energi",
 			Version:   "1.0",
 			Service:   &LightDummyAPI{},
 			Public:    true,
 		}, {
-			Namespace: "eth",
+			Namespace: "energi",
 			Version:   "1.0",
-			Service:   downloader.NewPublicDownloaderAPI(s.protocolManager.downloader, s.eventMux),
+			Service:   downloader.NewPublicDownloaderAPI(energi.protocolManager.downloader, energi.eventMux),
 			Public:    true,
 		}, {
-			Namespace: "eth",
+			Namespace: "energi",
 			Version:   "1.0",
-			Service:   filters.NewPublicFilterAPI(s.ApiBackend, true),
+			Service:   filters.NewPublicFilterAPI(energi.ApiBackend, true),
 			Public:    true,
 		}, {
 			Namespace: "net",
 			Version:   "1.0",
-			Service:   s.netRPCService,
+			Service:   energi.netRPCService,
 			Public:    true,
 		},
 	}...)
 }
 
-func (s *LightEthereum) ResetWithGenesisBlock(gb *types.Block) {
-	s.blockchain.ResetWithGenesisBlock(gb)
+func (energi *LightEnergi) ResetWithGenesisBlock(gb *types.Block) {
+	energi.blockchain.ResetWithGenesisBlock(gb)
 }
 
-func (s *LightEthereum) BlockChain() *light.LightChain      { return s.blockchain }
-func (s *LightEthereum) TxPool() *light.TxPool              { return s.txPool }
-func (s *LightEthereum) Engine() consensus.Engine           { return s.engine }
-func (s *LightEthereum) LesVersion() int                    { return int(ClientProtocolVersions[0]) }
-func (s *LightEthereum) Downloader() *downloader.Downloader { return s.protocolManager.downloader }
-func (s *LightEthereum) EventMux() *event.TypeMux           { return s.eventMux }
+func (energi *LightEnergi) BlockChain() *light.LightChain { return energi.blockchain }
+func (energi *LightEnergi) TxPool() *light.TxPool         { return energi.txPool }
+func (energi *LightEnergi) Engine() consensus.Engine      { return energi.engine }
+func (energi *LightEnergi) LesVersion() int               { return int(ClientProtocolVersions[0]) }
+func (energi *LightEnergi) Downloader() *downloader.Downloader {
+	return energi.protocolManager.downloader
+}
+func (energi *LightEnergi) EventMux() *event.TypeMux { return energi.eventMux }
 
 // Protocols implements node.Service, returning all the currently configured
 // network protocols to start.
-func (s *LightEthereum) Protocols() []p2p.Protocol {
-	return s.makeProtocols(ClientProtocolVersions)
+func (energi *LightEnergi) Protocols() []p2p.Protocol {
+	return energi.makeProtocols(ClientProtocolVersions)
 }
 
 // Start implements node.Service, starting all internal goroutines needed by the
-// Ethereum protocol implementation.
-func (s *LightEthereum) Start(srvr *p2p.Server) error {
+// Energi protocol implementation.
+func (energi *LightEnergi) Start(srvr *p2p.Server) error {
 	log.Warn("Light client mode is an experimental feature")
-	s.startBloomHandlers(params.BloomBitsBlocksClient)
-	s.netRPCService = ethapi.NewPublicNetAPI(srvr, s.networkId)
+	energi.startBloomHandlers(params.BloomBitsBlocksClient)
+	energi.netRPCService = energiapi.NewPublicNetAPI(srvr, energi.networkId)
 	// clients are searching for the first advertised protocol in the list
 	protocolVersion := AdvertiseProtocolVersions[0]
-	s.serverPool.start(srvr, lesTopic(s.blockchain.Genesis().Hash(), protocolVersion))
-	s.protocolManager.Start(s.config.LightPeers)
+	energi.serverPool.start(srvr, lesTopic(energi.blockchain.Genesis().Hash(), protocolVersion))
+	energi.protocolManager.Start(energi.config.LightPeers)
 	return nil
 }
 
 // Stop implements node.Service, terminating all internal goroutines used by the
-// Ethereum protocol.
-func (s *LightEthereum) Stop() error {
-	s.odr.Stop()
-	s.bloomIndexer.Close()
-	s.chtIndexer.Close()
-	s.blockchain.Stop()
-	s.protocolManager.Stop()
-	s.txPool.Stop()
-	s.engine.Close()
+// Energi protocol.
+func (energi *LightEnergi) Stop() error {
+	energi.odr.Stop()
+	energi.bloomIndexer.Close()
+	energi.chtIndexer.Close()
+	energi.blockchain.Stop()
+	energi.protocolManager.Stop()
+	energi.txPool.Stop()
+	energi.engine.Close()
 
-	s.eventMux.Stop()
+	energi.eventMux.Stop()
 
 	time.Sleep(time.Millisecond * 200)
-	s.chainDb.Close()
-	close(s.shutdownChan)
+	energi.chainDb.Close()
+	close(energi.shutdownChan)
 
 	return nil
 }

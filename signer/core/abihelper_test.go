@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package core
 
 import (
@@ -112,7 +128,7 @@ func TestCalldataDecoding(t *testing.T) {
 	{"type":"function","name":"issue","inputs":[{"name":"a","type":"address[]"},{"name":"a","type":"uint256"}]},
 	{"type":"function","name":"sam","inputs":[{"name":"a","type":"bytes"},{"name":"a","type":"bool"},{"name":"a","type":"uint256[]"}]}
 ]`
-	//Expected failures
+	// Expected failures
 	for i, hexdata := range []string{
 		"a52c101e00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000042",
 		"a52c101e000000000000000000000000000000000000000000000000000000000000001200",
@@ -123,9 +139,9 @@ func TestCalldataDecoding(t *testing.T) {
 		// Too short
 		"751e10790000000000000000000000000000000000000000000000000000000000000012",
 		"751e1079FFffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-		//Not valid multiple of 32
+		// Not valid multiple of 32
 		"deadbeef00000000000000000000000000000000000000000000000000000000000000",
-		//Too short 'issue'
+		// Too short 'issue'
 		"42958b5400000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000042",
 		// Too short compareAndApprove
 		"a52c101e00ff0000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000042",
@@ -138,7 +154,7 @@ func TestCalldataDecoding(t *testing.T) {
 			t.Errorf("test %d: expected decoding to fail: %s", i, hexdata)
 		}
 	}
-	//Expected success
+	// Expected success
 	for i, hexdata := range []string{
 		// From https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI
 		"a5643bf20000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000464617665000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003",
@@ -148,7 +164,7 @@ func TestCalldataDecoding(t *testing.T) {
 		"42958b54" +
 			// start of dynamic type
 			"0000000000000000000000000000000000000000000000000000000000000040" +
-			//uint256
+			// uint256
 			"0000000000000000000000000000000000000000000000000000000000000001" +
 			// length of  array
 			"0000000000000000000000000000000000000000000000000000000000000002" +
@@ -224,7 +240,7 @@ func TestCustomABI(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Should find a match for abi signature, got: %v", err)
 	}
-	//Check that it wrote to file
+	// Check that it wrote to file
 	abidb2, err := NewAbiDBFromFile(filename)
 	if err != nil {
 		t.Fatalf("Failed to create new abidb: %v", err)

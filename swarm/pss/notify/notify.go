@@ -182,7 +182,7 @@ func (c *Controller) Unsubscribe(name string) error {
 // It takes a name as identifier for the resource, a threshold indicating the granularity of the subscription address bin
 // It then starts an event loop which listens to the supplied update channel and executes notifications on channel receives
 // Fails if a notifier already is registered on the name
-//func (c *Controller) NewNotifier(name string, threshold int, contentFunc func(string) ([]byte, error)) error {
+// func (c *Controller) NewNotifier(name string, threshold int, contentFunc func(string) ([]byte, error)) error {
 func (c *Controller) NewNotifier(name string, threshold int, updateC <-chan []byte) (func(), error) {
 	c.mu.Lock()
 	if c.isActive(name) {
@@ -196,7 +196,7 @@ func (c *Controller) NewNotifier(name string, threshold int, updateC <-chan []by
 		threshold: threshold,
 		updateC:   updateC,
 		quitC:     quitC,
-		//contentFunc: contentFunc,
+		// contentFunc: contentFunc,
 	}
 	c.mu.Unlock()
 	go func() {

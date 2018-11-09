@@ -20,13 +20,13 @@ import (
 	"testing"
 
 	"github.com/IntegralTeam/energi/common"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 )
 
 var addr = common.BytesToAddress([]byte("test"))
 
 func create() (*ManagedState, *account) {
-	statedb, _ := New(common.Hash{}, NewDatabase(ethdb.NewMemDatabase()))
+	statedb, _ := New(common.Hash{}, NewDatabase(energidb.NewMemDatabase()))
 	ms := ManageState(statedb)
 	ms.StateDB.SetNonce(addr, 100)
 	ms.accounts[addr] = newAccount(ms.StateDB.getStateObject(addr))

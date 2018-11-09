@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 // This file contains the implementation for interacting with the Trezor hardware
 // wallets. The wire protocol spec can be found on the SatoshiLabs website:
 // https://doc.satoshilabs.com/trezor-tech/api-protobuf.html
@@ -64,7 +80,7 @@ func newTrezorDriver(logger log.Logger) driver {
 }
 
 // Status implements accounts.Wallet, always whether the Trezor is opened, closed
-// or whether the Ethereum app was not started on it.
+// or whether the Energi app was not started on it.
 func (w *trezorDriver) Status() (string, error) {
 	if w.failure != nil {
 		return fmt.Sprintf("Failed: %v", w.failure), w.failure
@@ -145,7 +161,7 @@ func (w *trezorDriver) Heartbeat() error {
 }
 
 // Derive implements usbwallet.driver, sending a derivation request to the Trezor
-// and returning the Ethereum address located on that derivation path.
+// and returning the Energi address located on that derivation path.
 func (w *trezorDriver) Derive(path accounts.DerivationPath) (common.Address, error) {
 	return w.trezorDerive(path)
 }
@@ -160,7 +176,7 @@ func (w *trezorDriver) SignTx(path accounts.DerivationPath, tx *types.Transactio
 }
 
 // trezorDerive sends a derivation request to the Trezor device and returns the
-// Ethereum address located on that path.
+// Energi address located on that path.
 func (w *trezorDriver) trezorDerive(derivationPath []uint32) (common.Address, error) {
 	address := new(trezor.EthereumAddress)
 	if _, err := w.trezorExchange(&trezor.EthereumGetAddress{AddressN: derivationPath}, address); err != nil {

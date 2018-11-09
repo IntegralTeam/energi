@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package keystore
 
 import (
@@ -218,7 +234,7 @@ func TestSignRace(t *testing.T) {
 // Tests that the wallet notifier loop starts and stops correctly based on the
 // addition and removal of wallet event subscriptions.
 func TestWalletNotifierLifecycle(t *testing.T) {
-	// Create a temporary kesytore to test with
+	// Create a temporary keystore to test with
 	dir, ks := tmpKeyStore(t, false)
 	defer os.RemoveAll(dir)
 
@@ -375,13 +391,13 @@ func checkEvents(t *testing.T, want []walletEvent, have []walletEvent) {
 }
 
 func tmpKeyStore(t *testing.T, encrypted bool) (string, *KeyStore) {
-	d, err := ioutil.TempDir("", "eth-keystore-test")
+	d, err := ioutil.TempDir("", "energi-keystore-test")
 	if err != nil {
 		t.Fatal(err)
 	}
-	new := NewPlaintextKeyStore
+	newStore := NewPlaintextKeyStore
 	if encrypted {
-		new = func(kd string) *KeyStore { return NewKeyStore(kd, veryLightScryptN, veryLightScryptP) }
+		newStore = func(kd string) *KeyStore { return NewKeyStore(kd, veryLightScryptN, veryLightScryptP) }
 	}
-	return d, new(d)
+	return d, newStore(d)
 }

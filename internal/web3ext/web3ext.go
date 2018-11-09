@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 // package web3ext contains energi specific web3.js extensions.
 package web3ext
 
@@ -21,9 +37,9 @@ var Modules = map[string]string{
 	"admin":      Admin_JS,
 	"chequebook": Chequebook_JS,
 	"clique":     Clique_JS,
-	"ethash":     Ethash_JS,
+	"energihash": Energihash_JS,
 	"debug":      Debug_JS,
-	"eth":        Eth_JS,
+	"energi":     Energi_JS,
 	"miner":      Miner_JS,
 	"net":        Net_JS,
 	"personal":   Personal_JS,
@@ -110,28 +126,28 @@ web3._extend({
 });
 `
 
-const Ethash_JS = `
+const Energihash_JS = `
 web3._extend({
-	property: 'ethash',
+	property: 'energihash',
 	methods: [
 		new web3._extend.Method({
 			name: 'getWork',
-			call: 'ethash_getWork',
+			call: 'energihash_getWork',
 			params: 0
 		}),
 		new web3._extend.Method({
 			name: 'getHashrate',
-			call: 'ethash_getHashrate',
+			call: 'energihash_getHashrate',
 			params: 0
 		}),
 		new web3._extend.Method({
 			name: 'submitWork',
-			call: 'ethash_submitWork',
+			call: 'energihash_submitWork',
 			params: 3,
 		}),
 		new web3._extend.Method({
 			name: 'submitHashRate',
-			call: 'ethash_submitHashRate',
+			call: 'energihash_submitHashRate',
 			params: 2,
 		}),
 	]
@@ -435,48 +451,48 @@ web3._extend({
 });
 `
 
-const Eth_JS = `
+const Energi_JS = `
 web3._extend({
-	property: 'eth',
+	property: 'energi',
 	methods: [
 		new web3._extend.Method({
 			name: 'chainId',
-			call: 'eth_chainId',
+			call: 'energi_chainId',
 			params: 0
 		}),
 		new web3._extend.Method({
 			name: 'sign',
-			call: 'eth_sign',
+			call: 'energi_sign',
 			params: 2,
 			inputFormatter: [web3._extend.formatters.inputAddressFormatter, null]
 		}),
 		new web3._extend.Method({
 			name: 'resend',
-			call: 'eth_resend',
+			call: 'energi_resend',
 			params: 3,
 			inputFormatter: [web3._extend.formatters.inputTransactionFormatter, web3._extend.utils.fromDecimal, web3._extend.utils.fromDecimal]
 		}),
 		new web3._extend.Method({
 			name: 'signTransaction',
-			call: 'eth_signTransaction',
+			call: 'energi_signTransaction',
 			params: 1,
 			inputFormatter: [web3._extend.formatters.inputTransactionFormatter]
 		}),
 		new web3._extend.Method({
 			name: 'submitTransaction',
-			call: 'eth_submitTransaction',
+			call: 'energi_submitTransaction',
 			params: 1,
 			inputFormatter: [web3._extend.formatters.inputTransactionFormatter]
 		}),
 		new web3._extend.Method({
 			name: 'getRawTransaction',
-			call: 'eth_getRawTransactionByHash',
+			call: 'energi_getRawTransactionByHash',
 			params: 1
 		}),
 		new web3._extend.Method({
 			name: 'getRawTransactionFromBlock',
 			call: function(args) {
-				return (web3._extend.utils.isString(args[0]) && args[0].indexOf('0x') === 0) ? 'eth_getRawTransactionByBlockHashAndIndex' : 'eth_getRawTransactionByBlockNumberAndIndex';
+				return (web3._extend.utils.isString(args[0]) && args[0].indexOf('0x') === 0) ? 'energi_getRawTransactionByBlockHashAndIndex' : 'energi_getRawTransactionByBlockNumberAndIndex';
 			},
 			params: 2,
 			inputFormatter: [web3._extend.formatters.inputBlockNumberFormatter, web3._extend.utils.toHex]
@@ -485,7 +501,7 @@ web3._extend({
 	properties: [
 		new web3._extend.Property({
 			name: 'pendingTransactions',
-			getter: 'eth_pendingTransactions',
+			getter: 'energi_pendingTransactions',
 			outputFormatter: function(txs) {
 				var formatted = [];
 				for (var i = 0; i < txs.length; i++) {
@@ -514,8 +530,8 @@ web3._extend({
 			call: 'miner_stop'
 		}),
 		new web3._extend.Method({
-			name: 'setEtherbase',
-			call: 'miner_setEtherbase',
+			name: 'setEnergibase',
+			call: 'miner_setEnergibase',
 			params: 1,
 			inputFormatter: [web3._extend.formatters.inputAddressFormatter]
 		}),

@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package les
 
 import (
@@ -22,42 +38,42 @@ import (
 )
 
 var (
-	/*	propTxnInPacketsMeter     = metrics.NewMeter("eth/prop/txns/in/packets")
-		propTxnInTrafficMeter     = metrics.NewMeter("eth/prop/txns/in/traffic")
-		propTxnOutPacketsMeter    = metrics.NewMeter("eth/prop/txns/out/packets")
-		propTxnOutTrafficMeter    = metrics.NewMeter("eth/prop/txns/out/traffic")
-		propHashInPacketsMeter    = metrics.NewMeter("eth/prop/hashes/in/packets")
-		propHashInTrafficMeter    = metrics.NewMeter("eth/prop/hashes/in/traffic")
-		propHashOutPacketsMeter   = metrics.NewMeter("eth/prop/hashes/out/packets")
-		propHashOutTrafficMeter   = metrics.NewMeter("eth/prop/hashes/out/traffic")
-		propBlockInPacketsMeter   = metrics.NewMeter("eth/prop/blocks/in/packets")
-		propBlockInTrafficMeter   = metrics.NewMeter("eth/prop/blocks/in/traffic")
-		propBlockOutPacketsMeter  = metrics.NewMeter("eth/prop/blocks/out/packets")
-		propBlockOutTrafficMeter  = metrics.NewMeter("eth/prop/blocks/out/traffic")
-		reqHashInPacketsMeter     = metrics.NewMeter("eth/req/hashes/in/packets")
-		reqHashInTrafficMeter     = metrics.NewMeter("eth/req/hashes/in/traffic")
-		reqHashOutPacketsMeter    = metrics.NewMeter("eth/req/hashes/out/packets")
-		reqHashOutTrafficMeter    = metrics.NewMeter("eth/req/hashes/out/traffic")
-		reqBlockInPacketsMeter    = metrics.NewMeter("eth/req/blocks/in/packets")
-		reqBlockInTrafficMeter    = metrics.NewMeter("eth/req/blocks/in/traffic")
-		reqBlockOutPacketsMeter   = metrics.NewMeter("eth/req/blocks/out/packets")
-		reqBlockOutTrafficMeter   = metrics.NewMeter("eth/req/blocks/out/traffic")
-		reqHeaderInPacketsMeter   = metrics.NewMeter("eth/req/headers/in/packets")
-		reqHeaderInTrafficMeter   = metrics.NewMeter("eth/req/headers/in/traffic")
-		reqHeaderOutPacketsMeter  = metrics.NewMeter("eth/req/headers/out/packets")
-		reqHeaderOutTrafficMeter  = metrics.NewMeter("eth/req/headers/out/traffic")
-		reqBodyInPacketsMeter     = metrics.NewMeter("eth/req/bodies/in/packets")
-		reqBodyInTrafficMeter     = metrics.NewMeter("eth/req/bodies/in/traffic")
-		reqBodyOutPacketsMeter    = metrics.NewMeter("eth/req/bodies/out/packets")
-		reqBodyOutTrafficMeter    = metrics.NewMeter("eth/req/bodies/out/traffic")
-		reqStateInPacketsMeter    = metrics.NewMeter("eth/req/states/in/packets")
-		reqStateInTrafficMeter    = metrics.NewMeter("eth/req/states/in/traffic")
-		reqStateOutPacketsMeter   = metrics.NewMeter("eth/req/states/out/packets")
-		reqStateOutTrafficMeter   = metrics.NewMeter("eth/req/states/out/traffic")
-		reqReceiptInPacketsMeter  = metrics.NewMeter("eth/req/receipts/in/packets")
-		reqReceiptInTrafficMeter  = metrics.NewMeter("eth/req/receipts/in/traffic")
-		reqReceiptOutPacketsMeter = metrics.NewMeter("eth/req/receipts/out/packets")
-		reqReceiptOutTrafficMeter = metrics.NewMeter("eth/req/receipts/out/traffic")*/
+	/*	propTxnInPacketsMeter     = metrics.NewMeter("energi/prop/txns/in/packets")
+		propTxnInTrafficMeter     = metrics.NewMeter("energi/prop/txns/in/traffic")
+		propTxnOutPacketsMeter    = metrics.NewMeter("energi/prop/txns/out/packets")
+		propTxnOutTrafficMeter    = metrics.NewMeter("energi/prop/txns/out/traffic")
+		propHashInPacketsMeter    = metrics.NewMeter("energi/prop/hashes/in/packets")
+		propHashInTrafficMeter    = metrics.NewMeter("energi/prop/hashes/in/traffic")
+		propHashOutPacketsMeter   = metrics.NewMeter("energi/prop/hashes/out/packets")
+		propHashOutTrafficMeter   = metrics.NewMeter("energi/prop/hashes/out/traffic")
+		propBlockInPacketsMeter   = metrics.NewMeter("energi/prop/blocks/in/packets")
+		propBlockInTrafficMeter   = metrics.NewMeter("energi/prop/blocks/in/traffic")
+		propBlockOutPacketsMeter  = metrics.NewMeter("energi/prop/blocks/out/packets")
+		propBlockOutTrafficMeter  = metrics.NewMeter("energi/prop/blocks/out/traffic")
+		reqHashInPacketsMeter     = metrics.NewMeter("energi/req/hashes/in/packets")
+		reqHashInTrafficMeter     = metrics.NewMeter("energi/req/hashes/in/traffic")
+		reqHashOutPacketsMeter    = metrics.NewMeter("energi/req/hashes/out/packets")
+		reqHashOutTrafficMeter    = metrics.NewMeter("energi/req/hashes/out/traffic")
+		reqBlockInPacketsMeter    = metrics.NewMeter("energi/req/blocks/in/packets")
+		reqBlockInTrafficMeter    = metrics.NewMeter("energi/req/blocks/in/traffic")
+		reqBlockOutPacketsMeter   = metrics.NewMeter("energi/req/blocks/out/packets")
+		reqBlockOutTrafficMeter   = metrics.NewMeter("energi/req/blocks/out/traffic")
+		reqHeaderInPacketsMeter   = metrics.NewMeter("energi/req/headers/in/packets")
+		reqHeaderInTrafficMeter   = metrics.NewMeter("energi/req/headers/in/traffic")
+		reqHeaderOutPacketsMeter  = metrics.NewMeter("energi/req/headers/out/packets")
+		reqHeaderOutTrafficMeter  = metrics.NewMeter("energi/req/headers/out/traffic")
+		reqBodyInPacketsMeter     = metrics.NewMeter("energi/req/bodies/in/packets")
+		reqBodyInTrafficMeter     = metrics.NewMeter("energi/req/bodies/in/traffic")
+		reqBodyOutPacketsMeter    = metrics.NewMeter("energi/req/bodies/out/packets")
+		reqBodyOutTrafficMeter    = metrics.NewMeter("energi/req/bodies/out/traffic")
+		reqStateInPacketsMeter    = metrics.NewMeter("energi/req/states/in/packets")
+		reqStateInTrafficMeter    = metrics.NewMeter("energi/req/states/in/traffic")
+		reqStateOutPacketsMeter   = metrics.NewMeter("energi/req/states/out/packets")
+		reqStateOutTrafficMeter   = metrics.NewMeter("energi/req/states/out/traffic")
+		reqReceiptInPacketsMeter  = metrics.NewMeter("energi/req/receipts/in/packets")
+		reqReceiptInTrafficMeter  = metrics.NewMeter("energi/req/receipts/in/traffic")
+		reqReceiptOutPacketsMeter = metrics.NewMeter("energi/req/receipts/out/packets")
+		reqReceiptOutTrafficMeter = metrics.NewMeter("energi/req/receipts/out/traffic")*/
 	miscInPacketsMeter  = metrics.NewRegisteredMeter("les/misc/in/packets", nil)
 	miscInTrafficMeter  = metrics.NewRegisteredMeter("les/misc/in/traffic", nil)
 	miscOutPacketsMeter = metrics.NewRegisteredMeter("les/misc/out/packets", nil)

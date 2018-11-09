@@ -13,7 +13,23 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
 //
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package storage
 
 import (
@@ -62,7 +78,7 @@ func TestFileStorage(t *testing.T) {
 			CipherText: common.Hex2Bytes("2df87baf86b5073ef1f03e3cc738de75b511400f5465bb0ddeacf47ae4dc267d"),
 		},
 	}
-	d, err := ioutil.TempDir("", "eth-encrypted-storage-test")
+	d, err := ioutil.TempDir("", "energi-encrypted-storage-test")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -95,7 +111,7 @@ func TestFileStorage(t *testing.T) {
 func TestEnd2End(t *testing.T) {
 	log.Root().SetHandler(log.LvlFilterHandler(log.Lvl(3), log.StreamHandler(colorable.NewColorableStderr(), log.TerminalFormat(true))))
 
-	d, err := ioutil.TempDir("", "eth-encrypted-storage-test")
+	d, err := ioutil.TempDir("", "energi-encrypted-storage-test")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -120,7 +136,7 @@ func TestSwappedKeys(t *testing.T) {
 	// K1:V1, K2:V2 can be swapped into K1:V2, K2:V1
 	log.Root().SetHandler(log.LvlFilterHandler(log.Lvl(3), log.StreamHandler(colorable.NewColorableStderr(), log.TerminalFormat(true))))
 
-	d, err := ioutil.TempDir("", "eth-encrypted-storage-test")
+	d, err := ioutil.TempDir("", "energi-encrypted-storage-test")
 	if err != nil {
 		t.Fatal(err)
 	}

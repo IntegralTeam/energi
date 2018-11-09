@@ -14,9 +14,26 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package miner
 
 import (
+	"github.com/IntegralTeam/energi/consensus/energihash"
 	"math/big"
 	"testing"
 	"time"
@@ -29,16 +46,17 @@ import (
 	"github.com/IntegralTeam/energi/core/types"
 	"github.com/IntegralTeam/energi/core/vm"
 	"github.com/IntegralTeam/energi/crypto"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/event"
 	"github.com/IntegralTeam/energi/params"
 )
 
 var (
 	// Test chain configurations
-	testTxPoolConfig  core.TxPoolConfig
-	ethashChainConfig *params.ChainConfig
-	cliqueChainConfig *params.ChainConfig
+	testTxPoolConfig      core.TxPoolConfig
+	ethashChainConfig     *params.ChainConfig
+	cliqueChainConfig     *params.ChainConfig
+	energihashChainConfig *params.ChainConfig
 
 	// Test accounts
 	testBankKey, _  = crypto.GenerateKey()
@@ -57,6 +75,8 @@ func init() {
 	testTxPoolConfig = core.DefaultTxPoolConfig
 	testTxPoolConfig.Journal = ""
 	ethashChainConfig = params.TestChainConfig
+	energihashChainConfig = params.TestChainConfig
+	energihashChainConfig.Energihash = &params.EnergihashConfig{}
 	cliqueChainConfig = params.TestChainConfig
 	cliqueChainConfig.Clique = &params.CliqueConfig{
 		Period: 10,
@@ -70,7 +90,7 @@ func init() {
 
 // testWorkerBackend implements worker.Backend interfaces and wraps all information needed during the testing.
 type testWorkerBackend struct {
-	db         ethdb.Database
+	db         energidb.Database
 	txPool     *core.TxPool
 	chain      *core.BlockChain
 	testTxFeed event.Feed
@@ -79,7 +99,7 @@ type testWorkerBackend struct {
 
 func newTestWorkerBackend(t *testing.T, chainConfig *params.ChainConfig, engine consensus.Engine, n int) *testWorkerBackend {
 	var (
-		db    = ethdb.NewMemDatabase()
+		db    = energidb.NewMemDatabase()
 		gspec = core.Genesis{
 			Config: chainConfig,
 			Alloc:  core.GenesisAlloc{testBankAddress: {Balance: testBankFunds}},
@@ -91,6 +111,7 @@ func newTestWorkerBackend(t *testing.T, chainConfig *params.ChainConfig, engine 
 		gspec.ExtraData = make([]byte, 32+common.AddressLength+65)
 		copy(gspec.ExtraData[32:], testBankAddress[:])
 	case *ethash.Ethash:
+	case *energihash.Energihash:
 	default:
 		t.Fatalf("unexpected consensus engine type: %T", engine)
 	}
@@ -134,15 +155,18 @@ func newTestWorker(t *testing.T, chainConfig *params.ChainConfig, engine consens
 	backend := newTestWorkerBackend(t, chainConfig, engine, blocks)
 	backend.txPool.AddLocals(pendingTxs)
 	w := newWorker(chainConfig, engine, backend, new(event.TypeMux), time.Second, params.GenesisGasLimit, params.GenesisGasLimit, nil)
-	w.setEtherbase(testBankAddress)
+	w.setEnergibase(testBankAddress)
 	return w, backend
 }
 
 func TestPendingStateAndBlockEthash(t *testing.T) {
 	testPendingStateAndBlock(t, ethashChainConfig, ethash.NewFaker())
 }
+func TestPendingStateAndBlockEnergihash(t *testing.T) {
+	testPendingStateAndBlock(t, energihashChainConfig, energihash.NewFaker())
+}
 func TestPendingStateAndBlockClique(t *testing.T) {
-	testPendingStateAndBlock(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, ethdb.NewMemDatabase()))
+	testPendingStateAndBlock(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, energidb.NewMemDatabase()))
 }
 
 func testPendingStateAndBlock(t *testing.T, chainConfig *params.ChainConfig, engine consensus.Engine) {
@@ -173,8 +197,11 @@ func testPendingStateAndBlock(t *testing.T, chainConfig *params.ChainConfig, eng
 func TestEmptyWorkEthash(t *testing.T) {
 	testEmptyWork(t, ethashChainConfig, ethash.NewFaker())
 }
+func TestEmptyWorkEnergihash(t *testing.T) {
+	testEmptyWork(t, energihashChainConfig, energihash.NewFaker())
+}
 func TestEmptyWorkClique(t *testing.T) {
-	testEmptyWork(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, ethdb.NewMemDatabase()))
+	testEmptyWork(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, energidb.NewMemDatabase()))
 }
 
 func testEmptyWork(t *testing.T, chainConfig *params.ChainConfig, engine consensus.Engine) {
@@ -286,12 +313,72 @@ func TestStreamUncleBlock(t *testing.T) {
 	}
 }
 
+func TestStreamUncleBlockEnergihash(t *testing.T) {
+	energihash := energihash.NewFaker()
+	defer energihash.Close()
+
+	w, b := newTestWorker(t, energihashChainConfig, energihash, 1)
+	defer w.close()
+
+	var taskCh = make(chan struct{})
+
+	taskIndex := 0
+	w.newTaskHook = func(task *task) {
+		if task.block.NumberU64() == 2 {
+			if taskIndex == 2 {
+				have := task.block.Header().UncleHash
+				want := types.CalcUncleHash([]*types.Header{b.uncleBlock.Header()})
+				if have != want {
+					t.Errorf("uncle hash mismatch: have %s, want %s", have.Hex(), want.Hex())
+				}
+			}
+			taskCh <- struct{}{}
+			taskIndex += 1
+		}
+	}
+	w.skipSealHook = func(task *task) bool {
+		return true
+	}
+	w.fullTaskHook = func() {
+		time.Sleep(100 * time.Millisecond)
+	}
+
+	// Ensure worker has finished initialization
+	for {
+		b := w.pendingBlock()
+		if b != nil && b.NumberU64() == 2 {
+			break
+		}
+	}
+	w.start()
+
+	// Ignore the first two works
+	for i := 0; i < 2; i += 1 {
+		select {
+		case <-taskCh:
+		case <-time.NewTimer(time.Second).C:
+			t.Error("new task timeout")
+		}
+	}
+	b.PostChainEvents([]interface{}{core.ChainSideEvent{Block: b.uncleBlock}})
+
+	select {
+	case <-taskCh:
+	case <-time.NewTimer(time.Second).C:
+		t.Error("new task timeout")
+	}
+}
+
 func TestRegenerateMiningBlockEthash(t *testing.T) {
 	testRegenerateMiningBlock(t, ethashChainConfig, ethash.NewFaker())
 }
 
+func TestRegenerateMiningBlockEnergihash(t *testing.T) {
+	testRegenerateMiningBlock(t, energihashChainConfig, energihash.NewFaker())
+}
+
 func TestRegenerateMiningBlockClique(t *testing.T) {
-	testRegenerateMiningBlock(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, ethdb.NewMemDatabase()))
+	testRegenerateMiningBlock(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, energidb.NewMemDatabase()))
 }
 
 func testRegenerateMiningBlock(t *testing.T, chainConfig *params.ChainConfig, engine consensus.Engine) {
@@ -355,8 +442,12 @@ func TestAdjustIntervalEthash(t *testing.T) {
 	testAdjustInterval(t, ethashChainConfig, ethash.NewFaker())
 }
 
+func TestAdjustIntervalEnergihash(t *testing.T) {
+	testAdjustInterval(t, energihashChainConfig, energihash.NewFaker())
+}
+
 func TestAdjustIntervalClique(t *testing.T) {
-	testAdjustInterval(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, ethdb.NewMemDatabase()))
+	testAdjustInterval(t, cliqueChainConfig, clique.New(cliqueChainConfig.Clique, energidb.NewMemDatabase()))
 }
 
 func testAdjustInterval(t *testing.T, chainConfig *params.ChainConfig, engine consensus.Engine) {

@@ -14,6 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
+// Copyright 2018 The energi Authors
+// This file is part of the energi library.
+//
+// The energi library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The energi library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the energi library. If not, see <http://www.gnu.org/licenses/>.
+
 package node
 
 import (
@@ -27,7 +43,7 @@ import (
 	"sync"
 
 	"github.com/IntegralTeam/energi/accounts"
-	"github.com/IntegralTeam/energi/ethdb"
+	"github.com/IntegralTeam/energi/energidb"
 	"github.com/IntegralTeam/energi/event"
 	"github.com/IntegralTeam/energi/internal/debug"
 	"github.com/IntegralTeam/energi/log"
@@ -578,11 +594,11 @@ func (n *Node) EventMux() *event.TypeMux {
 // OpenDatabase opens an existing database with the given name (or creates one if no
 // previous can be found) from within the node's instance directory. If the node is
 // ephemeral, a memory database is returned.
-func (n *Node) OpenDatabase(name string, cache, handles int) (ethdb.Database, error) {
+func (n *Node) OpenDatabase(name string, cache, handles int) (energidb.Database, error) {
 	if n.config.DataDir == "" {
-		return ethdb.NewMemDatabase(), nil
+		return energidb.NewMemDatabase(), nil
 	}
-	return ethdb.NewLDBDatabase(n.config.ResolvePath(name), cache, handles)
+	return energidb.NewLDBDatabase(n.config.ResolvePath(name), cache, handles)
 }
 
 // ResolvePath returns the absolute path of a resource in the instance directory.
