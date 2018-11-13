@@ -42,7 +42,7 @@ var customGenesisTests = []struct {
 			"timestamp"  : "0x00"
 		}`,
 		query:  "energi.getBlock(0).nonce",
-		result: "0x0000000000000042",
+		result: "0x00000000007dc9ca",
 	},
 	// Genesis file with an empty chain configuration (ensure missing fields work)
 	{
@@ -90,7 +90,6 @@ func TestCustomGenesis(t *testing.T) {
 	for i, tt := range customGenesisTests {
 		// Create a temporary data directory to use and inspect later
 		datadir := tmpdir(t)
-		defer os.RemoveAll(datadir)
 
 		// Initialize the data directory with the custom genesis block
 		json := filepath.Join(datadir, "genesis.json")
@@ -106,5 +105,7 @@ func TestCustomGenesis(t *testing.T) {
 			"--exec", tt.query, "console")
 		geth.ExpectRegexp(tt.result)
 		geth.ExpectExit()
+
+		os.RemoveAll(datadir)
 	}
 }

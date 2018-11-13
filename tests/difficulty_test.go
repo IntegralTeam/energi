@@ -70,11 +70,13 @@ func TestDifficulty(t *testing.T) {
 	dt.skipLoad("difficultyCustomHomestead\\.json")
 	dt.skipLoad("difficultyMorden\\.json")
 	dt.skipLoad("difficultyOlimpic\\.json")
-	dt.skipLoad("difficultyEnergi\\.json")
-
+	// dt.skipLoad("difficultyEnergi\\.json")
+	dt.skipLoad("difficultyRopsten\\.json")
+	// TODO: Include new tests for new code
 	dt.config("Ropsten", *params.TestnetChainConfig)
 	dt.config("Morden", *params.TestnetChainConfig)
 	dt.config("Frontier", params.ChainConfig{})
+	dt.config("Energi", *params.MainnetChainConfig)
 
 	dt.config("Homestead", params.ChainConfig{
 		HomesteadBlock: big.NewInt(0),

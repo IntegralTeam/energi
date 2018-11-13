@@ -157,7 +157,7 @@ func TestBzzFeedMultihash(t *testing.T) {
 		t.Fatalf("data %s could not be unmarshaled: %v", b, err)
 	}
 
-	correctManifestAddrHex := "bb056a5264c295c2b0f613c8409b9c87ce9d71576ace02458160df4cc894210b"
+	correctManifestAddrHex := "fef6490751e6c2a5c3fb4ddfe3d6ee3867538f1ad3bd2dcfcdd9fd7fdf5a87ca"
 	if rsrcResp.Hex() != correctManifestAddrHex {
 		t.Fatalf("Response feed manifest address mismatch, expected '%s', got '%s'", correctManifestAddrHex, rsrcResp.Hex())
 	}
@@ -237,7 +237,7 @@ func TestBzzFeed(t *testing.T) {
 		t.Fatalf("data %s could not be unmarshaled: %v", b, err)
 	}
 
-	correctManifestAddrHex := "bb056a5264c295c2b0f613c8409b9c87ce9d71576ace02458160df4cc894210b"
+	correctManifestAddrHex := "fef6490751e6c2a5c3fb4ddfe3d6ee3867538f1ad3bd2dcfcdd9fd7fdf5a87ca"
 	if rsrcResp.Hex() != correctManifestAddrHex {
 		t.Fatalf("Response feed manifest mismatch, expected '%s', got '%s'", correctManifestAddrHex, rsrcResp.Hex())
 	}
@@ -264,7 +264,7 @@ func TestBzzFeed(t *testing.T) {
 	if len(manifest.Entries) != 1 {
 		t.Fatalf("Manifest has %d entries", len(manifest.Entries))
 	}
-	correctFeedHex := "0x666f6f2e65746800000000000000000000000000000000000000000000000000c96aaa54e2d44c299564da76e1cd3184a2386b8d"
+	correctFeedHex := "0x666f6f2e656e6572676900000000000000000000000000000000000000000000c96aaa54e2d44c299564da76e1cd3184a2386b8d"
 	if manifest.Entries[0].Feed.Hex() != correctFeedHex {
 		t.Fatalf("Expected manifest Feed '%s', got '%s'", correctFeedHex, manifest.Entries[0].Feed.Hex())
 	}

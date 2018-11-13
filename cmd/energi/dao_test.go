@@ -26,7 +26,6 @@ import (
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/core/rawdb"
 	"github.com/IntegralTeam/energi/energidb"
-	"github.com/IntegralTeam/energi/params"
 )
 
 // Genesis block for nodes which don't care about the DAO fork (i.e. not configured)
@@ -88,8 +87,6 @@ func TestDAOForkBlockNewChain(t *testing.T) {
 		expectBlock *big.Int
 		expectVote  bool
 	}{
-		// Test DAO Default Mainnet
-		{"", params.MainnetChainConfig.DAOForkBlock, true},
 		// test DAO Init Old Privnet
 		{daoOldGenesis, nil, false},
 		// test DAO Default No Fork Privnet

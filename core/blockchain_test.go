@@ -68,7 +68,7 @@ func newCanonical(engine consensus.Engine, n int, full bool) (energidb.Database,
 	)
 
 	// Initialize a fresh chain with only a genesis block
-	blockchain, _ := NewBlockChain(db, nil, params.AllEthashProtocolChanges, engine, vm.Config{}, nil)
+	blockchain, _ := NewBlockChain(db, nil, params.AllEnergihashProtocolChanges, engine, vm.Config{}, nil)
 	// Create and inject the requested chain
 	if n == 0 {
 		return db, blockchain, nil
@@ -379,7 +379,7 @@ func TestReorgLongHeaders(t *testing.T) { testReorgLong(t, false) }
 func TestReorgLongBlocks(t *testing.T)  { testReorgLong(t, true) }
 
 func testReorgLong(t *testing.T, full bool) {
-	testReorg(t, []int64{0, 0, -9}, []int64{0, 0, 0, -9}, 393280, full)
+	testReorg(t, []int64{0, 0, -9}, []int64{0, 0, 0, -9}, 19883578, full)
 }
 
 // Tests that reorganising a short difficult chain after a long easy one
@@ -399,7 +399,7 @@ func testReorgShort(t *testing.T, full bool) {
 	for i := 0; i < len(diff); i++ {
 		diff[i] = -9
 	}
-	testReorg(t, easy, diff, 12615120, full)
+	testReorg(t, easy, diff, 485934254, full)
 }
 
 func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
@@ -458,6 +458,7 @@ func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
 	}
 	// Make sure the chain total difficulty is the correct one
 	want := new(big.Int).Add(blockchain.genesisBlock.Difficulty(), big.NewInt(td))
+	fmt.Println(blockchain.genesisBlock.Difficulty(), big.NewInt(td))
 	if full {
 		if have := blockchain.GetTdByHash(blockchain.CurrentBlock().Hash()); have.Cmp(want) != 0 {
 			t.Errorf("total difficulty mismatch: have %v, want %v", have, want)
@@ -628,7 +629,7 @@ func TestFastVsFullChains(t *testing.T) {
 			Alloc:  GenesisAlloc{address: {Balance: funds}},
 		}
 		genesis = gspec.MustCommit(gendb)
-		signer  = types.NewEIP155Signer(gspec.Config.ChainID)
+		signer  = types.FrontierSigner{}
 	)
 	blocks, receipts := GenerateChain(gspec.Config, genesis, energihash.NewFaker(), gendb, 1024, func(i int, block *BlockGen) {
 		block.SetCoinbase(common.Address{0x00})
@@ -803,7 +804,7 @@ func TestChainTxReorgs(t *testing.T) {
 			},
 		}
 		genesis = gspec.MustCommit(db)
-		signer  = types.NewEIP155Signer(gspec.Config.ChainID)
+		signer  = types.FrontierSigner{}
 	)
 
 	// Create two transactions shared between the chains:
@@ -909,7 +910,7 @@ func TestLogReorgs(t *testing.T) {
 		code    = common.Hex2Bytes("60606040525b7f24ec1d3ff24c2f6ff210738839dbc339cd45a5294d85c79361016243157aae7b60405180905060405180910390a15b600a8060416000396000f360606040526008565b00")
 		gspec   = &Genesis{Config: params.TestChainConfig, Alloc: GenesisAlloc{addr1: {Balance: big.NewInt(10000000000000)}}}
 		genesis = gspec.MustCommit(db)
-		signer  = types.NewEIP155Signer(gspec.Config.ChainID)
+		signer  = types.FrontierSigner{}
 	)
 
 	blockchain, _ := NewBlockChain(db, nil, gspec.Config, energihash.NewFaker(), vm.Config{}, nil)
@@ -956,7 +957,7 @@ func TestReorgSideEvent(t *testing.T) {
 			Alloc:  GenesisAlloc{addr1: {Balance: big.NewInt(10000000000000)}},
 		}
 		genesis = gspec.MustCommit(db)
-		signer  = types.NewEIP155Signer(gspec.Config.ChainID)
+		signer  = types.FrontierSigner{}
 	)
 
 	blockchain, _ := NewBlockChain(db, nil, gspec.Config, energihash.NewFaker(), vm.Config{}, nil)
@@ -977,6 +978,12 @@ func TestReorgSideEvent(t *testing.T) {
 		}
 		gen.AddTx(tx)
 	})
+	for i, block := range replacementBlocks {
+		fmt.Println(i, block.Hash().String())
+	}
+	for i, block := range chain {
+		fmt.Println(i, block.Hash().String())
+	}
 	chainSideCh := make(chan ChainSideEvent, 64)
 	blockchain.SubscribeChainSideEvent(chainSideCh)
 	if _, err := blockchain.InsertChain(replacementBlocks); err != nil {
@@ -989,9 +996,10 @@ func TestReorgSideEvent(t *testing.T) {
 	expectedSideHashes := map[common.Hash]bool{
 		replacementBlocks[0].Hash(): true,
 		replacementBlocks[1].Hash(): true,
-		chain[0].Hash():             true,
+		replacementBlocks[2].Hash(): true,
 		chain[1].Hash():             true,
 		chain[2].Hash():             true,
+		chain[0].Hash():             true,
 	}
 
 	i := 0
@@ -1003,6 +1011,7 @@ done:
 		select {
 		case ev := <-chainSideCh:
 			block := ev.Block
+			fmt.Println(block.Hash().String())
 			if _, ok := expectedSideHashes[block.Hash()]; !ok {
 				t.Errorf("%d: didn't expect %x to be in side chain", i, block.Hash())
 			}
@@ -1023,7 +1032,7 @@ done:
 	// make sure no more events are fired
 	select {
 	case e := <-chainSideCh:
-		t.Errorf("unexpected event fired: %v", e)
+		t.Errorf("unexpected event fired: %s", e.Block.Hash().String())
 	case <-time.After(250 * time.Millisecond):
 	}
 

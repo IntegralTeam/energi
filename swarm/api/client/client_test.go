@@ -425,7 +425,7 @@ func TestClientCreateFeedMultihash(t *testing.T) {
 		t.Fatalf("Error creating feed manifest: %s", err)
 	}
 
-	correctManifestAddrHex := "bb056a5264c295c2b0f613c8409b9c87ce9d71576ace02458160df4cc894210b"
+	correctManifestAddrHex := "fef6490751e6c2a5c3fb4ddfe3d6ee3867538f1ad3bd2dcfcdd9fd7fdf5a87ca"
 	if feedManifestHash != correctManifestAddrHex {
 		t.Fatalf("Response feed manifest mismatch, expected '%s', got '%s'", correctManifestAddrHex, feedManifestHash)
 	}

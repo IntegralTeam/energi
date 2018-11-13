@@ -34,6 +34,7 @@ package tests
 
 import (
 	"fmt"
+	"github.com/IntegralTeam/energi/consensus/energihash"
 	"math/big"
 
 	"github.com/IntegralTeam/energi/common"
@@ -71,8 +72,12 @@ func (test *DifficultyTest) Run(config *params.ChainConfig) error {
 		Number:     parentNumber,
 		UncleHash:  test.UncleHash,
 	}
-
-	actual := ethash.CalcDifficulty(config, test.CurrentTimestamp.Uint64(), parent)
+	actual := &big.Int{}
+	if config.Energihash != nil {
+		actual = energihash.CalcDifficulty(config, test.CurrentTimestamp.Uint64(), parent)
+	} else {
+		actual = ethash.CalcDifficulty(config, test.CurrentTimestamp.Uint64(), parent)
+	}
 	exp := test.CurrentDifficulty
 
 	if actual.Cmp(exp) != 0 {

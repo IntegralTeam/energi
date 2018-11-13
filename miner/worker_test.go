@@ -74,9 +74,8 @@ var (
 func init() {
 	testTxPoolConfig = core.DefaultTxPoolConfig
 	testTxPoolConfig.Journal = ""
-	ethashChainConfig = params.TestChainConfig
+	ethashChainConfig = params.AllEthashProtocolChanges
 	energihashChainConfig = params.TestChainConfig
-	energihashChainConfig.Energihash = &params.EnergihashConfig{}
 	cliqueChainConfig = params.TestChainConfig
 	cliqueChainConfig.Clique = &params.CliqueConfig{
 		Period: 10,
