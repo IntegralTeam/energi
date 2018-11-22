@@ -50,13 +50,18 @@ import (
 	"github.com/IntegralTeam/energi/crypto"
 )
 
+// NodeAddress represents a network address of a node.
+type NodeAddress struct {
+	IP       net.IP // len 4 for IPv4 or 16 for IPv6
+	UDP, TCP uint16 // port numbers
+}
+
 // Node represents a host on the network.
 // The public fields of Node may not be modified.
 type Node struct {
-	IP       net.IP // len 4 for IPv4 or 16 for IPv6
-	UDP, TCP uint16 // port numbers
 	ID       NodeID // the node's public key
 
+	NodeAddress
 	// Network-related fields are contained in nodeNetGuts.
 	// These fields are not supposed to be used off the
 	// Network.loop goroutine.
@@ -70,9 +75,11 @@ func NewNode(id NodeID, ip net.IP, udpPort, tcpPort uint16) *Node {
 		ip = ipv4
 	}
 	return &Node{
-		IP:          ip,
-		UDP:         udpPort,
-		TCP:         tcpPort,
+		NodeAddress: NodeAddress{
+			IP:          ip,
+			UDP:         udpPort,
+			TCP:         tcpPort,
+		},
 		ID:          id,
 		nodeNetGuts: nodeNetGuts{sha: crypto.Keccak256Hash(id[:])},
 	}
