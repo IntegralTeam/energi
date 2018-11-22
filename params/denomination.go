@@ -32,6 +32,10 @@
 
 package params
 
+import (
+	"math/big"
+)
+
 // These are the multipliers for ether/energi denominations.
 // Example: To get the wei value of an amount in 'gwei', use
 //
@@ -43,3 +47,7 @@ const (
 	Ether  = 1e18
 	Energi = 1e18
 )
+
+var Wei_bn = big.NewInt(Wei)
+var GWei_bn = big.NewInt(GWei)
+var Energi_bn = big.NewInt(Energi)
