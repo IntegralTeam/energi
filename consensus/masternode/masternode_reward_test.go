@@ -120,16 +120,16 @@ func getTestMasternodes_same_noReminder(num int) []*Masternode {
 
 func test_no_winners(t *testing.T, masternodes []*Masternode, until int) {
 	// test that there's no winner until masternode activation
-	for i := 0; i < until; i++ {
-		_, err := FindWinner(masternodes, big.NewInt(int64(i)))
+	for block_i := 0; block_i < until; block_i++ {
+		_, err := FindWinner(masternodes, big.NewInt(int64(block_i)))
 		assert.Equal(t, err.Error(), "No masternode to reward were found")
 	}
 }
 
 func test_winner_is(t *testing.T, masternodes []*Masternode, block_number int, winner_want *Masternode) {
-	i := big.NewInt(int64(block_number))
+	block_i := big.NewInt(int64(block_number))
 
-	winner, err := FindWinner(masternodes, i)
+	winner, err := FindWinner(masternodes, block_i)
 	assert.Equal(t, err, nil)
 	assert.Equal(t, winner, winner_want)
 }
@@ -138,18 +138,18 @@ func Test_FindWinner_1(t *testing.T) {
 	masternodes := getTestMasternode_1()
 	test_no_winners(t, masternodes, 10)
 	// test that the masternode is always a winner because it's the only masternode
-	for i := 10; i < 1000; i++ {
-		winner, err := FindWinner(masternodes, big.NewInt(int64(i)))
+	for block_i := 10; block_i < 1000; block_i++ {
+		winner, err := FindWinner(masternodes, big.NewInt(int64(block_i)))
 		assert.Equal(t, err, nil)
 		assert.Equal(t, winner, masternodes[0])
 	}
 }
 
 func test_fifo_rewards(t *testing.T, start_from int, masternodes []*Masternode) {
-	for i := start_from; i < start_from + 1000; i++ {
-		winner, err := FindWinner(masternodes, big.NewInt(int64(i)))
+	for block_i := start_from; block_i < start_from + 1000; block_i++ {
+		winner, err := FindWinner(masternodes, big.NewInt(int64(block_i)))
 		assert.Equal(t, err, nil)
-		assert.Equal(t, winner, masternodes[i % len(masternodes)])
+		assert.Equal(t, winner, masternodes[block_i % len(masternodes)])
 	}
 }
 
@@ -158,8 +158,8 @@ func Test_buildRewardsRound_distribution(t *testing.T) {
 	masternodes := getTestMasternodes_increasingCollateral(50)
 
 	pointsHits := make(map[int]int) // masternode -> number of occurrences
-	for i := 50; i < 10000; i++ {
-		winner, _ := FindWinner(masternodes, big.NewInt(int64(i)))
+	for block_i := 50; block_i < 10000; block_i++ {
+		winner, _ := FindWinner(masternodes, big.NewInt(int64(block_i)))
 		collateral_factor := new(big.Int).Div(winner.CollateralAmount, MinCollateral).Uint64()
 
 		_, ok := pointsHits[int(collateral_factor)]
@@ -235,9 +235,9 @@ func Test_FindWinner_3_normal(t *testing.T) {
 
 	// Test 14 block. 2 activated masternodes
 	{
-		i := big.NewInt(14)
+		block_i := big.NewInt(14)
 
-		activeOnly := filterNotActiveMasternodes(masternodes, i)
+		activeOnly := filterNotActiveMasternodes(masternodes, block_i)
 
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
@@ -252,7 +252,7 @@ func Test_FindWinner_3_normal(t *testing.T) {
 		assert.Equal(t, round.RewardsLine[1].size.Cmp(masternodes[1].CollateralAmount), 0)
 		assert.Equal(t, round.RewardsLine[1].masternode, masternodes[1])
 
-		winner, err := FindWinner(masternodes, i)
+		winner, err := FindWinner(masternodes, block_i)
 		assert.Equal(t, err, nil)
 		assert.Equal(t, winner, masternodes[1]) // 14 % 3 = 2, last step, MN1 is always is a winner
 	}
@@ -271,9 +271,9 @@ func Test_FindWinner_3_normal(t *testing.T) {
 
 	// Test 25 block. 3 activated masternodes
 	{
-		i := big.NewInt(25)
+		block_i := big.NewInt(25)
 
-		activeOnly := filterNotActiveMasternodes(masternodes, i)
+		activeOnly := filterNotActiveMasternodes(masternodes, block_i)
 
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
@@ -292,7 +292,7 @@ func Test_FindWinner_3_normal(t *testing.T) {
 		assert.Equal(t, round.RewardsLine[2].size.Cmp(masternodes[2].CollateralAmount), 0)
 		assert.Equal(t, round.RewardsLine[2].masternode, masternodes[2])
 
-		winner, err := FindWinner(masternodes, i)
+		winner, err := FindWinner(masternodes, block_i)
 		assert.Equal(t, err, nil)
 		assert.Equal(t, winner, masternodes[0]) // 25 % 4 = 1, second step
 	}
@@ -320,9 +320,9 @@ func Test_FindWinner_3_noReminder(t *testing.T) {
 
 	// Test 14 block. 2 activated masternodes
 	{
-		i := big.NewInt(14)
+		block_i := big.NewInt(14)
 
-		activeOnly := filterNotActiveMasternodes(masternodes, i)
+		activeOnly := filterNotActiveMasternodes(masternodes, block_i)
 
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
@@ -338,7 +338,7 @@ func Test_FindWinner_3_noReminder(t *testing.T) {
 		assert.Equal(t, round.RewardsLine[1].size.Cmp(masternodes[1].CollateralAmount), 0)
 		assert.Equal(t, round.RewardsLine[1].masternode, masternodes[1])
 
-		winner, err := FindWinner(masternodes, i)
+		winner, err := FindWinner(masternodes, block_i)
 		assert.Equal(t, err, nil)
 		assert.Equal(t, winner, masternodes[0]) // 14 % 2 = 0, first step, MN0 is always is a winner
 	}
@@ -357,9 +357,9 @@ func Test_FindWinner_3_noReminder(t *testing.T) {
 
 	// Test 25 block. 3 activated masternodes
 	{
-		i := big.NewInt(25)
+		block_i := big.NewInt(25)
 
-		activeOnly := filterNotActiveMasternodes(masternodes, i)
+		activeOnly := filterNotActiveMasternodes(masternodes, block_i)
 
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
@@ -379,7 +379,7 @@ func Test_FindWinner_3_noReminder(t *testing.T) {
 		assert.Equal(t, round.RewardsLine[2].size.Cmp(masternodes[2].CollateralAmount), 0)
 		assert.Equal(t, round.RewardsLine[2].masternode, masternodes[2])
 
-		winner, err := FindWinner(masternodes, i)
+		winner, err := FindWinner(masternodes, block_i)
 		assert.Equal(t, err, nil)
 		assert.Equal(t, winner, masternodes[1]) // 25 % 3 = 1, 1 step
 	}
