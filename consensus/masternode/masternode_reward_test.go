@@ -110,8 +110,8 @@ func getTestMasternodes_same_noReminder(num int) []*Masternode {
 			NodeAddressIpV6 : nil,
 			CollateralAmount : big.NewInt(0).Mul(big.NewInt(10000), params.Energi_bn),
 			CraAddress : common.Address{},
-			AnnouncementBlockNumber : big.NewInt(0),
-			ActivationBlockNumber : big.NewInt(4),
+			AnnouncementBlockNumber : big.NewInt(int64(i)),
+			ActivationBlockNumber : big.NewInt(int64(i + 1)),
 		}
 	}
 
@@ -143,6 +143,35 @@ func Test_FindWinner_1(t *testing.T) {
 		assert.Equal(t, err, nil)
 		assert.Equal(t, winner, masternodes[0])
 	}
+}
+
+func test_fifo_rewards(t *testing.T, start_from int, masternodes []*Masternode) {
+	for i := start_from; i < start_from + 1000; i++ {
+		winner, err := FindWinner(masternodes, big.NewInt(int64(i)))
+		assert.Equal(t, err, nil)
+		assert.Equal(t, winner, masternodes[i % len(masternodes)])
+	}
+}
+
+// Test that rewards work like FIFO when all the masternodes have the same collateral
+func Test_buildRewardsRound_no_reminder(t *testing.T) {
+	masternodes := getTestMasternodes_same_noReminder(2)
+	test_fifo_rewards(t, 2, masternodes)
+
+	masternodes = getTestMasternodes_same_noReminder(5)
+	test_fifo_rewards(t, 5, masternodes)
+
+	masternodes = getTestMasternodes_same_noReminder(10)
+	test_fifo_rewards(t, 10, masternodes)
+
+	masternodes = getTestMasternodes_same_noReminder(100)
+	test_fifo_rewards(t, 100, masternodes)
+
+	masternodes = getTestMasternodes_same_noReminder(1000)
+	test_fifo_rewards(t, 1000, masternodes)
+
+	masternodes = getTestMasternodes_same_noReminder(10000)
+	test_fifo_rewards(t, 10000, masternodes)
 }
 
 // Test that masternodes are sorted by their age
