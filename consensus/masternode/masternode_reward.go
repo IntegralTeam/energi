@@ -25,7 +25,7 @@ type Masternode struct {
 }
 
 // Minimum masternode collateral
-var MinCollateral = big.NewInt(0).Mul(big.NewInt(10000), params.Energi_bn) // 10000 NRG
+var MinCollateral = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn) // 10000 NRG
 
 // Segment on rewards line. If reward point is inside this segment, this masternode is a winner
 type rewardSegment struct {
@@ -62,9 +62,9 @@ func buildRewardsRound(masternodes []*Masternode) (*RewardsRound, error) {
 	}
 
 	// calculate roundLen
-	roundLen := big.NewInt(0).Div(wholeCollateral, MinCollateral) // roundLen = wholeCollateral / MinCollateral
+	roundLen := new(big.Int).Div(wholeCollateral, MinCollateral) // roundLen = wholeCollateral / MinCollateral
 	{
-		roundLenMod := big.NewInt(0).Mod(wholeCollateral, MinCollateral) // roundLenMod = wholeCollateral % MinCollateral
+		roundLenMod := new(big.Int).Mod(wholeCollateral, MinCollateral) // roundLenMod = wholeCollateral % MinCollateral
 		if roundLenMod.Cmp(big.NewInt(0)) != 0 { // roundLen = round up wholeCollateral / MinCollateral
 			roundLen.Add(roundLen, big.NewInt(1))
 		}
@@ -86,13 +86,13 @@ func buildRewardsRound(masternodes []*Masternode) (*RewardsRound, error) {
 		if i == 0 {
 			segments[i].start = big.NewInt(0)
 		} else {
-			segments[i].start = big.NewInt(0).Add(segments[i - 1].start, segments[i - 1].size)
+			segments[i].start = new(big.Int).Add(segments[i - 1].start, segments[i - 1].size)
 		}
 		segments[i].size = masternodes[i].CollateralAmount
 	}
 
 	// calculate round step
-	step := big.NewInt(0).Div(wholeCollateral, roundLen)
+	step := new(big.Int).Div(wholeCollateral, roundLen)
 
 	return &RewardsRound{
 		segments,
@@ -103,14 +103,14 @@ func buildRewardsRound(masternodes []*Masternode) (*RewardsRound, error) {
 
 // Calculate a point on rewards line. The point will specify segment, segment has a masternode (winner)
 func calcRewardPoint(round *RewardsRound, block_number *big.Int) *big.Int {
-	roundIndex := big.NewInt(0).Mod(block_number, round.Length)
-	roundId := big.NewInt(0).Sub(block_number, roundIndex) // roundId is round's first block
+	roundIndex := new(big.Int).Mod(block_number, round.Length)
+	roundId := new(big.Int).Sub(block_number, roundIndex) // roundId is round's first block
 
 	roundId_hash := sha256.Sum256(roundId.Bytes())
-	roundOffset := big.NewInt(0).SetBytes(roundId_hash[:])
+	roundOffset := new(big.Int).SetBytes(roundId_hash[:])
 	roundOffset = roundOffset.Mod(roundOffset, round.Step) // roundOffset = hash % round step
 
-	point := big.NewInt(0).Mul(roundIndex, round.Step)
+	point := new(big.Int).Mul(roundIndex, round.Step)
 	point.Add(point, roundOffset) // point = index * step + offset
 
 	return point
@@ -121,7 +121,7 @@ func findPointInRound(round *RewardsRound, point *big.Int) (*Masternode, error) 
 	// TODO binary search
 	for _, segment := range round.RewardsLine {
 		if segment.start.Cmp(point) <= 0 {
-			if big.NewInt(0).Add(segment.start, segment.size).Cmp(point) > 0 {
+			if new(big.Int).Add(segment.start, segment.size).Cmp(point) > 0 {
 				return segment.masternode, nil
 			}
 		}

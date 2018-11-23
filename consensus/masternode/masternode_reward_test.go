@@ -23,7 +23,7 @@ func getTestMasternode_1() []*Masternode {
 			ActivationBlockNumber : new(big.Int),
 		}
 	}
-	masternodes[0].CollateralAmount = big.NewInt(0).Mul(big.NewInt(10000), params.Energi_bn)
+	masternodes[0].CollateralAmount = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)
 	masternodes[0].AnnouncementBlockNumber = big.NewInt(0)
 	masternodes[0].ActivationBlockNumber = big.NewInt(10)
 
@@ -44,15 +44,15 @@ func getTestMasternodes_3_normal() []*Masternode {
 			ActivationBlockNumber : new(big.Int),
 		}
 	}
-	masternodes[0].CollateralAmount = big.NewInt(0).Mul(big.NewInt(10001), params.Energi_bn)
+	masternodes[0].CollateralAmount = new(big.Int).Mul(big.NewInt(10001), params.Energi_bn)
 	masternodes[0].AnnouncementBlockNumber = big.NewInt(0)
 	masternodes[0].ActivationBlockNumber = big.NewInt(4)
 
-	masternodes[1].CollateralAmount = big.NewInt(0).Mul(big.NewInt(10000), params.Energi_bn)
+	masternodes[1].CollateralAmount = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)
 	masternodes[1].AnnouncementBlockNumber = big.NewInt(10)
 	masternodes[1].ActivationBlockNumber = big.NewInt(14)
 
-	masternodes[2].CollateralAmount = big.NewInt(0).Mul(big.NewInt(10000), params.Energi_bn)
+	masternodes[2].CollateralAmount = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)
 	masternodes[2].AnnouncementBlockNumber = big.NewInt(20)
 	masternodes[2].ActivationBlockNumber = big.NewInt(24)
 
@@ -62,7 +62,7 @@ func getTestMasternodes_3_normal() []*Masternode {
 func getTestMasternodes_3_noReminder() []*Masternode {
 	masternodes := getTestMasternodes_3_normal()
 
-	masternodes[0].CollateralAmount = big.NewInt(0).Mul(big.NewInt(10000), params.Energi_bn)
+	masternodes[0].CollateralAmount = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)
 
 	return masternodes
 }
@@ -90,7 +90,7 @@ func getTestMasternodes_increasingCollateral(num int) []*Masternode {
 			Alias : fmt.Sprintf("MN%d", i),
 			NodeAddressIpV4 : nil,
 			NodeAddressIpV6 : nil,
-			CollateralAmount : big.NewInt(0).Mul(big.NewInt(int64(i * 10000)), params.Energi_bn),
+			CollateralAmount : new(big.Int).Mul(big.NewInt(int64(i * 10000)), params.Energi_bn),
 			CraAddress : common.Address{},
 			AnnouncementBlockNumber : big.NewInt(int64(i)),
 			ActivationBlockNumber : big.NewInt(int64(i + 1)),
@@ -108,7 +108,7 @@ func getTestMasternodes_same_noReminder(num int) []*Masternode {
 			Alias : fmt.Sprintf("MN%d", i),
 			NodeAddressIpV4 : nil,
 			NodeAddressIpV6 : nil,
-			CollateralAmount : big.NewInt(0).Mul(big.NewInt(10000), params.Energi_bn),
+			CollateralAmount : new(big.Int).Mul(big.NewInt(10000), params.Energi_bn),
 			CraAddress : common.Address{},
 			AnnouncementBlockNumber : big.NewInt(int64(i)),
 			ActivationBlockNumber : big.NewInt(int64(i + 1)),
@@ -327,7 +327,7 @@ func Test_FindWinner_3_noReminder(t *testing.T) {
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
 		assert.Equal(t, round.Length.Uint64(), uint64(2))
-		assert.Equal(t, round.Step.Cmp(big.NewInt(0).Mul(big.NewInt(10000), params.Energi_bn)), 0)
+		assert.Equal(t, round.Step.Cmp(new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)), 0)
 
 		assert.Equal(t, len(round.RewardsLine), 2)
 		assert.Equal(t, round.RewardsLine[0].start.Uint64(), uint64(0))
@@ -364,7 +364,7 @@ func Test_FindWinner_3_noReminder(t *testing.T) {
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
 		assert.Equal(t, round.Length.Uint64(), uint64(3))
-		assert.Equal(t, round.Step.Cmp(big.NewInt(0).Mul(big.NewInt(10000), params.Energi_bn)), 0)
+		assert.Equal(t, round.Step.Cmp(new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)), 0)
 
 		assert.Equal(t, len(round.RewardsLine), 3)
 		assert.Equal(t, round.RewardsLine[0].start.Uint64(), uint64(0))
