@@ -82,7 +82,7 @@ func getTestMasternodes_3_reversed() []*Masternode {
 	return masternodes
 }
 
-func getTestMasternodes_same(num int) []*Masternode {
+func getTestMasternodes_increasingCollateral(num int) []*Masternode {
 	masternodes := make([]*Masternode, num, num)
 
 	for i, _ := range masternodes {
@@ -90,10 +90,10 @@ func getTestMasternodes_same(num int) []*Masternode {
 			Alias : fmt.Sprintf("MN%d", i),
 			NodeAddressIpV4 : nil,
 			NodeAddressIpV6 : nil,
-			CollateralAmount : big.NewInt(0).Mul(big.NewInt(10001), params.Energi_bn),
+			CollateralAmount : big.NewInt(0).Mul(big.NewInt(int64(i * 10000)), params.Energi_bn),
 			CraAddress : common.Address{},
-			AnnouncementBlockNumber : big.NewInt(0),
-			ActivationBlockNumber : big.NewInt(4),
+			AnnouncementBlockNumber : big.NewInt(int64(i)),
+			ActivationBlockNumber : big.NewInt(int64(i + 1)),
 		}
 	}
 
@@ -150,6 +150,29 @@ func test_fifo_rewards(t *testing.T, start_from int, masternodes []*Masternode) 
 		winner, err := FindWinner(masternodes, big.NewInt(int64(i)))
 		assert.Equal(t, err, nil)
 		assert.Equal(t, winner, masternodes[i % len(masternodes)])
+	}
+}
+
+// Test average distribution of rewards
+func Test_buildRewardsRound_distribution(t *testing.T) {
+	masternodes := getTestMasternodes_increasingCollateral(50)
+
+	pointsHits := make(map[int]int) // masternode -> number of occurrences
+	for i := 50; i < 10000; i++ {
+		winner, _ := FindWinner(masternodes, big.NewInt(int64(i)))
+		collateral_factor := new(big.Int).Div(winner.CollateralAmount, MinCollateral).Uint64()
+
+		_, ok := pointsHits[int(collateral_factor)]
+		if !ok {
+			pointsHits[int(collateral_factor)] = 0
+		}
+		pointsHits[int(collateral_factor)] += 1
+	}
+
+	for collateral_factor, hits := range pointsHits {
+		print((hits / collateral_factor))
+		assert.Equal(t, (hits / collateral_factor) > 8 - 2, true)
+		assert.Equal(t, (hits / collateral_factor) < 8 + 2, true)
 	}
 }
 
