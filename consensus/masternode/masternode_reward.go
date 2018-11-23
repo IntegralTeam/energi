@@ -42,11 +42,11 @@ type RewardsRound struct {
 }
 
 // Return only activated masternodes
-func filterNotActiveMasternodes(masternodes []*Masternode) []*Masternode {
+func filterNotActiveMasternodes(masternodes []*Masternode, block_number *big.Int) []*Masternode {
 	masternodesFiltered := make([]*Masternode, 0, len(masternodes))
 
 	for _, masternode := range masternodes {
-		if masternode.AnnouncementBlockNumber.Cmp(masternode.ActivationBlockNumber) >= 0 {
+		if block_number.Cmp(masternode.ActivationBlockNumber) >= 0 {
 			masternodesFiltered = append(masternodesFiltered, masternode)
 		}
 	}
