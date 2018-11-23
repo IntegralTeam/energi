@@ -68,7 +68,7 @@ func getTestMasternodes_3_noReminder() []*Masternode {
 }
 
 func getTestMasternodes_3_reversed() []*Masternode {
-	masternodes := make([]*Masternode, 3, 3)
+	masternodes := getTestMasternodes_3_normal()
 
 	masternodes[0].AnnouncementBlockNumber = big.NewInt(0)
 	masternodes[0].ActivationBlockNumber = big.NewInt(4)
@@ -143,6 +143,18 @@ func Test_FindWinner_1(t *testing.T) {
 		assert.Equal(t, err, nil)
 		assert.Equal(t, winner, masternodes[0])
 	}
+}
+
+// Test that masternodes are sorted by their age
+func Test_buildRewardsRound_sorting(t *testing.T) {
+	masternodes := getTestMasternodes_3_reversed()
+	masternodes[0], masternodes[1] = masternodes[1], masternodes[0]
+
+	round, _ := buildRewardsRound(masternodes)
+
+	assert.Equal(t, round.RewardsLine[0].masternode.Alias, "MN0")
+	assert.Equal(t, round.RewardsLine[1].masternode.Alias, "MN1")
+	assert.Equal(t, round.RewardsLine[2].masternode.Alias, "MN2")
 }
 
 func Test_FindWinner_3_normal(t *testing.T) {
