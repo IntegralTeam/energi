@@ -209,6 +209,7 @@ func Test_buildRewardsRound_sorting(t *testing.T) {
 	assert.Equal(t, round.RewardsLine[2].masternode.Alias, "MN2")
 }
 
+// Test FindWinner with 3 masternodes. Whole collateral is with reminder (30001 % 10000 != 0, gives 4-step round)
 func Test_FindWinner_3_normal(t *testing.T) {
 	masternodes := getTestMasternodes_3_normal()
 	test_no_winners(t, masternodes, 4)
@@ -314,6 +315,7 @@ func Test_FindWinner_3_normal(t *testing.T) {
 	test_winner_is(t, masternodes, 39, masternodes[2]) // 3 step
 }
 
+// Test FindWinner with 3 masternodes. Whole collateral is without reminder (30000 % 10000 == 0, gives 3-step round)
 func Test_FindWinner_3_noReminder(t *testing.T) {
 	masternodes := getTestMasternodes_3_noReminder()
 	test_no_winners(t, masternodes, 4)
