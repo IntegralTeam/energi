@@ -157,19 +157,19 @@ func test_fifo_rewards(t *testing.T, start_from int, masternodes []*Masternode) 
 func Test_buildRewardsRound_distribution(t *testing.T) {
 	masternodes := getTestMasternodes_increasingCollateral(50)
 
-	pointsHits := make(map[int]int) // masternode -> number of occurrences
+	masternodeHits := make(map[int]int) // masternode -> number of occurrences
 	for block_i := 50; block_i < 10000; block_i++ {
 		winner, _ := FindWinner(masternodes, big.NewInt(int64(block_i)))
 		collateral_factor := new(big.Int).Div(winner.CollateralAmount, MinCollateral).Uint64()
 
-		_, ok := pointsHits[int(collateral_factor)]
+		_, ok := masternodeHits[int(collateral_factor)]
 		if !ok {
-			pointsHits[int(collateral_factor)] = 0
+			masternodeHits[int(collateral_factor)] = 0
 		}
-		pointsHits[int(collateral_factor)] += 1
+		masternodeHits[int(collateral_factor)] += 1
 	}
 
-	for collateral_factor, hits := range pointsHits {
+	for collateral_factor, hits := range masternodeHits {
 		print((hits / collateral_factor))
 		assert.Equal(t, (hits / collateral_factor) > 8 - 2, true)
 		assert.Equal(t, (hits / collateral_factor) < 8 + 2, true)
