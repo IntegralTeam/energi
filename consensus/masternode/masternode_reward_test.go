@@ -170,7 +170,7 @@ func Test_buildRewardsRound_distribution(t *testing.T) {
 	}
 
 	for collateral_factor, hits := range masternodeHits {
-		print((hits / collateral_factor))
+		fmt.Printf("Test_buildRewardsRound_distribution: %d \n", hits / collateral_factor)
 		assert.Equal(t, (hits / collateral_factor) > 8 - 2, true)
 		assert.Equal(t, (hits / collateral_factor) < 8 + 2, true)
 	}
@@ -424,6 +424,7 @@ func Test_calcRewardPoint(t *testing.T) {
 		pointsHits[point.Uint64()] += 1
 	}
 	for _, hits := range pointsHits {
+		fmt.Printf("Test_calcRewardPoint hits: %d \n", hits)
 		assert.Equal(t, hits > 300 - 60, true)
 		assert.Equal(t, hits < 300 + 60, true)
 	}
@@ -438,12 +439,12 @@ func Test_calcRewardPoint(t *testing.T) {
 	point25 := calcRewardPoint(&round, big.NewInt(25))
 	point39 := calcRewardPoint(&round, big.NewInt(39))
 
-	//println(point0.String())
-	//println(point5.String())
-	//println(point19.String())
-	//println(point20.String())
-	//println(point25.String())
-	//println(point39.String())
+	fmt.Printf("Test_calcRewardPoint actual num: %s \n", point0.String())
+	fmt.Printf("Test_calcRewardPoint actual num: %s \n", point5.String())
+	fmt.Printf("Test_calcRewardPoint actual num: %s \n", point19.String())
+	fmt.Printf("Test_calcRewardPoint actual num: %s \n", point20.String())
+	fmt.Printf("Test_calcRewardPoint actual num: %s \n", point25.String())
+	fmt.Printf("Test_calcRewardPoint actual num: %s \n", point39.String())
 
 	point0_want,  _ := new(big.Int).SetString(  "48198034993379397001115665086549", 10)
 	point5_want,  _ := new(big.Int).SetString( "548198034993379397001115665086549", 10)
