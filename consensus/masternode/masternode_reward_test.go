@@ -100,7 +100,7 @@ func getTestMasternodes_increasingCollateral(num int) []*Masternode {
 	return masternodes
 }
 
-func getTestMasternodes_same_noReminder(num int) []*Masternode {
+func getTestMasternodes_noReminder(num int) []*Masternode {
 	masternodes := make([]*Masternode, num, num)
 
 	for i, _ := range masternodes {
@@ -178,22 +178,22 @@ func Test_buildRewardsRound_distribution(t *testing.T) {
 
 // Test that rewards work like FIFO when all the masternodes have the same collateral
 func Test_buildRewardsRound_no_reminder(t *testing.T) {
-	masternodes := getTestMasternodes_same_noReminder(2)
+	masternodes := getTestMasternodes_noReminder(2)
 	test_fifo_rewards(t, 2, masternodes)
 
-	masternodes = getTestMasternodes_same_noReminder(5)
+	masternodes = getTestMasternodes_noReminder(5)
 	test_fifo_rewards(t, 5, masternodes)
 
-	masternodes = getTestMasternodes_same_noReminder(10)
+	masternodes = getTestMasternodes_noReminder(10)
 	test_fifo_rewards(t, 10, masternodes)
 
-	masternodes = getTestMasternodes_same_noReminder(100)
+	masternodes = getTestMasternodes_noReminder(100)
 	test_fifo_rewards(t, 100, masternodes)
 
-	masternodes = getTestMasternodes_same_noReminder(1000)
+	masternodes = getTestMasternodes_noReminder(1000)
 	test_fifo_rewards(t, 1000, masternodes)
 
-	masternodes = getTestMasternodes_same_noReminder(10000)
+	masternodes = getTestMasternodes_noReminder(10000)
 	test_fifo_rewards(t, 10000, masternodes)
 }
 
