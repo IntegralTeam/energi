@@ -12,13 +12,13 @@ type rewardSegment struct {
 	masternode *Masternode
 
 	start *big.Int
-	size *big.Int
+	size  *big.Int
 }
 
 type rewardsRound struct {
 	RewardsLine []rewardSegment
-	Step *big.Int // Every block, reward point moves by Step
-	Length *big.Int // Round length (line length / Step). Not equal to len(rewardSegment)!
+	Step        *big.Int // Every block, reward point moves by Step
+	Length      *big.Int // Round length (line length / Step). Not equal to len(rewardSegment)!
 }
 
 // Build rewards line for current masternodes
@@ -54,7 +54,7 @@ func buildRewardsRound(masternodes []*Masternode) (*rewardsRound, error) {
 		if i == 0 {
 			segments[i].start = big.NewInt(0)
 		} else {
-			segments[i].start = new(big.Int).Add(segments[i - 1].start, segments[i - 1].size)
+			segments[i].start = new(big.Int).Add(segments[i-1].start, segments[i-1].size)
 		}
 		segments[i].size = masternodes[i].CollateralAmount
 	}

@@ -14,13 +14,13 @@ func getTestMasternode_1() []*Masternode {
 
 	for i, _ := range masternodes {
 		masternodes[i] = &Masternode{
-			Alias : fmt.Sprintf("MN%d", i),
-			NodeAddressIpV4 : nil,
-			NodeAddressIpV6 : nil,
-			CollateralAmount : new(big.Int),
-			CraAddress : common.Address{},
-			AnnouncementBlockNumber : new(big.Int),
-			ActivationBlockNumber : new(big.Int),
+			Alias:                   fmt.Sprintf("MN%d", i),
+			NodeAddressIpV4:         nil,
+			NodeAddressIpV6:         nil,
+			CollateralAmount:        new(big.Int),
+			CraAddress:              common.Address{},
+			AnnouncementBlockNumber: new(big.Int),
+			ActivationBlockNumber:   new(big.Int),
 		}
 	}
 	masternodes[0].CollateralAmount = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)
@@ -35,13 +35,13 @@ func getTestMasternodes_3_normal() []*Masternode {
 
 	for i, _ := range masternodes {
 		masternodes[i] = &Masternode{
-			Alias : fmt.Sprintf("MN%d", i),
-			NodeAddressIpV4 : nil,
-			NodeAddressIpV6 : nil,
-			CollateralAmount : new(big.Int),
-			CraAddress : common.Address{},
-			AnnouncementBlockNumber : new(big.Int),
-			ActivationBlockNumber : new(big.Int),
+			Alias:                   fmt.Sprintf("MN%d", i),
+			NodeAddressIpV4:         nil,
+			NodeAddressIpV6:         nil,
+			CollateralAmount:        new(big.Int),
+			CraAddress:              common.Address{},
+			AnnouncementBlockNumber: new(big.Int),
+			ActivationBlockNumber:   new(big.Int),
 		}
 	}
 	masternodes[0].CollateralAmount = new(big.Int).Mul(big.NewInt(10001), params.Energi_bn)
@@ -87,13 +87,13 @@ func getTestMasternodes_increasingCollateral(num int) []*Masternode {
 
 	for i, _ := range masternodes {
 		masternodes[i] = &Masternode{
-			Alias : fmt.Sprintf("MN%d", i),
-			NodeAddressIpV4 : nil,
-			NodeAddressIpV6 : nil,
-			CollateralAmount : new(big.Int).Mul(big.NewInt(int64(i * 10000)), params.Energi_bn),
-			CraAddress : common.Address{},
-			AnnouncementBlockNumber : big.NewInt(int64(i)),
-			ActivationBlockNumber : big.NewInt(int64(i + 1)),
+			Alias:                   fmt.Sprintf("MN%d", i),
+			NodeAddressIpV4:         nil,
+			NodeAddressIpV6:         nil,
+			CollateralAmount:        new(big.Int).Mul(big.NewInt(int64(i*10000)), params.Energi_bn),
+			CraAddress:              common.Address{},
+			AnnouncementBlockNumber: big.NewInt(int64(i)),
+			ActivationBlockNumber:   big.NewInt(int64(i + 1)),
 		}
 	}
 
@@ -105,13 +105,13 @@ func getTestMasternodes_noReminder(num int) []*Masternode {
 
 	for i, _ := range masternodes {
 		masternodes[i] = &Masternode{
-			Alias : fmt.Sprintf("MN%d", i),
-			NodeAddressIpV4 : nil,
-			NodeAddressIpV6 : nil,
-			CollateralAmount : new(big.Int).Mul(big.NewInt(10000), params.Energi_bn),
-			CraAddress : common.Address{},
-			AnnouncementBlockNumber : big.NewInt(int64(i)),
-			ActivationBlockNumber : big.NewInt(int64(i + 1)),
+			Alias:                   fmt.Sprintf("MN%d", i),
+			NodeAddressIpV4:         nil,
+			NodeAddressIpV6:         nil,
+			CollateralAmount:        new(big.Int).Mul(big.NewInt(10000), params.Energi_bn),
+			CraAddress:              common.Address{},
+			AnnouncementBlockNumber: big.NewInt(int64(i)),
+			ActivationBlockNumber:   big.NewInt(int64(i + 1)),
 		}
 	}
 
@@ -146,10 +146,10 @@ func Test_FindWinner_1(t *testing.T) {
 }
 
 func test_fifo_rewards(t *testing.T, start_from int, masternodes []*Masternode) {
-	for block_i := start_from; block_i < start_from + 1000; block_i++ {
+	for block_i := start_from; block_i < start_from+1000; block_i++ {
 		winner, err := FindWinner(masternodes, big.NewInt(int64(block_i)))
 		assert.Equal(t, err, nil)
-		assert.Equal(t, winner, masternodes[block_i % len(masternodes)])
+		assert.Equal(t, winner, masternodes[block_i%len(masternodes)])
 	}
 }
 
@@ -170,9 +170,9 @@ func Test_buildRewardsRound_distribution(t *testing.T) {
 	}
 
 	for collateral_factor, hits := range masternodeHits {
-		fmt.Printf("Test_buildRewardsRound_distribution: %d \n", hits / collateral_factor)
-		assert.Equal(t, (hits / collateral_factor) > 8 - 2, true)
-		assert.Equal(t, (hits / collateral_factor) < 8 + 2, true)
+		fmt.Printf("Test_buildRewardsRound_distribution: %d \n", hits/collateral_factor)
+		assert.Equal(t, (hits / collateral_factor) > 8-2, true)
+		assert.Equal(t, (hits / collateral_factor) < 8+2, true)
 	}
 }
 
@@ -227,7 +227,6 @@ func Test_FindWinner_3_normal(t *testing.T) {
 		assert.Equal(t, round.RewardsLine[0].start.Uint64(), uint64(0))
 		assert.Equal(t, round.RewardsLine[0].size.Cmp(masternodes[0].CollateralAmount), 0)
 		assert.Equal(t, round.RewardsLine[0].masternode, masternodes[0])
-
 
 		winner, err := FindWinner(masternodes, big.NewInt(int64(i)))
 		assert.Equal(t, err, nil)
@@ -400,7 +399,7 @@ func Test_calcRewardPoint(t *testing.T) {
 	round.Length = big.NewInt(10)
 	for i := 0; i < 100; i++ {
 		point := calcRewardPoint(&round, big.NewInt(int64(i)))
-		assert.Equal(t, int(point.Uint64()), i % 10)
+		assert.Equal(t, int(point.Uint64()), i%10)
 	}
 
 	// Test 10-step round bounds
@@ -408,8 +407,8 @@ func Test_calcRewardPoint(t *testing.T) {
 	round.Length = big.NewInt(20)
 	for i := 0; i < 1000; i++ {
 		point := calcRewardPoint(&round, big.NewInt(int64(i)))
-		assert.Equal(t, int(point.Uint64()) >= (i % 20) * 10, true)
-		assert.Equal(t, int(point.Uint64()) < (i % 20) * 10 + 10, true)
+		assert.Equal(t, int(point.Uint64()) >= (i%20)*10, true)
+		assert.Equal(t, int(point.Uint64()) < (i%20)*10+10, true)
 	}
 
 	// Test the equiprobability of the distribution
@@ -427,8 +426,8 @@ func Test_calcRewardPoint(t *testing.T) {
 	}
 	for _, hits := range pointsHits {
 		fmt.Printf("Test_calcRewardPoint hits: %d \n", hits)
-		assert.Equal(t, hits > 300 - 60, true)
-		assert.Equal(t, hits < 300 + 60, true)
+		assert.Equal(t, hits > 300-60, true)
+		assert.Equal(t, hits < 300+60, true)
 	}
 
 	// Test specific 1e+32-step round
@@ -448,11 +447,11 @@ func Test_calcRewardPoint(t *testing.T) {
 	fmt.Printf("Test_calcRewardPoint actual num: %s \n", point25.String())
 	fmt.Printf("Test_calcRewardPoint actual num: %s \n", point39.String())
 
-	point0_want,  _ := new(big.Int).SetString(  "48198034993379397001115665086549", 10)
-	point5_want,  _ := new(big.Int).SetString( "548198034993379397001115665086549", 10)
+	point0_want, _ := new(big.Int).SetString("48198034993379397001115665086549", 10)
+	point5_want, _ := new(big.Int).SetString("548198034993379397001115665086549", 10)
 	point19_want, _ := new(big.Int).SetString("1948198034993379397001115665086549", 10)
-	point20_want, _ := new(big.Int).SetString(  "92190392920402856263689962707065", 10)
-	point25_want, _ := new(big.Int).SetString( "592190392920402856263689962707065", 10)
+	point20_want, _ := new(big.Int).SetString("92190392920402856263689962707065", 10)
+	point25_want, _ := new(big.Int).SetString("592190392920402856263689962707065", 10)
 	point39_want, _ := new(big.Int).SetString("1992190392920402856263689962707065", 10)
 
 	assert.Equal(t, point0.Cmp(point0_want), 0)
