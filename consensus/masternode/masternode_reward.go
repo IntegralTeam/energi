@@ -1,31 +1,11 @@
-package masternode_reward
+package masternode
 
 import (
 	"crypto/sha256"
 	"errors"
-	"github.com/IntegralTeam/energi/common"
-	"github.com/IntegralTeam/energi/p2p/discv5"
-	"github.com/IntegralTeam/energi/params"
 	"math/big"
 	"sort"
 )
-
-// Represents Masternode. This state is stored inside masternodes smart contract.
-type Masternode struct {
-	Alias string // human-readable name
-
-	// net addresses
-	NodeAddressIpV4 *discv5.NodeAddress
-	NodeAddressIpV6 *discv5.NodeAddress // Optional network address
-
-	CollateralAmount *big.Int
-	CraAddress common.Address // CRA (Collateral/Reward/Authentication) address. The address from which the collateral was sent
-	AnnouncementBlockNumber *big.Int // The block in which the tx-Announce was included
-	ActivationBlockNumber *big.Int // Formula: <Announcement block number> + max(round_up(<whole collateral> / <MinCollateral>), 100)
-}
-
-// Minimum masternode collateral
-var MinCollateral = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn) // 10000 NRG
 
 // Segment on rewards line. If reward point is inside this segment, this masternode is a winner
 type rewardSegment struct {
@@ -35,26 +15,14 @@ type rewardSegment struct {
 	size *big.Int
 }
 
-type RewardsRound struct {
+type rewardsRound struct {
 	RewardsLine []rewardSegment
 	Step *big.Int // Every block, reward point moves by Step
 	Length *big.Int // Round length (line length / Step). Not equal to len(rewardSegment)!
 }
 
-// Return only activated masternodes
-func filterNotActiveMasternodes(masternodes []*Masternode, block_number *big.Int) []*Masternode {
-	masternodesFiltered := make([]*Masternode, 0, len(masternodes))
-
-	for _, masternode := range masternodes {
-		if block_number.Cmp(masternode.ActivationBlockNumber) >= 0 {
-			masternodesFiltered = append(masternodesFiltered, masternode)
-		}
-	}
-	return masternodesFiltered
-}
-
 // Build rewards line for current masternodes
-func buildRewardsRound(masternodes []*Masternode) (*RewardsRound, error) {
+func buildRewardsRound(masternodes []*Masternode) (*rewardsRound, error) {
 	// sum collaterals
 	wholeCollateral := big.NewInt(0)
 	for _, masternode := range masternodes {
@@ -94,7 +62,7 @@ func buildRewardsRound(masternodes []*Masternode) (*RewardsRound, error) {
 	// calculate round step
 	step := new(big.Int).Div(wholeCollateral, roundLen)
 
-	return &RewardsRound{
+	return &rewardsRound{
 		segments,
 		step,
 		roundLen,
@@ -102,7 +70,7 @@ func buildRewardsRound(masternodes []*Masternode) (*RewardsRound, error) {
 }
 
 // Calculate a point on rewards line. The point will specify segment, segment has a masternode (winner)
-func calcRewardPoint(round *RewardsRound, block_number *big.Int) *big.Int {
+func calcRewardPoint(round *rewardsRound, block_number *big.Int) *big.Int {
 	roundIndex := new(big.Int).Mod(block_number, round.Length)
 	roundId := new(big.Int).Sub(block_number, roundIndex) // roundId is round's first block
 
@@ -117,7 +85,7 @@ func calcRewardPoint(round *RewardsRound, block_number *big.Int) *big.Int {
 }
 
 // Search for a segment which includes the point
-func findPointInRound(round *RewardsRound, point *big.Int) (*Masternode, error) {
+func findPointInRound(round *rewardsRound, point *big.Int) (*Masternode, error) {
 	// TODO binary search
 	for _, segment := range round.RewardsLine {
 		if segment.start.Cmp(point) <= 0 {
@@ -132,7 +100,7 @@ func findPointInRound(round *RewardsRound, point *big.Int) (*Masternode, error) 
 
 // Return masternode to reward on current block
 func FindWinner(masternodes []*Masternode, block_number *big.Int) (*Masternode, error) {
-	activeOnly := filterNotActiveMasternodes(masternodes, block_number)
+	activeOnly := FilterNotActiveMasternodes(masternodes, block_number)
 	if len(activeOnly) == 0 {
 		return nil, errors.New("No masternode to reward were found")
 	}

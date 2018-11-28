@@ -1,4 +1,4 @@
-package masternode_reward
+package masternode
 
 import (
 	"fmt"
@@ -216,7 +216,7 @@ func Test_FindWinner_3_normal(t *testing.T) {
 
 	// Test 4-13 blocks. First masternode is always a winner
 	for i := 4; i < 14; i++ {
-		activeOnly := filterNotActiveMasternodes(masternodes, big.NewInt(int64(i)))
+		activeOnly := FilterNotActiveMasternodes(masternodes, big.NewInt(int64(i)))
 
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
@@ -238,7 +238,7 @@ func Test_FindWinner_3_normal(t *testing.T) {
 	{
 		block_i := big.NewInt(14)
 
-		activeOnly := filterNotActiveMasternodes(masternodes, block_i)
+		activeOnly := FilterNotActiveMasternodes(masternodes, block_i)
 
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
@@ -274,7 +274,7 @@ func Test_FindWinner_3_normal(t *testing.T) {
 	{
 		block_i := big.NewInt(25)
 
-		activeOnly := filterNotActiveMasternodes(masternodes, block_i)
+		activeOnly := FilterNotActiveMasternodes(masternodes, block_i)
 
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
@@ -324,7 +324,7 @@ func Test_FindWinner_3_noReminder(t *testing.T) {
 	{
 		block_i := big.NewInt(14)
 
-		activeOnly := filterNotActiveMasternodes(masternodes, block_i)
+		activeOnly := FilterNotActiveMasternodes(masternodes, block_i)
 
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
@@ -361,7 +361,7 @@ func Test_FindWinner_3_noReminder(t *testing.T) {
 	{
 		block_i := big.NewInt(25)
 
-		activeOnly := filterNotActiveMasternodes(masternodes, block_i)
+		activeOnly := FilterNotActiveMasternodes(masternodes, block_i)
 
 		round, err := buildRewardsRound(activeOnly)
 		assert.Equal(t, err, nil)
@@ -394,7 +394,7 @@ func Test_FindWinner_3_noReminder(t *testing.T) {
 }
 
 func Test_calcRewardPoint(t *testing.T) {
-	var round RewardsRound
+	var round rewardsRound
 	// Test one-step round
 	round.Step = big.NewInt(1)
 	round.Length = big.NewInt(10)
@@ -463,24 +463,24 @@ func Test_calcRewardPoint(t *testing.T) {
 	assert.Equal(t, point39.Cmp(point39_want), 0)
 }
 
-func Test_filterNotActiveMasternodes_3_normal(t *testing.T) {
+func Test_FilterNotActiveMasternodes_3_normal(t *testing.T) {
 	masternodes := getTestMasternodes_3_normal()
 	masternodes[2].ActivationBlockNumber.Mul(big.NewInt(1e+16), big.NewInt(1e+16))
 
-	masternodes_filtered0 := filterNotActiveMasternodes(masternodes, big.NewInt(0))
-	masternodes_filtered1 := filterNotActiveMasternodes(masternodes, big.NewInt(1))
-	masternodes_filtered2 := filterNotActiveMasternodes(masternodes, big.NewInt(2))
-	masternodes_filtered3 := filterNotActiveMasternodes(masternodes, big.NewInt(3))
-	masternodes_filtered4 := filterNotActiveMasternodes(masternodes, big.NewInt(4))
-	masternodes_filtered5 := filterNotActiveMasternodes(masternodes, big.NewInt(5))
+	masternodes_filtered0 := FilterNotActiveMasternodes(masternodes, big.NewInt(0))
+	masternodes_filtered1 := FilterNotActiveMasternodes(masternodes, big.NewInt(1))
+	masternodes_filtered2 := FilterNotActiveMasternodes(masternodes, big.NewInt(2))
+	masternodes_filtered3 := FilterNotActiveMasternodes(masternodes, big.NewInt(3))
+	masternodes_filtered4 := FilterNotActiveMasternodes(masternodes, big.NewInt(4))
+	masternodes_filtered5 := FilterNotActiveMasternodes(masternodes, big.NewInt(5))
 
-	masternodes_filtered13 := filterNotActiveMasternodes(masternodes, big.NewInt(13))
-	masternodes_filtered14 := filterNotActiveMasternodes(masternodes, big.NewInt(14))
-	masternodes_filtered15 := filterNotActiveMasternodes(masternodes, big.NewInt(15))
+	masternodes_filtered13 := FilterNotActiveMasternodes(masternodes, big.NewInt(13))
+	masternodes_filtered14 := FilterNotActiveMasternodes(masternodes, big.NewInt(14))
+	masternodes_filtered15 := FilterNotActiveMasternodes(masternodes, big.NewInt(15))
 
-	masternodes_filtered1e32sub := filterNotActiveMasternodes(masternodes, new(big.Int).Sub(masternodes[2].ActivationBlockNumber, big.NewInt(1)))
-	masternodes_filtered1e32 := filterNotActiveMasternodes(masternodes, masternodes[2].ActivationBlockNumber)
-	masternodes_filtered1e32sum := filterNotActiveMasternodes(masternodes, new(big.Int).Add(masternodes[2].ActivationBlockNumber, big.NewInt(1)))
+	masternodes_filtered1e32sub := FilterNotActiveMasternodes(masternodes, new(big.Int).Sub(masternodes[2].ActivationBlockNumber, big.NewInt(1)))
+	masternodes_filtered1e32 := FilterNotActiveMasternodes(masternodes, masternodes[2].ActivationBlockNumber)
+	masternodes_filtered1e32sum := FilterNotActiveMasternodes(masternodes, new(big.Int).Add(masternodes[2].ActivationBlockNumber, big.NewInt(1)))
 
 	// Ensure right number of entries were filtered
 	assert.Equal(t, len(masternodes_filtered0), 0)
