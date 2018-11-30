@@ -17,6 +17,7 @@
 package masternode
 
 import (
+	"fmt"
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/p2p/discv5"
 	"github.com/IntegralTeam/energi/params"
@@ -50,4 +51,62 @@ func FilterNotActiveMasternodes(masternodes []*Masternode, block_number *big.Int
 		}
 	}
 	return masternodesFiltered
+}
+
+func GetMasternodes() []*Masternode {
+	masternodes := make([]*Masternode, 3, 3)
+
+	for i, _ := range masternodes {
+		masternodes[i] = &Masternode{
+			Alias : fmt.Sprintf("MN%d", i),
+			NodeAddressIpV4 : nil,
+			NodeAddressIpV6 : nil,
+			CollateralAmount : new(big.Int),
+			CraAddress : common.Address{},
+			AnnouncementBlockNumber : new(big.Int),
+			ActivationBlockNumber : new(big.Int),
+		}
+	}
+	masternodes[0].CollateralAmount = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)
+	masternodes[0].AnnouncementBlockNumber = big.NewInt(0)
+	masternodes[0].ActivationBlockNumber = big.NewInt(4)
+	masternodes[0].CraAddress = common.HexToAddress("93197b9019527e516b87317ebd065f240d972d22") // pass is 1
+
+	masternodes[1].CollateralAmount = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)
+	masternodes[1].AnnouncementBlockNumber = big.NewInt(10)
+	masternodes[1].ActivationBlockNumber = big.NewInt(14)
+	masternodes[1].CraAddress = common.HexToAddress("c192752af76b34ea21fbf71b76a872b1282d02fd") // pass is 2
+
+	masternodes[2].CollateralAmount = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)
+	masternodes[2].AnnouncementBlockNumber = big.NewInt(20)
+	masternodes[2].ActivationBlockNumber = big.NewInt(24)
+	masternodes[2].CraAddress = common.HexToAddress("25c4f7736914f6dc48dcf8245e247f09c26765ff") // pass is 3
+
+	return masternodes
+}
+
+func GetActiveMasternodes(block_number *big.Int) []*Masternode {
+	return FilterNotActiveMasternodes(GetMasternodes(), block_number)
+}
+
+func GetMasternodesMap() map[common.Address]*Masternode {
+	masternodes := GetMasternodes()
+
+	masternodes_map := make(map[common.Address]*Masternode, 0)
+	for _,masternode := range masternodes {
+		masternodes_map[masternode.CraAddress] = masternode
+	}
+
+	return masternodes_map
+}
+
+func GetActiveMasternodesMap(block_number *big.Int) map[common.Address]*Masternode {
+	masternodes := GetActiveMasternodes(block_number)
+
+	masternodes_map := make(map[common.Address]*Masternode, 0)
+	for _,masternode := range masternodes {
+		masternodes_map[masternode.CraAddress] = masternode
+	}
+
+	return masternodes_map
 }
