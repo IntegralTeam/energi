@@ -36,6 +36,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/IntegralTeam/energi/energi/masternode"
 	"math"
 	"math/big"
 	"sync"
@@ -701,6 +702,42 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		}
 		pm.txpool.AddRemotes(txs)
 
+	case msg.Code == MasternodeHeartbeatMsg:
+		// Process incoming MN heartbeat
+		var heartbeat *mn_back.Heartbeat
+		if err := msg.Decode(&heartbeat); err != nil {
+			return errResp(ErrDecode, "msg %v: %v", msg, err)
+		}
+
+		block_number := pm.blockchain.CurrentBlock().Header().Number
+		broadcasting, err := ArrivedHeartbeat(heartbeat, block_number)
+		if err != nil {
+			return errResp(err.Code, "%v: %v", msg, err)
+		}
+
+		p.MarkHeartbeat(heartbeat.Hash())
+		if broadcasting {
+			pm.BroadcastHeartbeat(heartbeat)
+		}
+
+	case msg.Code == MasternodeDismissVoteMsg:
+		// Process incoming MN DismissVote
+		var dismissVote *mn_back.DismissVote
+		if err := msg.Decode(&dismissVote); err != nil {
+			return errResp(ErrDecode, "msg %v: %v", msg, err)
+		}
+
+		block_number := pm.blockchain.CurrentBlock().Header().Number
+		broadcasting, err := ArrivedDismmisingVote(dismissVote, block_number)
+		if err != nil {
+			return errResp(err.Code, "%v: %v", msg, err)
+		}
+
+		p.MarkDismissVote(dismissVote.Hash())
+		if broadcasting {
+			pm.BroadcastDismissVote(dismissVote)
+		}
+
 	default:
 		return errResp(ErrInvalidMsgCode, "%v", msg.Code)
 	}
@@ -764,6 +801,28 @@ func (pm *ProtocolManager) BroadcastTxs(txs types.Transactions) {
 	for peer, txs := range txset {
 		peer.AsyncSendTransactions(txs)
 	}
+}
+
+// BroadcastHeartbeat will propagate a heartbeat to all peers which are not known to
+// already have the given message.
+func (pm *ProtocolManager) BroadcastHeartbeat(heartbeat *mn_back.Heartbeat) {
+	// Broadcast message to a batch of peers not knowing about it
+	peers := pm.peers.PeersWithoutHeartbeat(heartbeat.Hash())
+	for _, peer := range peers {
+		peer.AsyncSendHeartbeat(heartbeat)
+	}
+	log.Trace("Broadcast heartbeat", "hash", heartbeat.Hash(), "recipients", len(peers))
+}
+
+// BroadcastDismissVote will propagate a DismissVote to all peers which are not known to
+// already have the given message.
+func (pm *ProtocolManager) BroadcastDismissVote(dismissVote *mn_back.DismissVote) {
+	// Broadcast message to a batch of peers not knowing about it
+	peers := pm.peers.PeersWithoutDismissVote(dismissVote.Hash())
+	for _, peer := range peers {
+		peer.AsyncSendDismissVote(dismissVote)
+	}
+	log.Trace("Broadcast DismissVote", "hash", dismissVote.Hash(), "recipients", len(peers))
 }
 
 // Mined broadcast loop

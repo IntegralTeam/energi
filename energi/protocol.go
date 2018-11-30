@@ -56,7 +56,7 @@ var ProtocolName = "energi"
 var ProtocolVersions = []uint{eth63}
 
 // ProtocolLengths are the number of implemented message corresponding to different protocol versions.
-var ProtocolLengths = []uint64{17}
+var ProtocolLengths = []uint64{19}
 
 const ProtocolMaxMsgSize = 10 * 1024 * 1024 // Maximum cap on the size of a protocol message
 
@@ -77,9 +77,21 @@ const (
 	NodeDataMsg    = 0x0e
 	GetReceiptsMsg = 0x0f
 	ReceiptsMsg    = 0x10
+
+	// Protocol messages belonging to energi masternodes (energi/63)
+	MasternodeHeartbeatMsg   = 0x11
+	MasternodeDismissVoteMsg = 0x12
 )
 
+// ErrCode implements error
 type errCode int
+type ErrCode struct {
+	Code errCode
+}
+
+func (e *ErrCode) Error() string {
+	return errorToString[int(e.Code)]
+}
 
 const (
 	ErrMsgTooLarge = iota
@@ -91,6 +103,10 @@ const (
 	ErrNoStatusMsg
 	ErrExtraStatusMsg
 	ErrSuspendedPeer
+	ErrAuthWrongSignature
+	ErrAuthMasternodeNotFound
+	ErrMasternodeToDismissNotFound
+	ErrMsgTooFarInFuture
 )
 
 func (e errCode) String() string {
@@ -99,15 +115,19 @@ func (e errCode) String() string {
 
 // XXX change once legacy code is out
 var errorToString = map[int]string{
-	ErrMsgTooLarge:             "Message too long",
-	ErrDecode:                  "Invalid message",
-	ErrInvalidMsgCode:          "Invalid message code",
-	ErrProtocolVersionMismatch: "Protocol version mismatch",
-	ErrNetworkIdMismatch:       "NetworkId mismatch",
-	ErrGenesisBlockMismatch:    "Genesis block mismatch",
-	ErrNoStatusMsg:             "No status message",
-	ErrExtraStatusMsg:          "Extra status message",
-	ErrSuspendedPeer:           "Suspended peer",
+	ErrMsgTooLarge:                 "Message too long",
+	ErrDecode:                      "Invalid message",
+	ErrInvalidMsgCode:              "Invalid message code",
+	ErrProtocolVersionMismatch:     "Protocol version mismatch",
+	ErrNetworkIdMismatch:           "NetworkId mismatch",
+	ErrGenesisBlockMismatch:        "Genesis block mismatch",
+	ErrNoStatusMsg:                 "No status message",
+	ErrExtraStatusMsg:              "Extra status message",
+	ErrSuspendedPeer:               "Suspended peer",
+	ErrAuthWrongSignature:          "MN auth: wrong signature",
+	ErrAuthMasternodeNotFound:      "MN auth: masternode wasn't found",
+	ErrMasternodeToDismissNotFound: "Masternode to dismiss wasn't found",
+	ErrMsgTooFarInFuture:           "Message timestamp is too far in future",
 }
 
 type txPool interface {
