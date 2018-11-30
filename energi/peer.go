@@ -35,6 +35,7 @@ package energi
 import (
 	"errors"
 	"fmt"
+	"github.com/IntegralTeam/energi/energi/masternode"
 	"math/big"
 	"sync"
 	"time"
@@ -59,7 +60,9 @@ const (
 	// maxQueuedTxs is the maximum number of transaction lists to queue up before
 	// dropping broadcasts. This is a sensitive number as a transaction list might
 	// contain a single transaction, or thousands.
-	maxQueuedTxs = 128
+	maxQueuedTxs          = 128
+	maxQueuedHeartbeats   = 128
+	maxQueuedDismissVotes = 128
 
 	// maxQueuedProps is the maximum number of block propagations to queue up before
 	// dropping broadcasts. There's not much point in queueing stale blocks, so a few
@@ -101,26 +104,34 @@ type peer struct {
 	td   *big.Int
 	lock sync.RWMutex
 
-	knownTxs    mapset.Set                // Set of transaction hashes known to be known by this peer
-	knownBlocks mapset.Set                // Set of block hashes known to be known by this peer
-	queuedTxs   chan []*types.Transaction // Queue of transactions to broadcast to the peer
-	queuedProps chan *propEvent           // Queue of blocks to broadcast to the peer
-	queuedAnns  chan *types.Block         // Queue of blocks to announce to the peer
-	term        chan struct{}             // Termination channel to stop the broadcaster
+	knownTxs           mapset.Set                // Set of transaction hashes known to be known by this peer
+	knownBlocks        mapset.Set                // Set of block hashes known to be known by this peer
+	knownHeartbeats    mapset.Set                // Set of MN heartbeat hashes known to be known by this peer
+	knownDismissVotes  mapset.Set                // Set of MN DismissVote hashes known to be known by this peer
+	queuedTxs          chan []*types.Transaction // Queue of transactions to broadcast to the peer
+	queuedProps        chan *propEvent           // Queue of blocks to broadcast to the peer
+	queuedAnns         chan *types.Block         // Queue of blocks to announce to the peer
+	queuedHeartbeats   chan *mn_back.Heartbeat   // Queue of MN heartbeats to announce to the peer
+	queuedDismissVotes chan *mn_back.DismissVote // Queue of MN DismissVotes to announce to the peer
+	term               chan struct{}             // Termination channel to stop the broadcaster
 }
 
 func newPeer(version int, p *p2p.Peer, rw p2p.MsgReadWriter) *peer {
 	return &peer{
-		Peer:        p,
-		rw:          rw,
-		version:     version,
-		id:          fmt.Sprintf("%x", p.ID().Bytes()[:8]),
-		knownTxs:    mapset.NewSet(),
-		knownBlocks: mapset.NewSet(),
-		queuedTxs:   make(chan []*types.Transaction, maxQueuedTxs),
-		queuedProps: make(chan *propEvent, maxQueuedProps),
-		queuedAnns:  make(chan *types.Block, maxQueuedAnns),
-		term:        make(chan struct{}),
+		Peer:               p,
+		rw:                 rw,
+		version:            version,
+		id:                 fmt.Sprintf("%x", p.ID().Bytes()[:8]),
+		knownTxs:           mapset.NewSet(),
+		knownBlocks:        mapset.NewSet(),
+		knownHeartbeats:    mapset.NewSet(),
+		knownDismissVotes:  mapset.NewSet(),
+		queuedHeartbeats:   make(chan *mn_back.Heartbeat, maxQueuedHeartbeats),
+		queuedDismissVotes: make(chan *mn_back.DismissVote, maxQueuedDismissVotes),
+		queuedTxs:          make(chan []*types.Transaction, maxQueuedTxs),
+		queuedProps:        make(chan *propEvent, maxQueuedProps),
+		queuedAnns:         make(chan *types.Block, maxQueuedAnns),
+		term:               make(chan struct{}),
 	}
 }
 
@@ -135,6 +146,18 @@ func (p *peer) broadcast() {
 				return
 			}
 			p.Log().Trace("Broadcast transactions", "count", len(txs))
+
+		case heartbeat := <-p.queuedHeartbeats:
+			if err := p.SendHeartbeat(heartbeat); err != nil {
+				return
+			}
+			p.Log().Trace("Broadcast heartbeat", "count", 1)
+
+		case dismissVote := <-p.queuedDismissVotes:
+			if err := p.SendDismissVote(dismissVote); err != nil {
+				return
+			}
+			p.Log().Trace("Broadcast DismissVote", "count", 1)
 
 		case prop := <-p.queuedProps:
 			if err := p.SendNewBlock(prop.block, prop.td); err != nil {
@@ -228,6 +251,62 @@ func (p *peer) AsyncSendTransactions(txs []*types.Transaction) {
 		}
 	default:
 		p.Log().Debug("Dropping transaction propagation", "count", len(txs))
+	}
+}
+
+// MarkDismissVote marks a DismissVote as known for the peer, ensuring that it
+// will never be propagated to this particular peer.
+func (p *peer) MarkDismissVote(hash common.Hash) {
+	// If we reached the memory allowance, drop a previously known message hash
+	for p.knownDismissVotes.Cardinality() >= maxKnownTxs {
+		p.knownDismissVotes.Pop()
+	}
+	p.knownDismissVotes.Add(hash)
+}
+
+// SendDismissVote sends message to the peer and includes the hash
+// in its message hash set for future reference.
+func (p *peer) SendDismissVote(dismissVote *mn_back.DismissVote) error {
+	p.knownDismissVotes.Add(dismissVote.Hash())
+	return p2p.Send(p.rw, MasternodeDismissVoteMsg, dismissVote)
+}
+
+// AsyncSendDismissVote queues a DismissVote propagation to a remote
+// peer. If the peer's broadcast queue is full, the event is silently dropped.
+func (p *peer) AsyncSendDismissVote(dismissVote *mn_back.DismissVote) {
+	select {
+	case p.queuedDismissVotes <- dismissVote:
+		p.knownDismissVotes.Add(dismissVote.Hash())
+	default:
+		p.Log().Debug("Dropping DismissVote propagation", "count", 1)
+	}
+}
+
+// MarkHeartbeat marks a heartbeat as known for the peer, ensuring that it
+// will never be propagated to this particular peer.
+func (p *peer) MarkHeartbeat(hash common.Hash) {
+	// If we reached the memory allowance, drop a previously known message hash
+	for p.knownHeartbeats.Cardinality() >= maxKnownTxs {
+		p.knownHeartbeats.Pop()
+	}
+	p.knownHeartbeats.Add(hash)
+}
+
+// SendHeartbeat sends heartbeat to the peer and includes the hash
+// in its heartbeat hash set for future reference.
+func (p *peer) SendHeartbeat(heartbeat *mn_back.Heartbeat) error {
+	p.knownHeartbeats.Add(heartbeat.Hash())
+	return p2p.Send(p.rw, MasternodeHeartbeatMsg, heartbeat)
+}
+
+// AsyncSendHeartbeat queues a heartbeat propagation to a remote
+// peer. If the peer's broadcast queue is full, the event is silently dropped.
+func (p *peer) AsyncSendHeartbeat(heartbeat *mn_back.Heartbeat) {
+	select {
+	case p.queuedHeartbeats <- heartbeat:
+		p.knownHeartbeats.Add(heartbeat.Hash())
+	default:
+		p.Log().Debug("Dropping heartbeat propagation", "count", 1)
 	}
 }
 
@@ -502,6 +581,36 @@ func (ps *peerSet) PeersWithoutTx(hash common.Hash) []*peer {
 	list := make([]*peer, 0, len(ps.peers))
 	for _, p := range ps.peers {
 		if !p.knownTxs.Contains(hash) {
+			list = append(list, p)
+		}
+	}
+	return list
+}
+
+// PeersWithoutHeartbeat retrieves a list of peers that do not have a given heartbeat
+// in their set of known hashes.
+func (ps *peerSet) PeersWithoutHeartbeat(hash common.Hash) []*peer {
+	ps.lock.RLock()
+	defer ps.lock.RUnlock()
+
+	list := make([]*peer, 0, len(ps.peers))
+	for _, p := range ps.peers {
+		if !p.knownHeartbeats.Contains(hash) {
+			list = append(list, p)
+		}
+	}
+	return list
+}
+
+// PeersWithoutDismissVote retrieves a list of peers that do not have a given DismissVote
+// in their set of known hashes.
+func (ps *peerSet) PeersWithoutDismissVote(hash common.Hash) []*peer {
+	ps.lock.RLock()
+	defer ps.lock.RUnlock()
+
+	list := make([]*peer, 0, len(ps.peers))
+	for _, p := range ps.peers {
+		if !p.knownDismissVotes.Contains(hash) {
 			list = append(list, p)
 		}
 	}
