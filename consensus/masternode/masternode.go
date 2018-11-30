@@ -58,13 +58,13 @@ func GetMasternodes() []*Masternode {
 
 	for i, _ := range masternodes {
 		masternodes[i] = &Masternode{
-			Alias : fmt.Sprintf("MN%d", i),
-			NodeAddressIpV4 : nil,
-			NodeAddressIpV6 : nil,
-			CollateralAmount : new(big.Int),
-			CraAddress : common.Address{},
-			AnnouncementBlockNumber : new(big.Int),
-			ActivationBlockNumber : new(big.Int),
+			Alias:                   fmt.Sprintf("MN%d", i),
+			NodeAddressIpV4:         nil,
+			NodeAddressIpV6:         nil,
+			CollateralAmount:        new(big.Int),
+			CraAddress:              common.Address{},
+			AnnouncementBlockNumber: new(big.Int),
+			ActivationBlockNumber:   new(big.Int),
 		}
 	}
 	masternodes[0].CollateralAmount = new(big.Int).Mul(big.NewInt(10000), params.Energi_bn)
@@ -93,7 +93,7 @@ func GetMasternodesMap() map[common.Address]*Masternode {
 	masternodes := GetMasternodes()
 
 	masternodes_map := make(map[common.Address]*Masternode, 0)
-	for _,masternode := range masternodes {
+	for _, masternode := range masternodes {
 		masternodes_map[masternode.CraAddress] = masternode
 	}
 
@@ -104,7 +104,7 @@ func GetActiveMasternodesMap(block_number *big.Int) map[common.Address]*Masterno
 	masternodes := GetActiveMasternodes(block_number)
 
 	masternodes_map := make(map[common.Address]*Masternode, 0)
-	for _,masternode := range masternodes {
+	for _, masternode := range masternodes {
 		masternodes_map[masternode.CraAddress] = masternode
 	}
 
