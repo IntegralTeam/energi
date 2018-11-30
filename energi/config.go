@@ -40,6 +40,7 @@ import (
 	"github.com/IntegralTeam/energi/core"
 	"github.com/IntegralTeam/energi/energi/downloader"
 	"github.com/IntegralTeam/energi/energi/gasprice"
+	"github.com/IntegralTeam/energi/energi/masternode"
 	"github.com/IntegralTeam/energi/params"
 	"math/big"
 	"os"
@@ -101,6 +102,9 @@ type Config struct {
 	NetworkId uint64 // Network ID to use for selecting peers to connect to
 	SyncMode  downloader.SyncMode
 	NoPruning bool
+
+	// Local Masternode options
+	Masternode mn_back.Config `toml:",omitempty"`
 
 	// Light client options
 	LightServ  int `toml:",omitempty"` // Maximum percentage of time allowed for serving LES requests

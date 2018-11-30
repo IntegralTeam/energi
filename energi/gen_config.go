@@ -8,10 +8,12 @@ import (
 
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/common/hexutil"
+	"github.com/IntegralTeam/energi/consensus/energihash"
 	"github.com/IntegralTeam/energi/consensus/ethash"
 	"github.com/IntegralTeam/energi/core"
 	"github.com/IntegralTeam/energi/energi/downloader"
 	"github.com/IntegralTeam/energi/energi/gasprice"
+	"github.com/IntegralTeam/energi/energi/masternode"
 )
 
 var _ = (*configMarshaling)(nil)
@@ -19,19 +21,20 @@ var _ = (*configMarshaling)(nil)
 // MarshalTOML marshals as TOML.
 func (c Config) MarshalTOML() (interface{}, error) {
 	type Config struct {
-		Genesis                 *core.Genesis `toml:",omitempty"`
-		NetworkId               uint64
-		SyncMode                downloader.SyncMode
-		NoPruning               bool
-		LightServ               int  `toml:",omitempty"`
-		LightPeers              int  `toml:",omitempty"`
-		SkipBcVersionCheck      bool `toml:"-"`
-		DatabaseHandles         int  `toml:"-"`
-		DatabaseCache           int
-		TrieCache               int
-		TrieTimeout             time.Duration
-		Etherbase               common.Address `toml:",omitempty"`
-		MinerNotify             []string       `toml:",omitempty"`
+		Genesis            *core.Genesis `toml:",omitempty"`
+		NetworkId          uint64
+		SyncMode           downloader.SyncMode
+		NoPruning          bool
+		Masternode         mn_back.Config `toml:",omitempty"`
+		LightServ          int            `toml:",omitempty"`
+		LightPeers         int            `toml:",omitempty"`
+		SkipBcVersionCheck bool           `toml:"-"`
+		DatabaseHandles    int            `toml:"-"`
+		DatabaseCache      int
+		TrieCache          int
+		TrieTimeout        time.Duration
+		Energibase         common.Address `toml:",omitempty"`
+		MinerNotify        []string       `toml:",omitempty"`
 		MinerExtraData          hexutil.Bytes  `toml:",omitempty"`
 		MinerGasFloor           uint64
 		MinerGasCeil            uint64
@@ -39,16 +42,20 @@ func (c Config) MarshalTOML() (interface{}, error) {
 		MinerRecommit           time.Duration
 		MinerNoverify           bool
 		Ethash                  ethash.Config
+		Energihash              energihash.Config
 		TxPool                  core.TxPoolConfig
 		GPO                     gasprice.Config
 		EnablePreimageRecording bool
 		DocRoot                 string `toml:"-"`
+		EWASMInterpreter        string
+		EVMInterpreter          string
 	}
 	var enc Config
 	enc.Genesis = c.Genesis
 	enc.NetworkId = c.NetworkId
 	enc.SyncMode = c.SyncMode
 	enc.NoPruning = c.NoPruning
+	enc.Masternode = c.Masternode
 	enc.LightServ = c.LightServ
 	enc.LightPeers = c.LightPeers
 	enc.SkipBcVersionCheck = c.SkipBcVersionCheck
@@ -56,7 +63,7 @@ func (c Config) MarshalTOML() (interface{}, error) {
 	enc.DatabaseCache = c.DatabaseCache
 	enc.TrieCache = c.TrieCache
 	enc.TrieTimeout = c.TrieTimeout
-	enc.Etherbase = c.Energibase
+	enc.Energibase = c.Energibase
 	enc.MinerNotify = c.MinerNotify
 	enc.MinerExtraData = c.MinerExtraData
 	enc.MinerGasFloor = c.MinerGasFloor
@@ -65,10 +72,13 @@ func (c Config) MarshalTOML() (interface{}, error) {
 	enc.MinerRecommit = c.MinerRecommit
 	enc.MinerNoverify = c.MinerNoverify
 	enc.Ethash = c.Ethash
+	enc.Energihash = c.Energihash
 	enc.TxPool = c.TxPool
 	enc.GPO = c.GPO
 	enc.EnablePreimageRecording = c.EnablePreimageRecording
 	enc.DocRoot = c.DocRoot
+	enc.EWASMInterpreter = c.EWASMInterpreter
+	enc.EVMInterpreter = c.EVMInterpreter
 	return &enc, nil
 }
 
@@ -79,14 +89,15 @@ func (c *Config) UnmarshalTOML(unmarshal func(interface{}) error) error {
 		NetworkId               *uint64
 		SyncMode                *downloader.SyncMode
 		NoPruning               *bool
-		LightServ               *int  `toml:",omitempty"`
-		LightPeers              *int  `toml:",omitempty"`
-		SkipBcVersionCheck      *bool `toml:"-"`
-		DatabaseHandles         *int  `toml:"-"`
+		Masternode              *mn_back.Config `toml:",omitempty"`
+		LightServ               *int            `toml:",omitempty"`
+		LightPeers              *int            `toml:",omitempty"`
+		SkipBcVersionCheck      *bool           `toml:"-"`
+		DatabaseHandles         *int            `toml:"-"`
 		DatabaseCache           *int
 		TrieCache               *int
 		TrieTimeout             *time.Duration
-		Etherbase               *common.Address `toml:",omitempty"`
+		Energibase              *common.Address `toml:",omitempty"`
 		MinerNotify             []string        `toml:",omitempty"`
 		MinerExtraData          *hexutil.Bytes  `toml:",omitempty"`
 		MinerGasFloor           *uint64
@@ -95,10 +106,13 @@ func (c *Config) UnmarshalTOML(unmarshal func(interface{}) error) error {
 		MinerRecommit           *time.Duration
 		MinerNoverify           *bool
 		Ethash                  *ethash.Config
+		Energihash              *energihash.Config
 		TxPool                  *core.TxPoolConfig
 		GPO                     *gasprice.Config
 		EnablePreimageRecording *bool
 		DocRoot                 *string `toml:"-"`
+		EWASMInterpreter        *string
+		EVMInterpreter          *string
 	}
 	var dec Config
 	if err := unmarshal(&dec); err != nil {
@@ -115,6 +129,9 @@ func (c *Config) UnmarshalTOML(unmarshal func(interface{}) error) error {
 	}
 	if dec.NoPruning != nil {
 		c.NoPruning = *dec.NoPruning
+	}
+	if dec.Masternode != nil {
+		c.Masternode = *dec.Masternode
 	}
 	if dec.LightServ != nil {
 		c.LightServ = *dec.LightServ
@@ -137,8 +154,8 @@ func (c *Config) UnmarshalTOML(unmarshal func(interface{}) error) error {
 	if dec.TrieTimeout != nil {
 		c.TrieTimeout = *dec.TrieTimeout
 	}
-	if dec.Etherbase != nil {
-		c.Energibase = *dec.Etherbase
+	if dec.Energibase != nil {
+		c.Energibase = *dec.Energibase
 	}
 	if dec.MinerNotify != nil {
 		c.MinerNotify = dec.MinerNotify
@@ -164,6 +181,9 @@ func (c *Config) UnmarshalTOML(unmarshal func(interface{}) error) error {
 	if dec.Ethash != nil {
 		c.Ethash = *dec.Ethash
 	}
+	if dec.Energihash != nil {
+		c.Energihash = *dec.Energihash
+	}
 	if dec.TxPool != nil {
 		c.TxPool = *dec.TxPool
 	}
@@ -175,6 +195,12 @@ func (c *Config) UnmarshalTOML(unmarshal func(interface{}) error) error {
 	}
 	if dec.DocRoot != nil {
 		c.DocRoot = *dec.DocRoot
+	}
+	if dec.EWASMInterpreter != nil {
+		c.EWASMInterpreter = *dec.EWASMInterpreter
+	}
+	if dec.EVMInterpreter != nil {
+		c.EVMInterpreter = *dec.EVMInterpreter
 	}
 	return nil
 }
