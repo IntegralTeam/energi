@@ -37,15 +37,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"math/big"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
 	"github.com/IntegralTeam/energi/accounts/keystore"
-	"github.com/IntegralTeam/energi/cmd/utils"
 	"github.com/IntegralTeam/energi/common"
 	"github.com/IntegralTeam/energi/common/hexutil"
 	"github.com/IntegralTeam/energi/core/types"
@@ -145,13 +146,33 @@ func tmpDirName(t *testing.T) string {
 	return d
 }
 
+// Fatalf formats a message to standard error and exits the program.
+// The message is also printed to standard output if standard error
+// is redirected to a different file.
+func Fatalf(format string, args ...interface{}) {
+	w := io.MultiWriter(os.Stdout, os.Stderr)
+	if runtime.GOOS == "windows" {
+		// The SameFile check below doesn't work on Windows.
+		// stdout is unlikely to get redirected though, so just print there.
+		w = os.Stdout
+	} else {
+		outf, _ := os.Stdout.Stat()
+		errf, _ := os.Stderr.Stat()
+		if outf != nil && errf != nil && os.SameFile(outf, errf) {
+			w = os.Stderr
+		}
+	}
+	fmt.Fprintf(w, "Fatal: "+format+"\n", args...)
+	os.Exit(1)
+}
+
 func setup(t *testing.T) (*SignerAPI, chan string) {
 
 	controller := make(chan string, 20)
 
 	db, err := NewAbiDBFromFile("../../cmd/clef/4byte.json")
 	if err != nil {
-		utils.Fatalf(err.Error())
+		Fatalf(err.Error())
 	}
 	var (
 		ui  = &HeadlessUI{controller}
