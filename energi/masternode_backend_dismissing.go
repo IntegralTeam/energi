@@ -35,7 +35,7 @@ func (backend *MasternodeBackend) onMnWatchdogTick() {
 	}
 
 	block_number := backend.protocolManager.blockchain.CurrentBlock().Header().Number
-	masternodes := masternode.GetActiveMasternodes(block_number)
+	masternodes := mn.GetActiveMasternodes(block_number)
 
 	tracker := GetMasternodesTracker()
 	tracker.lock.Lock()
@@ -214,7 +214,7 @@ func GetMinDismissingQuorum(numberOfMasternodes uint64) uint64 {
 // Called by: masternode
 func (backend *MasternodeBackend) findFulfilledDismissVotings() []common.Address {
 	block_number := backend.protocolManager.blockchain.CurrentBlock().Header().Number
-	masternodes_number := uint64(len(masternode.GetActiveMasternodes(block_number)))
+	masternodes_number := uint64(len(mn.GetActiveMasternodes(block_number)))
 
 	res := make([]common.Address, 0, 4)
 	for craAddressToDismiss, votes := range backend.MyEnemies {

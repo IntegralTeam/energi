@@ -34,7 +34,7 @@ func AuthenticateMessage(dataToSign []byte, auth *mn_back.Auth, block_number *bi
 		return common.Address{}, &ErrCode{ErrAuthWrongSignature}
 	}
 
-	_, ok := masternode.GetActiveMasternodesMap(block_number)[craAddress]
+	_, ok := mn.GetActiveMasternodesMap(block_number)[craAddress]
 	if !ok {
 		return craAddress, &ErrCode{ErrAuthMasternodeNotFound}
 	}
@@ -67,13 +67,13 @@ func (backend *MasternodeBackend) amIActiveMasternode() bool {
 	block_number := backend.protocolManager.blockchain.CurrentBlock().Header().Number
 
 	// Ensure we're an active masternode
-	_, ok := masternode.GetMasternodesMap()[backend.Config.CraAddress]
+	_, ok := mn.GetMasternodesMap()[backend.Config.CraAddress]
 	if !ok {
 		log.Error("Masternode isn't announced", "block", block_number.String(), "address", backend.Config.CraAddress.String())
 		return false
 	}
 
-	_, ok = masternode.GetActiveMasternodesMap(block_number)[backend.Config.CraAddress]
+	_, ok = mn.GetActiveMasternodesMap(block_number)[backend.Config.CraAddress]
 	if !ok {
 		log.Warn("Masternode isn't activated", "block", block_number.String(), "address", backend.Config.CraAddress.String())
 		return false
