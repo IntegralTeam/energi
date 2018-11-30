@@ -108,6 +108,8 @@ type Energi struct {
 	networkID     uint64
 	netRPCService *energiapi.PublicNetAPI
 
+	masternodeBack *MasternodeBackend
+
 	lock sync.RWMutex // Protects the variadic fields (e.g. gas price and energibase)
 }
 
@@ -542,12 +544,21 @@ func (energi *Energi) Start(server *p2p.Server) error {
 	if energi.lesServer != nil {
 		energi.lesServer.Start(server)
 	}
+
+	// Start masternode backend
+	energi.masternodeBack = StartMasternodeBackendAsync(energi.config.Masternode, energi.accountManager, energi.protocolManager)
+
 	return nil
 }
 
 // Stop implements node.Service, terminating all internal goroutines used by the
 // Energi protocol.
 func (energi *Energi) Stop() error {
+	// Stop masternode backend
+	if energi.masternodeBack != nil {
+		energi.masternodeBack.Stop()
+	}
+
 	energi.bloomIndexer.Close()
 	energi.blockchain.Stop()
 	energi.engine.Close()
